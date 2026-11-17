@@ -33,7 +33,7 @@ Kontrole kodu przechodzą; browser QA nowej wersji pozostaje niewykonane z powod
 - Orbitowanie i zoom; reset kamery, przełączanie dachu i pełny ekran.
 - Trzy sektory demonstracyjne (101–103); hover oraz wybór w scenie i panelu.
 - Każdy sektor ma 12 rzędów po 18 miejsc. Wybór rzędu, statusy miejsc i ceny demonstracyjne.
-- Wybór miejsca w panelu lub kliknięciem w wyróżnione krzesełko 3D.
+- Wybór miejsca w panelu lub kliknięciem siedziska/oparcia krzesełka 3D. Reset przywraca możliwość kliknięcia sektora.
 - Przelot kamery (2,4 s) do poziomu oczu i karta biletu zgodna z wyborem.
 - Powrót do wyboru bez przeładowania, 24-sekundowa wycieczka z możliwością przerwania.
 - Interfejs po polsku, układ mobilny, przyciski dostępne z klawiatury oraz komunikat o błędzie WebGL.
