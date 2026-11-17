@@ -14,6 +14,7 @@ npm run dev
 Vite wypisze lokalny adres aplikacji. Produkcja:
 
 ```sh
+npm run lint
 npm run typecheck
 npm test
 npm run build
@@ -22,7 +23,11 @@ npm exec vite preview
 
 Katalog `dist` można opublikować na dowolnym hostingu statycznym (np. Vercel). `npm run dev` jest jedyną komendą potrzebną do kolejnych uruchomień po instalacji.
 
-## Co działa
+## Implementacja i stan weryfikacji
+
+Kontrole kodu przechodzą; browser QA nowej wersji pozostaje niewykonane z powodu awarii relay podglądu. Nie traktuj listy funkcji poniżej jako potwierdzonego odbioru wizualnego. Kroki i ograniczenia: `docs/QA.md`.
+
+## Co zaimplementowano
 
 - Proceduralna bryła stadionu: boisko z oznaczeniami, cztery trybuny, krzesełka, częściowo odkryty dach, kolumny i otoczenie.
 - Orbitowanie i zoom; reset kamery, przełączanie dachu i pełny ekran.
@@ -47,6 +52,10 @@ Aby dodać sektor, rozszerz `SectorId` i listę `sectors` w pliku danych, przypi
 To uproszczona proceduralna interpretacja, nie zweryfikowany bliźniak cyfrowy. Oznaczenie „Demo koncepcyjne — dane poglądowe” jest stale widoczne. Numeracja sektorów, nazwy trybun, rzędy, dostępność i ceny są przykładowe. Perspektywa wynika z modelu 3D, ale nie gwarantuje dokładnego widoku z rzeczywistego fotela. Weryfikacja wymaga oficjalnych planów i konsultacji z klubem. Nie wykorzystano oficjalnego herbu ani zewnętrznych modeli lub zdjęć.
 
 Brak logowania, sprzedaży biletów, płatności, rezerwacji i integracji z systemem klubowym. WebGL i nowoczesna przeglądarka są wymagane. Fonty Google są opcjonalne: bez sieci stosowany jest font systemowy.
+
+## Wspólny model miejsc i kamery
+
+W `src/data/stadium.ts` obiekt `layout` określa wysokość i głębokość rzędów oraz rozstaw siedzeń. `getSeat()` zwraca środek siedziska; stopnie i instancje krzeseł korzystają z tych samych parametrów. Dekoracyjne krzesełka są pomijane w obszarze 648 miejsc demo. `src/domain/camera.ts` wyznacza oczy nad górną powierzchnią siedziska i interpolację lotu; rozglądanie zmienia kierunek, zachowując pozycję oczu. `selection.ts` synchronizuje sektor, rząd i fotel. `tour.ts` anuluje wszystkie zaplanowane kroki przy ręcznej interakcji.
 
 ## Następne kroki
 

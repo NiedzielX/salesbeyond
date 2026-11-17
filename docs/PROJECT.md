@@ -1,12 +1,12 @@
 # Projekt — SalesBeyond Stadium MVP
 
-Status: rozpoznanie na podstawie plików repozytorium i ustaleń właściciela; do potwierdzenia przed implementacją nowej specyfikacji. Stan kodu: 3d3c307.
+Status: rozpoznanie na podstawie plików repozytorium i ustaleń właściciela; zatwierdzone przez właściciela 2026-11-17. Stan kodu: 3d3c307.
 
 | Pole | Wartość |
 |---|---|
 | Cel produktu, użytkownicy | Demo dla przedstawicieli klubu i kibiców: wybrać sektor, rząd i miejsce, płynnie przejść do widoku z fotela. Uproszczone 3D inspirowane Enea Stadionem, dopuszczalne generyczne elementy. |
-| Stos i wersje | TypeScript 5.9.3, React/React DOM 19.3.1, Vite 7.3.8, Three.js 0.181.2, R3F 9.8.2, Drei 10.7.9, Tailwind 4.3.5. Testy: node:test. Wersje odczytane z package-lock.json; manifest nadal ma zakresy ^/~. Brak bazy i backendu. |
-| Polecenia | Instalacja odtwarzalna: npm ci. Lint: BRAK skryptu i konfiguracji. Typecheck: npm run typecheck. Testy: npm test. Build: npm run build. Start: npm run dev. Skan sekretów: brak skryptu. |
+| Stos i wersje | TypeScript 5.9.3, React/React DOM 19.3.1, Vite 7.3.8, Three.js 0.181.2, R3F 9.8.2, Drei 10.7.9, Tailwind 4.3.5. Testy: node:test. Wersje odczytane z package-lock.json; manifest przypięty do wersji lockfile. Brak bazy i backendu. |
+| Polecenia | Instalacja odtwarzalna: npm ci. Lint: npm run lint (ESLint + typescript-eslint). Typecheck: npm run typecheck. Testy: npm test. Build: npm run build. Start: npm run dev. Skan sekretów: brak skryptu. |
 | Struktura i granice | src/data/stadium.ts — dane domenowe i pozycje; src/components/Stadium.tsx — geometria, kamera i scena; src/App.tsx — stan wyboru/UI/tour; src/styles.css — styl; src/data/stadium.test.ts — testy danych. |
 | Architektura | Istniejące zależności: UI i scena → dane; dane nie importują UI ani Three.js. Brak monorepo i API. Zalecenie dla MVP: wspólne obliczenia miejsc dla sceny i kamery, jeden kontroler kamery. |
 | Niezmienniki | Dane demonstracyjne i jawne oznaczenie; brak sprzedaży i płatności; wybór sceny, panelu, widoku i podsumowania spójny. Brak obietnicy dokładności realnego fotela. Nie kupować assetów. |
@@ -22,7 +22,7 @@ Status: rozpoznanie na podstawie plików repozytorium i ustaleń właściciela; 
 - Tańsze modele do ograniczonych zadań; integrator weryfikuje ich wyniki.
 - Specyfikację zatwierdza właściciel; zgoda na wykonanie planu nie zatwierdza automatycznie nieprzedstawionego dokumentu.
 
-## Propozycje wymagające zatwierdzenia ze specyfikacją
+## Ustalenia zatwierdzone ze specyfikacją
 
 1. Zachować obecny stos i node:test. Przypiąć istniejące zależności do wersji z lockfile, bez ich aktualizacji.
 2. Do lintu użyć lokalnego TypeScript ESLint (dokładne wersje sprawdzone przed dodaniem, wydania starsze niż 14 dni). Alternatywa: pozostawić lint jawnie niedostępny; nie udawać, że typecheck zastępuje lint.

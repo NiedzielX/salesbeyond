@@ -19,7 +19,7 @@ Nie zawiera stosu technologicznego, architektury, poleceń, struktury katalogów
 |---|---|
 | Cel produktu, użytkownicy | Funkcjonalne demo stadionu dla kibiców i klubu; szczegóły: `docs/PROJECT.md`. |
 | Stos i wersje (język, framework, baza, testy) | Istniejący React + TypeScript + Vite + Three.js/R3F + Tailwind, node:test; brak backendu. Wersje z lockfile: `docs/PROJECT.md`. |
-| Polecenia: instalacja / lint / typecheck / test / build / uruchomienie | `npm ci` / brak lint / `npm run typecheck` / `npm test` / `npm run build` / `npm run dev`. |
+| Polecenia: instalacja / lint / typecheck / test / build / uruchomienie | `npm ci` / `npm run lint` / `npm run typecheck` / `npm test` / `npm run build` / `npm run dev`. |
 | Struktura repozytorium i granice między modułami | `src/data` dane, `src/components` scena/kamera, `src/App.tsx` wybór/UI; `docs/PROJECT.md`. |
 | Zasady architektury (kierunek zależności, warstwy, dostęp do danych) | Scena i UI importują dane; dane nie importują UI. Brak API i bazy; szczegóły/propozycje: `docs/PROJECT.md`. |
 | Niezmienniki produktu (czego nie wolno łamać) | Demo/dane poglądowe; spójność miejsca i kamery; bez fotorealizmu, VIP, sprzedaży, płatności i dokładnego bliźniaka w MVP. |
@@ -27,7 +27,7 @@ Nie zawiera stosu technologicznego, architektury, poleceń, struktury katalogów
 | Środowiska i hosting; kto zarządza sekretami | Vite/dist; istniejący prywatny Sites; właściciel zatwierdza dalsze publikacje. Bez kluczy API w aplikacji. |
 | Stan wyjściowy (testy, lint, build przed zmianami) | Zapis w `.ai/runs/2026-11-17-adopt-agent-process.md`; rozpoznanie bez zmian kodu. |
 
-Sekcja wypełniona z repozytorium i ustaleń rozmowy, oczekuje potwierdzenia właściciela. Router: fakty projektu → `docs/PROJECT.md`; zakres do review → `.ai/specs/2026-11-17-functional-stadium-mvp.md`; preferencje → `.ai/lessons.md`.
+Sekcja wypełniona z repozytorium i ustaleń rozmowy, zatwierdzona przez właściciela 2026-11-17. Router: fakty projektu → `docs/PROJECT.md`; zakres do review → `.ai/specs/2026-11-17-functional-stadium-mvp.md`; preferencje → `.ai/lessons.md`.
 
 ## 2. Struktura `.ai/` (pamięć i ślad pracy)
 

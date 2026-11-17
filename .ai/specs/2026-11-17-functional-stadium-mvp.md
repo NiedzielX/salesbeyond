@@ -1,5 +1,5 @@
 ---
-status: draft
+status: in-progress
 created: 2026-11-17
 owner: NiedzielX
 related:
@@ -51,7 +51,7 @@ Fotorealistyczne kadry, filmy AI, maski w postprodukcji, VIP, oficjalne sektory/
 Jedna specyfikacja = jeden worktree implementacyjny. Integrator jest jedynym autorem zmian w plikach współdzielonych (Stadium.tsx i App.tsx). Tańszy agent (gpt-6-luna) wykonuje niezależny audyt/review w trybie read-only; nie pushuje i nie otwiera PR. Jeżeli wydzielone zadanie będzie faktycznie niezależne, otrzyma osobną specyfikację/gałąź/worktree. Nie mnożyć agentów dla małych zmian.
 
 ## Ryzyka i otwarte pytania
-- Do zatwierdzenia: sekcja Projekt w AGENTS.md/docs/PROJECT.md i ta specyfikacja. Nowe reguły są obowiązujące; nie stosować architektury Wine Match.
+- Sekcja Projekt i specyfikacja zatwierdzone przez właściciela wiadomością „zatwierdzam” 2026-11-17.
 - Lokalny podgląd miał problem z relay w poprzedniej sesji. Nie uznawać browser QA za wykonane na podstawie udanego buildu lub strony logowania hostingu.
 - Gotowy film i darmowy blueprint służą jako inspiracja flow; nie kopiujemy ich obiektu, nie odtwarzamy fotorealizmu.
 - Nie ma aktualnie konfiguracji CI, lintu i skanu sekretów. Lint w zakresie R9; CI nie jest wymagane w MVP.
@@ -67,4 +67,12 @@ Przeprowadzony 2026-11-17 przez osobną sesję gpt-6-luna (świeży kontekst, re
 - Integrator sam sprawdził dokument i wskazane miejsca kodu. Status pozostaje draft; akceptacja należy do właściciela.
 
 ## Realizacja
-Nie rozpoczęto implementacji. Zakres kierunkowy został uzgodniony w rozmowie; dokument draft nie jest samodzielnie zatwierdzany przez agenta.
+Właściciel zatwierdził dokument i sekcję Projekt wiadomością „zatwierdzam” 2026-11-17. Rozpoczęto implementację.
+
+
+### Wynik przyrostu
+Commit implementacyjny: ccf5733. Wspólny layout miejsc/stopni, reducer wyboru, kamera z ustaloną pozycją oczu, czyste obliczenia lotu, cleanup autotour, komunikat braku WebGL, lint i przypięte wersje.
+
+Kontrole: npm ci, lint, typecheck, testy 10/10 i build — exit 0. Bundle JS 1193,89 kB / gzip 338,62 kB, ostrzeżenie Vite o rozmiarze. Instalator ostrzega o zakończonym wsparciu eslint 9.39.1; zależność lokalna developerska, kontrola działa. Nowe wersje eslint/typescript-eslint sprawdzono w registry: odpowiednio 2025-11-03 i 2025-11-10 (starsze niż 14 dni).
+
+Read-only review świeżej sesji gpt-6-luna nie wskazał potwierdzonych błędów głównej ścieżki. Integrator sprawdził diff i uruchomił bramki samodzielnie. Browser QA: niewykonane — sites-preview relay timeout, bez adresu podglądu. AC2–AC8 w części wizualnej pozostają niepotwierdzone. Brak publikacji/push/scalenia. Status pozostaje in-progress zgodnie z AC9. Szczegóły i kroki: docs/QA.md.
