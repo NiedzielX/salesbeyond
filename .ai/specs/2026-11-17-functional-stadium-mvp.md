@@ -88,3 +88,7 @@ Commit 8961d50: usunięcie starej bezwładności OrbitControls przed lotem, anal
 
 ### Usunięcie blokerów interakcji i lotu
 Commit 5d61dfb: etykiety sektorów tylko w panoramie, odsłonięcie przednich słupów (11 kolizji przed / 0 po dla sprawdzonych lotów), quaternion slerp orientacji, status błędu fullscreen, poprawne przewijanie telefonu także w fallbacku i ochrona fokusu modala. Weryfikacja: lint/typecheck/build exit 0, 20/20 testów. Odrębna sesja audytu/review; integrator sprawdził ustalenia i bramki. Log: .ai/runs/2026-11-17-finish-mvp-accessibility.md. Realne browser QA nadal niewykonane, status in-progress.
+
+
+### Rzeczywisty browser QA panelu i poprawka montowania sceny
+Właściciel zezwolił na lokalne Vite zamiast managed preview. Commit 8d355e6: czysty neutralny fallback HTML canvas zamiast efektu wyłączającego scenę, spacje mobilnych nagłówków. W realnej przeglądarce wykonano 36 wyborów (18 na 1440×900, 18 na 390×844), ceny, powroty, reset, klawiaturę, modal, reload i brak overflow. Obejrzane zrzuty w docs/qa-evidence. Kontrole kodu 20/20, lint/typecheck/build zielone. Review niezależne. Realne renderowanie 3D, raycast i lot pozostają niepotwierdzone: cloud nie może utworzyć WebGL, diagnostyka GPU/DevTools zablokowana polityką. Nie oznaczać implemented; AC2/3/5/7 zaliczone jedynie w zakresie panelu/fallbacku. Log: .ai/runs/2026-11-17-local-browser-qa.md.

@@ -1,15 +1,15 @@
 # QA funkcjonalnego MVP
 
-Status: kontrole kodu wykonane; browser QA NIE WYKONANE. Specyfikacja pozostaje in-progress.
+Status: kontrole kodu i browser QA panelu/fallbacku wykonane; renderowanie i interakcje 3D NIEZWERYFIKOWANE (WebGL niedostępny w cloud). Specyfikacja pozostaje in-progress.
 
 ## Automatyczne
 
 `npm ci`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`.
 Test regresji Three.js/R3F sprawdza przywrócenie raycast po resecie. Testy danych i domeny sprawdzają 648 miejsc, ceny/statusy/ID, stan wyboru, wspólne pozycje rzędów i kamery, interpolację lotu i brak zmiany oczu przy rozglądaniu, anulowanie callbacków autotour.
 
-## Realna przeglądarka — do wykonania
+## Scenariusze odbioru (3D pozostaje do wykonania)
 
-Uruchomić `sites-preview start <checkout>` w środowisku managed i otworzyć dokładny zwrócony URL. Przy awarii relay nie zastępować tego innym serwerem. Na zwykłym komputerze: `npm run dev`.
+Właściciel wyraźnie zezwolił na lokalny Vite zamiast managed preview. Uruchomiono `npm run dev -- --port 5173 --strictPort`, otwarto http://localhost:5173/ w cloud Chrome. Na zwykłym komputerze: `npm run dev`. Nie zmieniano ustawień bezpieczeństwa przeglądarki.
 
 1. Rozmiary 390×844 i 1440×900. Obejrzeć zrzuty panoramy/sektora/fotela. Porównać szerokość dokumentu z viewportem; brak poziomego przewijania i krytycznych błędów konsoli.
 2. W widoku sektora etykiety HTML mają zniknąć i odsłonić siatkę krzeseł. Dla sektorów 101–103 i rzędów 1/6/12 wybrać pierwsze i ostatnie dostępne miejsce: 18 prób. Skontrolować podsumowanie, cenę i widok boiska, brak geometrii przecinającej kamerę. Lot bez cięcia.
@@ -25,3 +25,28 @@ Uruchomić `sites-preview start <checkout>` w środowisku managed i otworzyć do
 ## Ograniczenie infrastruktury 2026-11-17
 
 `sites-preview start /workspace/worktrees/salesbeyond-process` zakończyło się błędem `relay could not open browser port 4173: timed out waiting for relay readiness`. `sites-preview status`: stopped. Przeglądarka się uruchamia, ale nie uzyskano lokalnego URL ani zrzutów aplikacji. Nie uznaje się kontroli wizualnej za wykonaną.
+
+
+## Wynik realnego browser QA panelu, 2026-11-17
+
+Przeglądarka: cloud Chromium; normalna zmiana rozmiaru okna i zoomu, bez emulacji urządzenia ani DevTools. Z DOM potwierdzono dokładne viewporty CSS 1440×900 i 390×844.
+
+| Kontrola | Wynik |
+|---|---|
+| Poziomy overflow | Brak w obu rozmiarach: szerokość dokumentu 1421 ≤ 1440 i 380 ≤ 390 |
+| 18 wyborów na desktopie | Pass: sektory 101–103 × rzędy 1/6/12 × skrajne dostępne fotele, podsumowanie zgodne |
+| 18 wyborów na telefonie | Pass: te same kombinacje, zgodne dane i ceny; brak overflow |
+| Ceny | 101/103: 65 lub 75 zł; 102: 85 lub 95 zł zgodnie z rzędem |
+| Zajęte miejsca | Przyciski disabled, co najmniej jedno w każdym badanym rzędzie |
+| Kolejne zmiany i reset | 36 wyborów i powrotów bez reload, co najmniej 6 resetów panoramy |
+| Klawiatura | Home/End i strzałki zmieniają rząd; Enter wybiera fotel i wraca; rząd zachowany |
+| Modal | Tab/Shift+Tab pozostają wewnątrz, Escape zamyka, fokus wraca do O projekcie |
+| Fallback na telefonie | Panel/podsumowanie widoczne po wyborze; na zapisanym bilecie panelTop = 91 px |
+| Odświeżenie | Interfejs wraca do panoramy, można ponownie wybrać sektor i fotel |
+| Zrzuty | Obejrzano, zapisano w docs/qa-evidence/desktop-1440x900.jpg i mobile-390x844.jpg |
+
+Wykryte i naprawione w browser QA:
+- Canvas fallback z efektem `onUnavailable` montował się zawsze jako dzieci HTML canvas i sam wyłączał scenę. Zastąpiono czystym, neutralnym tekstem; renderer po poprawce rzeczywiście rozpoczyna inicjalizację.
+- Ukryte mobilnie br sklejało „swójpunkt” i „widok.Wielkie”. Dodano jawne spacje.
+
+Niezaliczone: panorama stadionu, klik fotela w 3D, wizualna kolizja lotu i autotour. W konsoli faktyczny błąd: WebGL context could not be created; GL_VENDOR/GL_RENDERER Disabled. Wewnętrzna strona diagnostyki GPU i DevTools są blokowane polityką narzędzia/przeglądarki — nie obchodzono blokad. Testy UI wykonano w rzeczywistym stanie bez WebGL. Znane błędy konsoli inicjalizacji WebGL i rozszerzenia przeglądarki nie są raportowane jako czysta konsola aplikacji.

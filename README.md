@@ -25,7 +25,7 @@ Katalog `dist` można opublikować na dowolnym hostingu statycznym (np. Vercel).
 
 ## Implementacja i stan weryfikacji
 
-Kontrole kodu przechodzą; browser QA nowej wersji pozostaje niewykonane z powodu awarii relay podglądu. Nie traktuj listy funkcji poniżej jako potwierdzonego odbioru wizualnego. Kroki i ograniczenia: `docs/QA.md`.
+Kontrole kodu i browser QA panelu przechodzą: 36 wyborów w rozmiarach 1440×900 i 390×844, ceny, powroty, klawiatura, modal i odświeżenie. Realny widok 3D i przeloty pozostają niezweryfikowane, ponieważ cloud Chromium ma niedostępny WebGL. Nie traktuj testów panelu jako odbioru sceny. Wyniki i zrzuty: `docs/QA.md`.
 
 ## Co zaimplementowano
 
