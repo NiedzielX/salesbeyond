@@ -4,10 +4,12 @@ import { useMemo, useRef, useEffect, useState, Component, type ReactNode } from 
 import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsType } from 'three-stdlib';
 import { layout, sectors, sectorSeats, type SectorId, type Seat } from '../data/stadium';
+import {columnPositions} from './structure';
+import {aimRotation,rotateFlight} from './cameraRotation';
 import {watchContextLoss} from './contextLoss';
 import { pauseOrbit } from './cameraControls';
 import { sectorRaycast } from './interaction';
-import { eyePosition, flightPoint, lookTarget, overviewPosition, overviewScale, type Point } from '../domain/camera';
+import { eyePosition, flightPoint, flightProgress, lookTarget, overviewPosition, overviewScale, type Point } from '../domain/camera';
 import type { View } from '../domain/selection';
 export type { View } from '../domain/selection';
 type Props = {sector: SectorId | null; seat:Seat|null; view:View; roof:boolean; onSector:(id:SectorId)=>void; onSeat:(seat:Seat)=>void; reset:number; onReady:()=>void; onUnavailable:()=>void};
@@ -41,9 +43,10 @@ function Camera({view,seat,sector,reset,onReady}:{view:View;seat:Seat|null;secto
  const controls=useRef<OrbitControlsType>(null);const {camera,gl,size}=useThree();
  const aspect=size.width/Math.max(1,size.height);
  const framingAspect=view==='overview'?aspect:1.5;
- const flight=useRef(true);const elapsed=useRef(0);const from=useRef<Point>([0,0,0]);const fromTarget=useRef<Point>([0,0,0]);const to=useRef<Point>([0,0,0]);const target=useRef<Point>([0,0,0]);const angles=useRef({yaw:0,pitch:0});
- useEffect(()=>{from.current=camera.position.toArray() as Point;const direction=camera.getWorldDirection(new THREE.Vector3());fromTarget.current=camera.position.clone().add(direction.multiplyScalar(50)).toArray() as Point;elapsed.current=0;flight.current=true;
+ const flight=useRef(true);const elapsed=useRef(0);const from=useRef<Point>([0,0,0]);const fromRotation=useRef(new THREE.Quaternion());const toRotation=useRef(new THREE.Quaternion());const to=useRef<Point>([0,0,0]);const target=useRef<Point>([0,0,0]);const angles=useRef({yaw:0,pitch:0});
+ useEffect(()=>{from.current=camera.position.toArray() as Point;fromRotation.current.copy(camera.quaternion);elapsed.current=0;flight.current=true;
  if(view==='seat'&&seat){to.current=eyePosition(seat);target.current=[0,1,0];}else if(view==='sector'){const x=sectors.find(s=>s.id===sector)?.center||0;to.current=[x,48,96];target.current=[x,6,49];}else{to.current=overviewPosition(framingAspect);target.current=[0,0,0];}
+ toRotation.current.copy(aimRotation(to.current,target.current,camera.up));
  if(controls.current)pauseOrbit(controls.current,camera);
  },[view,seat,sector,reset,camera,framingAspect]);
  useEffect(()=>{const canvas=gl.domElement;let pointer:number|null=null;let last=[0,0];
@@ -52,7 +55,7 @@ function Camera({view,seat,sector,reset,onReady}:{view:View;seat:Seat|null;secto
  const up=()=>{pointer=null};canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
  return()=>{canvas.removeEventListener('pointerdown',down);canvas.removeEventListener('pointermove',move);canvas.removeEventListener('pointerup',up);canvas.removeEventListener('pointercancel',up)};
  },[view,camera,gl]);
- useFrame((_,delta)=>{if(!flight.current||!controls.current)return;elapsed.current+=delta;const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;camera.position.set(...flightPoint(from.current,to.current,elapsed.current,reduced));const look=flightPoint(fromTarget.current,target.current,elapsed.current,reduced);camera.lookAt(...look);
+ useFrame((_,delta)=>{if(!flight.current||!controls.current)return;elapsed.current+=delta;const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;camera.position.set(...flightPoint(from.current,to.current,elapsed.current,reduced));rotateFlight(fromRotation.current,toRotation.current,flightProgress(elapsed.current,reduced),camera.quaternion);
  if(reduced||elapsed.current>=2.4){flight.current=false;const d=new THREE.Vector3(...target.current).sub(camera.position);angles.current={yaw:Math.atan2(d.x,d.z),pitch:Math.atan2(d.y,Math.hypot(d.x,d.z))};controls.current.target.set(...target.current);controls.current.enabled=view!=='seat';onReady();}});
  return <OrbitControls ref={controls} makeDefault enableDamping enablePan={false} minDistance={45} maxDistance={330*overviewScale(aspect)} minPolarAngle={.15} maxPolarAngle={Math.PI*.47} enableZoom={view!=='seat'} rotateSpeed={.5}/>;
 }
@@ -62,8 +65,8 @@ const [hover,setHover]=useState<SectorId|null>(null);const trees=useMemo(()=>Arr
 return <><color attach="background" args={['#eef1f3']}/><fog attach="fog" args={['#eef1f3',260,640]}/><ambientLight intensity={1.4}/><hemisphereLight args={['#e9f3ff','#8e9c8b',1.4]}/><directionalLight position={[-90,140,40]} intensity={2.5} castShadow shadow-mapSize={[2048,2048]} shadow-camera-left={-180} shadow-camera-right={180} shadow-camera-top={180} shadow-camera-bottom={-180} shadow-camera-far={500} shadow-bias={-.001}/><mesh rotation-x={-Math.PI/2} position-y={-1.5} receiveShadow><planeGeometry args={[1800,1800]}/><meshStandardMaterial color="#e0e5df"/></mesh><Box position={[0,-1,0]} size={[224,.8,187]} color="#c8d1ce"/><Box position={[0,-.5,0]} size={[204,.5,165]} color="#dfe3e2"/>
 {trees.map(([x,z],i)=><group key={i} position={[x,0,z]}><mesh position-y={2}><cylinderGeometry args={[.5,.7,4,5]}/><meshStandardMaterial color="#8b8e7a"/></mesh><mesh position-y={5+i%3} castShadow><icosahedronGeometry args={[3+i%3,1]}/><meshStandardMaterial color={i%2?'#8eaa91':'#a4b5a0'}/></mesh></group>)}
 <Pitch/>{[0,1,2,3].map(i=><Tier key={i} side={i}/>)}
-{[0,1,2,3].map(side=><group key={side}>{Array.from({length:side<2?9:7},(_,i)=>{const a=(i-(side<2?4:3))*15;const pos:[number,number,number]=side<2?[a,16,(side===0?1:-1)*79]:[(side===2?1:-1)*97,16,a];return <group key={i}><Box position={pos} size={[.7,33,.7]} color="#e7e9ea"/>{((p.roof&&p.view==='overview')||side===1||side===3)&&<Box position={[pos[0],32,pos[2]]} size={side<2?[1.1,.8,38]:[38,.8,1.1]} color="#f6f7f8"/>}</group>})}{((p.roof&&p.view==='overview')||side===1||side===3)&&<Box position={side<2?[0,32,(side===0?1:-1)*66]:[(side===2?1:-1)*84,32,0]} size={side<2?[128,.7,32]:[32,.7,104]} color="#f8fafc"/>}</group>)}
-{sectors.map(s=><group key={s.id}><mesh visible={p.view==='overview'} position={[s.center,6.3,50]} rotation-x={-.57} raycast={sectorRaycast(p.view)} onClick={e=>{e.stopPropagation();p.onSector(s.id);}} onPointerOver={e=>{e.stopPropagation();setHover(s.id);document.body.style.cursor='pointer';}} onPointerOut={()=>{setHover(null);document.body.style.cursor='auto';}}><boxGeometry args={[33,.35,24]}/><meshStandardMaterial color={p.sector===s.id?'#3181f7':hover===s.id?'#7db5ff':'#2f72d4'} transparent opacity={p.sector===s.id?.8:hover===s.id?.6:.15} depthWrite={false}/></mesh>{p.view!=='seat'&&<Html position={[s.center,19,64]} center distanceFactor={170} zIndexRange={[5,0]}><button className={`sector-label ${p.sector===s.id?'active':''}`} onClick={()=>p.onSector(s.id)}>{s.id}<span> ↗</span></button></Html>}</group>)}{sectors.map(s=><DemoSeats key={s.id} sector={s.id} selected={p.seat} onSeat={p.onSeat} interactive={p.view==='sector'&&p.sector===s.id}/>)}
+{[0,1,2,3].map(side=><group key={side}>{columnPositions(side,p.view).map((pos,i)=>{return <group key={i}><Box position={pos} size={[.7,33,.7]} color="#e7e9ea"/>{((p.roof&&p.view==='overview')||side===1||side===3)&&<Box position={[pos[0],32,pos[2]]} size={side<2?[1.1,.8,38]:[38,.8,1.1]} color="#f6f7f8"/>}</group>})}{((p.roof&&p.view==='overview')||side===1||side===3)&&<Box position={side<2?[0,32,(side===0?1:-1)*66]:[(side===2?1:-1)*84,32,0]} size={side<2?[128,.7,32]:[32,.7,104]} color="#f8fafc"/>}</group>)}
+{sectors.map(s=><group key={s.id}><mesh visible={p.view==='overview'} position={[s.center,6.3,50]} rotation-x={-.57} raycast={sectorRaycast(p.view)} onClick={e=>{e.stopPropagation();p.onSector(s.id);}} onPointerOver={e=>{e.stopPropagation();setHover(s.id);document.body.style.cursor='pointer';}} onPointerOut={()=>{setHover(null);document.body.style.cursor='auto';}}><boxGeometry args={[33,.35,24]}/><meshStandardMaterial color={p.sector===s.id?'#3181f7':hover===s.id?'#7db5ff':'#2f72d4'} transparent opacity={p.sector===s.id?.8:hover===s.id?.6:.15} depthWrite={false}/></mesh>{p.view==='overview'&&<Html position={[s.center,19,64]} center distanceFactor={170} zIndexRange={[5,0]}><button className={`sector-label ${p.sector===s.id?'active':''}`} onClick={()=>p.onSector(s.id)}>{s.id}<span> ↗</span></button></Html>}</group>)}{sectors.map(s=><DemoSeats key={s.id} sector={s.id} selected={p.seat} onSeat={p.onSeat} interactive={p.view==='sector'&&p.sector===s.id}/>)}
 <Camera {...p}/></>}
 function Unavailable({notify}:{notify:()=>void}){
  useEffect(()=>notify(),[notify]);

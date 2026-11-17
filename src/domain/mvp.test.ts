@@ -45,3 +45,15 @@ test('przerwanie autotour usuwa timery i blokuje również spóźnione callbacki
  callbacks[0]();assert.equal(actions.length,1);cleanup();
  callbacks[1]();callbacks[2]();assert.equal(actions.length,1);assert.equal(finished,false);assert.equal(canceled.length,3);
 });
+
+test('wybór kanonizuje dane fotela i nie gubi poprzedniego wyboru dla zajętych',()=>{
+ const seats=sectors.flatMap(s=>sectorSeats(s.id));
+ const available=seats.find(s=>s.available)!;
+ const occupied=seats.find(s=>!s.available)!;
+ const altered={...available,price:0,position:[NaN,NaN,NaN] as [number,number,number]};
+ const selected=selectionReducer(initialSelection,{type:'seat',seat:altered});
+ assert.deepEqual(selected.seat,available);
+ assert.equal(selectionReducer(selected,{type:'seat',seat:occupied}),selected);
+ const changed=selectionReducer(selected,{type:'sector',id:'103'});
+ assert.equal(changed.seat,null);assert.equal(changed.view,'sector');assert.equal(changed.sector,'103');
+});

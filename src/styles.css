@@ -3,3 +3,4 @@
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 /* Keep touch drags inside the 3D viewport; the page still scrolls outside it. */
 .scene canvas{touch-action:none}.panel-content:focus-visible{outline:2px solid #8eb8ff;outline-offset:-3px}
+.control-message{position:absolute;z-index:12;bottom:62px;left:20px;right:20px;text-align:center;font-size:10px;color:#52647b;pointer-events:none}.control-message:not(:empty){background:#ffffffed;border:1px solid #dce2eb;border-radius:6px;padding:9px}.scene-top-right button:disabled{opacity:.4;cursor:not-allowed}.viewport{scroll-margin-top:16px}
