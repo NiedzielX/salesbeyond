@@ -77,4 +77,4 @@ class Boundary extends Component<{children:ReactNode;notify:()=>void},{error:boo
  static getDerivedStateFromError(){return {error:true}}
  render(){return this.state.error?<Unavailable notify={this.props.notify}/>:this.props.children}
 }
-export default function Stadium(props:Props){return <Boundary notify={props.onUnavailable}><Canvas fallback={<Unavailable notify={props.onUnavailable}/>} shadows dpr={[1,1.7]} camera={{position:[148,138,168],fov:43,near:.1,far:1200}} gl={{antialias:true}}><Scene {...props}/></Canvas></Boundary>}
+export default function Stadium(props:Props){return <Boundary notify={props.onUnavailable}><Canvas fallback={<p>Sektor, rząd i miejsce możesz wybrać w panelu obok.</p>} shadows dpr={[1,1.7]} camera={{position:[148,138,168],fov:43,near:.1,far:1200}} gl={{antialias:true}}><Scene {...props}/></Canvas></Boundary>}
