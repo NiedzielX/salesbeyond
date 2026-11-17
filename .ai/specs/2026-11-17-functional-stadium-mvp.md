@@ -80,3 +80,7 @@ Read-only review świeżej sesji gpt-6-luna nie wskazał potwierdzonych błędó
 
 ### Dalsza poprawka interakcji 2026-11-17
 Reprodukcja regresji raycast po powrocie do panoramy: test przed poprawką 10/11, po przywróceniu konkretnej funkcji Mesh.prototype.raycast 11/11. Klik fotela obsługuje wspólna grupa siedziska/oparcia. Cena w panelu uwzględnia aktualny rząd; fallback nie obiecuje widoku 3D. Lint/typecheck/test/build zielone. Niezależne review gpt-6-luna bez uwag. Log: .ai/runs/2026-11-17-finish-mvp-interactions.md. AC przeglądarkowe nadal niezweryfikowane; status bez zmian.
+
+
+### Domknięcie kontrolera kamery i klawiatury
+Commit 8961d50: usunięcie starej bezwładności OrbitControls przed lotem, analityczne dopasowanie kadru panoramy do telefonu, stały widok fotela przy zmianie rozmiaru, obsługa utraty kontekstu GPU oraz fokus modala. Testy 14/14 i lint/typecheck/build zielone. Review tańszego gpt-6-luna wykrył konflikt autoFocus/opener — naprawiony. Log: .ai/runs/2026-11-17-complete-camera-controls.md. Pozostałe AC wizualne nadal niepotwierdzone; status in-progress.

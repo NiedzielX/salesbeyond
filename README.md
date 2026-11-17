@@ -30,13 +30,13 @@ Kontrole kodu przechodzą; browser QA nowej wersji pozostaje niewykonane z powod
 ## Co zaimplementowano
 
 - Proceduralna bryła stadionu: boisko z oznaczeniami, cztery trybuny, krzesełka, częściowo odkryty dach, kolumny i otoczenie.
-- Orbitowanie i zoom; reset kamery, przełączanie dachu i pełny ekran.
+- Orbitowanie i zoom; reset kamery, dopasowanie panoramy do proporcji ekranu, przełączanie dachu i pełny ekran.
 - Trzy sektory demonstracyjne (101–103); hover oraz wybór w scenie i panelu.
 - Każdy sektor ma 12 rzędów po 18 miejsc. Wybór rzędu, statusy miejsc i ceny demonstracyjne.
 - Wybór miejsca w panelu lub kliknięciem siedziska/oparcia krzesełka 3D. Reset przywraca możliwość kliknięcia sektora.
 - Przelot kamery (2,4 s) do poziomu oczu i karta biletu zgodna z wyborem.
 - Powrót do wyboru bez przeładowania, 24-sekundowa wycieczka z możliwością przerwania.
-- Interfejs po polsku, układ mobilny, przyciski dostępne z klawiatury oraz komunikat o błędzie WebGL.
+- Interfejs po polsku, układ mobilny, przyciski dostępne z klawiatury oraz komunikat o błędzie WebGL i utracie kontekstu GPU. Modal utrzymuje fokus i zwraca go do przycisku po zamknięciu.
 
 ## Struktura i dodawanie sektorów
 
@@ -55,7 +55,7 @@ Brak logowania, sprzedaży biletów, płatności, rezerwacji i integracji z syst
 
 ## Wspólny model miejsc i kamery
 
-W `src/data/stadium.ts` obiekt `layout` określa wysokość i głębokość rzędów oraz rozstaw siedzeń. `getSeat()` zwraca środek siedziska; stopnie i instancje krzeseł korzystają z tych samych parametrów. Dekoracyjne krzesełka są pomijane w obszarze 648 miejsc demo. `src/domain/camera.ts` wyznacza oczy nad górną powierzchnią siedziska i interpolację lotu; rozglądanie zmienia kierunek, zachowując pozycję oczu. `selection.ts` synchronizuje sektor, rząd i fotel. `tour.ts` anuluje wszystkie zaplanowane kroki przy ręcznej interakcji.
+W `src/data/stadium.ts` obiekt `layout` określa wysokość i głębokość rzędów oraz rozstaw siedzeń. `getSeat()` zwraca środek siedziska; stopnie i instancje krzeseł korzystają z tych samych parametrów. Dekoracyjne krzesełka są pomijane w obszarze 648 miejsc demo. `src/domain/camera.ts` wyznacza oczy nad górną powierzchnią siedziska i interpolację lotu; rozglądanie zmienia kierunek, zachowując pozycję oczu. Kontroler usuwa starą bezwładność orbity przed lotem, a panorama oblicza dystans z kątów widzenia i rozmiaru bryły. `selection.ts` synchronizuje sektor, rząd i fotel. `tour.ts` anuluje wszystkie zaplanowane kroki przy ręcznej interakcji.
 
 ## Następne kroki
 
