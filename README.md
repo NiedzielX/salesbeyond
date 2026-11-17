@@ -34,7 +34,7 @@ Kontrole kodu przechodzą; browser QA nowej wersji pozostaje niewykonane z powod
 - Trzy sektory demonstracyjne (101–103); hover oraz wybór w scenie i panelu.
 - Każdy sektor ma 12 rzędów po 18 miejsc. Wybór rzędu, statusy miejsc i ceny demonstracyjne.
 - Wybór miejsca w panelu lub kliknięciem siedziska/oparcia krzesełka 3D. Reset przywraca możliwość kliknięcia sektora.
-- Przelot kamery (2,4 s) do poziomu oczu i karta biletu zgodna z wyborem.
+- Przelot kamery (2,4 s) do poziomu oczu i karta biletu zgodna z wyborem. Orientacja interpolowana kwaternionem; przednie słupy są odsłaniane wraz z dachem przy wejściu na trybunę. Etykiety sektorów nie zasłaniają foteli.
 - Powrót do wyboru bez przeładowania, 24-sekundowa wycieczka z możliwością przerwania.
 - Interfejs po polsku, układ mobilny, przyciski dostępne z klawiatury oraz komunikat o błędzie WebGL i utracie kontekstu GPU. Modal utrzymuje fokus i zwraca go do przycisku po zamknięciu.
 
@@ -50,6 +50,8 @@ Aby dodać sektor, rozszerz `SectorId` i listę `sectors` w pliku danych, przypi
 ## Zakres demonstracyjny
 
 To uproszczona proceduralna interpretacja, nie zweryfikowany bliźniak cyfrowy. Oznaczenie „Demo koncepcyjne — dane poglądowe” jest stale widoczne. Numeracja sektorów, nazwy trybun, rzędy, dostępność i ceny są przykładowe. Perspektywa wynika z modelu 3D, ale nie gwarantuje dokładnego widoku z rzeczywistego fotela. Weryfikacja wymaga oficjalnych planów i konsultacji z klubem. Nie wykorzystano oficjalnego herbu ani zewnętrznych modeli lub zdjęć.
+
+Na telefonie wybór miejsca przewija do sceny, a przy niedostępnym WebGL do podsumowania. Brak pełnego ekranu jest sygnalizowany komunikatem; nie blokuje wyboru miejsca.
 
 Brak logowania, sprzedaży biletów, płatności, rezerwacji i integracji z systemem klubowym. WebGL i nowoczesna przeglądarka są wymagane. Fonty Google są opcjonalne: bez sieci stosowany jest font systemowy.
 

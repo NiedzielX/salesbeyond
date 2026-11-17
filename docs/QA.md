@@ -12,14 +12,14 @@ Test regresji Three.js/R3F sprawdza przywrócenie raycast po resecie. Testy dany
 Uruchomić `sites-preview start <checkout>` w środowisku managed i otworzyć dokładny zwrócony URL. Przy awarii relay nie zastępować tego innym serwerem. Na zwykłym komputerze: `npm run dev`.
 
 1. Rozmiary 390×844 i 1440×900. Obejrzeć zrzuty panoramy/sektora/fotela. Porównać szerokość dokumentu z viewportem; brak poziomego przewijania i krytycznych błędów konsoli.
-2. Dla sektorów 101–103 i rzędów 1/6/12 wybrać pierwsze i ostatnie dostępne miejsce: 18 prób. Skontrolować podsumowanie, cenę i widok boiska, brak geometrii przecinającej kamerę. Lot bez cięcia.
+2. W widoku sektora etykiety HTML mają zniknąć i odsłonić siatkę krzeseł. Dla sektorów 101–103 i rzędów 1/6/12 wybrać pierwsze i ostatnie dostępne miejsce: 18 prób. Skontrolować podsumowanie, cenę i widok boiska, brak geometrii przecinającej kamerę. Lot bez cięcia.
 3. Po powrocie do panoramy ponownie kliknąć sektor w 3D (regresja raycast). W sektorze wybrać fotel osobno kliknięciem siedziska i oparcia. Kliknąć w scenie fotel z innego rzędu niż w panelu; wrócić i sprawdzić numer rzędu. Kliknięcie zajętego miejsca nic nie wybiera.
 4. Obrócić panoramę szybkim gestem i natychmiast wybrać sektor; sprawdzić, że bezwładność nie przesuwa końca lotu. Po zmianie orientacji telefonu panorama ma mieścić bryłę stadionu, a widok z fotela zachować kierunek patrzenia. Dziesięć zmian miejsca, trzy resety panoramy. Brak przeładowania i niespójności biletu. Rozglądanie z fotela nie zmienia pozycji obserwatora.
-5. W czasie lotu kliknąć reset i zmienić sektor; końcowa kamera odpowiada ostatniemu wyborowi. Powtórzyć przy prefers-reduced-motion.
+5. Sektor 103/rząd 12/miejsce 2: przednia konstrukcja jest odsłonięta i nie przecina lotu. W widoku z fotela obrócić kamerę w stronę kierunku panoramy (około yaw 41°, pitch 32°), następnie reset: brak nagłego odwrócenia. W czasie lotu kliknąć reset i zmienić sektor; końcowa kamera odpowiada ostatniemu wyborowi. Powtórzyć przy prefers-reduced-motion.
 6. Autotour: start, stop/Escape/ręczny wybór/drag, odczekać do końca 24 s. Brak spóźnionego nadpisania wyboru.
 7. Klawiatura: Tab, Shift+Tab, Enter/Space w sektorach i miejscach; strzałki na suwaku rzędu; powrót. Widoczny fokus i możliwość dalszej nawigacji.
-8. Zasymulować brak WebGL w osobnej sesji QA bez zmiany ustawień użytkownika. Komunikat zamiast sceny; panel nie może udawać wyrenderowanego widoku.
-9. Sprawdzić dach, pełny ekran i modal O projekcie, stale widoczny napis DEMO. W modalu Tab i Shift+Tab pozostają wewnątrz; Escape zamyka modal i zwraca fokus do przycisku.
+8. Na telefonie po wyborze miejsca scena ma być widoczna; przy awarii 3D zamiast niej widoczne podsumowanie. Zasymulować brak WebGL w osobnej sesji QA bez zmiany ustawień użytkownika. Komunikat zamiast sceny; panel nie może udawać wyrenderowanego widoku.
+9. W przeglądarce bez pełnego ekranu odmowa ma pokazać status, bez otwarcia modala O projekcie; tour zatrzymany. Dach dostępny tylko w panoramie. Sprawdzić dach, pełny ekran i modal O projekcie, stale widoczny napis DEMO. W modalu Tab i Shift+Tab pozostają wewnątrz; Escape zamyka modal i zwraca fokus do przycisku.
 10. W sesji QA wymusić utratę kontekstu GPU: scena zastąpiona komunikatem, zatrzymany tour, panel nadal pozwala sprawdzić dane miejsc. Kontrola samego listenera jest testem jednostkowym, nie zastępuje tego kroku w przeglądarce.
 
 ## Ograniczenie infrastruktury 2026-11-17

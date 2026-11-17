@@ -84,3 +84,7 @@ Reprodukcja regresji raycast po powrocie do panoramy: test przed poprawką 10/11
 
 ### Domknięcie kontrolera kamery i klawiatury
 Commit 8961d50: usunięcie starej bezwładności OrbitControls przed lotem, analityczne dopasowanie kadru panoramy do telefonu, stały widok fotela przy zmianie rozmiaru, obsługa utraty kontekstu GPU oraz fokus modala. Testy 14/14 i lint/typecheck/build zielone. Review tańszego gpt-6-luna wykrył konflikt autoFocus/opener — naprawiony. Log: .ai/runs/2026-11-17-complete-camera-controls.md. Pozostałe AC wizualne nadal niepotwierdzone; status in-progress.
+
+
+### Usunięcie blokerów interakcji i lotu
+Commit 5d61dfb: etykiety sektorów tylko w panoramie, odsłonięcie przednich słupów (11 kolizji przed / 0 po dla sprawdzonych lotów), quaternion slerp orientacji, status błędu fullscreen, poprawne przewijanie telefonu także w fallbacku i ochrona fokusu modala. Weryfikacja: lint/typecheck/build exit 0, 20/20 testów. Odrębna sesja audytu/review; integrator sprawdził ustalenia i bramki. Log: .ai/runs/2026-11-17-finish-mvp-accessibility.md. Realne browser QA nadal niewykonane, status in-progress.
