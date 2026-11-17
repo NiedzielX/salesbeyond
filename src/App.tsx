@@ -6,7 +6,7 @@ import {initialSelection, selectionReducer} from './domain/selection';
 import { sectors, getSeat, seatsPerRow, rows, type SectorId, type Seat } from './data/stadium';
 export default function App(){
  const [{sector,seat,row,view},dispatch]=useReducer(selectionReducer,initialSelection);
- const [roof,setRoof]=useState(false);const [reset,setReset]=useState(0);const [tour,setTour]=useState(false);const [info,setInfo]=useState(false);const [full,setFull]=useState(false);const [flying,setFlying]=useState(false);const container=useRef<HTMLDivElement>(null);const panel=useRef<HTMLDivElement>(null);
+ const [roof,setRoof]=useState(false);const [reset,setReset]=useState(0);const [tour,setTour]=useState(false);const [info,setInfo]=useState(false);const [full,setFull]=useState(false);const [flying,setFlying]=useState(false);const container=useRef<HTMLDivElement>(null);const panel=useRef<HTMLDivElement>(null);const modal=useRef<HTMLElement>(null);
  const [unavailable,setUnavailable]=useState(false);
  const failScene=useCallback(()=>{setUnavailable(true);setFlying(false);setTour(false)},[]);
  const ready=useCallback(()=>setFlying(false),[]);
@@ -16,15 +16,30 @@ export default function App(){
  useEffect(()=>{panel.current?.focus({preventScroll:true});},[view]);
  useEffect(()=>{if(!tour)return;dispatch({type:'reset'});setFlying(true);setReset(r=>r+1);return scheduleTour(action=>{dispatch(action);setFlying(true)},()=>setTour(false))},[tour]);
  useEffect(()=>{const onKey=(e:KeyboardEvent)=>{if(e.key==='Escape'){setTour(false);setInfo(false);}};const onFull=()=>setFull(!!document.fullscreenElement);window.addEventListener('keydown',onKey);document.addEventListener('fullscreenchange',onFull);return()=>{window.removeEventListener('keydown',onKey);document.removeEventListener('fullscreenchange',onFull)}},[]);
+ useEffect(()=>{
+ if(!info)return;
+ const opener=document.activeElement instanceof HTMLElement?document.activeElement:null;
+ const dialog=modal.current;
+ const focusable=()=>Array.from(dialog?.querySelectorAll<HTMLElement>('button, a[href], input, [tabindex="0"]')||[]).filter(el=>!el.hasAttribute('disabled'));
+ focusable()[0]?.focus();
+ const trap=(event:KeyboardEvent)=>{
+ if(event.key!=='Tab')return;
+ const items=focusable();const first=items[0];const last=items[items.length-1];
+ if(event.shiftKey&&(document.activeElement===first||!dialog?.contains(document.activeElement))){event.preventDefault();last?.focus()}
+ else if(!event.shiftKey&&(document.activeElement===last||!dialog?.contains(document.activeElement))){event.preventDefault();first?.focus()}
+ };
+ document.addEventListener('keydown',trap);
+ return()=>{document.removeEventListener('keydown',trap);if(opener?.isConnected)opener.focus()};
+ },[info]);
  async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else await container.current?.requestFullscreen();}catch{setInfo(true)}}
  const selectedSector=sectors.find(s=>s.id===sector);
  return <div className="app" ref={container}>
- <header className="header"><a className="wordmark" href="./" aria-label="SalesBeyond — strona główna"><span className="brand-symbol">s<span>↗</span></span>salesbeyond<span className="brand-period">.</span></a><span className="header-divider"/><span className="header-project">STADIUM EXPERIENCE</span><nav><button onClick={()=>setInfo(true)}>O projekcie <ArrowUpRight size={14}/></button><span className="demo-pill"><i/> INTERAKTYWNE DEMO</span></nav></header>
+ <header className="header"><a className="wordmark" href="./" aria-label="SalesBeyond — strona główna"><span className="brand-symbol">s<span>↗</span></span>salesbeyond<span className="brand-period">.</span></a><span className="header-divider"/><span className="header-project">STADIUM EXPERIENCE</span><nav><button onClick={()=>{setTour(false);setInfo(true)}}>O projekcie <ArrowUpRight size={14}/></button><span className="demo-pill"><i/> INTERAKTYWNE DEMO</span></nav></header>
  <main>
  <div className="intro"><div className="intro-copy"><div className="eyebrow"><span/> POZNAŃ, UL. BUŁGARSKA 17</div><h1>Twoje miejsce.<br/><span>Twoja perspektywa.</span></h1><p>Poczuj atmosferę, zanim wejdziesz na trybuny.<br/>Odkryj stadion i zobacz widok ze swojego miejsca.</p></div><div className="intro-meta"><div className="stadium-mark"><span>1922</span><b>POZNAŃ</b><span>STADION</span></div><div><span className="small-label">WIRTUALNA WIZYTA</span><strong>Stadion w Poznaniu</strong><span className="location"><MapPin size={12}/> 52°23′52″N 16°51′29″E</span></div></div></div>
  <section className="experience" aria-label="Interaktywny wybór miejsca na stadionie">
  <div className="viewport"><div className="viewport-heading"><span className="live-dot"/>{view==='overview'?'ODKRYWAJ STADION':view==='sector'?`TRYBUNA PÓŁNOCNA / ${sector}`:unavailable?'PODGLĄD NIEDOSTĘPNY':flying?'PRZELOT DO MIEJSCA':'TWÓJ WIDOK Z MIEJSCA'}<span className="render-badge">{unavailable?'BRAK 3D':'LIVE 3D'}</span></div>
- <div className="scene" onPointerDown={()=>setTour(false)} onWheel={()=>setTour(false)}><Stadium sector={sector} seat={seat} view={view} roof={roof} reset={reset} onSector={selectSector} onSeat={selectSeat} onReady={ready} onUnavailable={failScene}/></div>
+ <div className="scene" onPointerDown={()=>setTour(false)} onWheel={()=>setTour(false)}><>{unavailable?<div className="webgl-error" role="alert">Podgląd 3D jest niedostępny.<br/>Odśwież stronę, aby spróbować ponownie.<br/>Dane miejsc nadal możesz sprawdzić w panelu.</div>:<Stadium sector={sector} seat={seat} view={view} roof={roof} reset={reset} onSector={selectSector} onSeat={selectSeat} onReady={ready} onUnavailable={failScene}/>}</></div>
  <div className="scene-top-right"><button title={roof?'Odkryj trybuny':'Pokaż dach'} aria-pressed={roof} onClick={()=>setRoof(v=>!v)}><Layers3 size={17}/></button><button title="Pełny ekran" aria-pressed={full} onClick={fullscreen}><Maximize2 size={17}/></button></div>
  <div className="scene-bottom"><div className="scene-controls"><button onClick={overview} title="Przywróć widok stadionu"><RotateCcw size={16}/></button><div className="controls-divider"/><MousePointer2 size={14}/><span>{view==='seat'?'Przeciągnij, aby rozejrzeć się':'Przeciągnij, aby obrócić'}</span><span className="scroll-hint">{view==='seat'?'· Stały punkt widzenia':'· Scroll, aby przybliżyć'}</span></div><div className="compass"><span>N</span><MoveUpRight size={20}/></div></div>
  {view==='overview'&&!unavailable&&<div className="scene-hint"><span className="hint-orbit"><Orbit size={16}/></span>Wybierz niebieski sektor, aby wejść na trybunę<ArrowUpRight size={14}/></div>}
@@ -38,6 +53,6 @@ export default function App(){
  </section>
  <div className="bottom-bar"><div className="bottom-caption"><span className="mini-plus">+</span><div><b>Najlepsze miejsce? To Twoje.</b><span>Poznaj stadion z zupełnie nowej perspektywy.</span></div></div><button disabled={unavailable} className={`tour-button ${tour?'playing':''}`} onClick={()=>setTour(v=>!v)}>{tour?<Pause size={13}/>:<Play size={13} fill="currentColor"/>}{tour?'Zatrzymaj wycieczkę':'Zobacz, jak to działa'}<span>24 S</span></button></div>
  </main><footer><span>© 2026 SALESBEYOND</span><span>PROTOTYP DOŚWIADCZENIA KIBICA <span className="footer-dot">·</span> ZBUDOWANY DLA EMOCJI</span><span>POZNAŃ, POLSKA <ArrowUpRight size={11}/></span></footer>
- {info&&<div className="modal-backdrop" onClick={()=>setInfo(false)}><section className="modal" role="dialog" aria-modal="true" aria-labelledby="about-title" onClick={e=>e.stopPropagation()}><button autoFocus className="close-modal" aria-label="Zamknij" onClick={()=>setInfo(false)}><X/></button><div className="eyebrow">SALESBEYOND / PROTOTYP</div><h2 id="about-title">Bliżej stadionu.<br/>Bliżej emocji.</h2><p>Koncepcja modułu „Zobacz widok ze swojego miejsca” dla stadionu Lecha Poznań. Wybierz sektor, rząd i fotel — kamera przeniesie Cię na trybunę.</p><p>Bryła jest uproszczoną interpretacją stadionu. Nazwy sektorów, miejsca, dostępność i ceny są przykładowe. Dokładność wymaga oficjalnych planów i weryfikacji z klubem.</p><button className="primary-button" onClick={()=>setInfo(false)}>Odkrywaj stadion <ArrowRight size={16}/></button></section></div>}
+ {info&&<div className="modal-backdrop" onClick={()=>setInfo(false)}><section className="modal" ref={modal} role="dialog" aria-modal="true" aria-labelledby="about-title" onClick={e=>e.stopPropagation()}><button className="close-modal" aria-label="Zamknij" onClick={()=>setInfo(false)}><X/></button><div className="eyebrow">SALESBEYOND / PROTOTYP</div><h2 id="about-title">Bliżej stadionu.<br/>Bliżej emocji.</h2><p>Koncepcja modułu „Zobacz widok ze swojego miejsca” dla stadionu Lecha Poznań. Wybierz sektor, rząd i fotel — kamera przeniesie Cię na trybunę.</p><p>Bryła jest uproszczoną interpretacją stadionu. Nazwy sektorów, miejsca, dostępność i ceny są przykładowe. Dokładność wymaga oficjalnych planów i weryfikacji z klubem.</p><button className="primary-button" onClick={()=>setInfo(false)}>Odkrywaj stadion <ArrowRight size={16}/></button></section></div>}
  </div>
 }
