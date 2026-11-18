@@ -1,5 +1,6 @@
 # Lekcje projektu
 
+- [2026-11-18] [Promise lotu a faktyczne dotarcie](lessons/2026-11-18-flight-promise-arrival.md) — resolve może oznaczać anulowanie; sprawdzaj stan kamery przed komunikatem i miniaturą.
 - [2026-11-17] [Fallback Canvas nie jest testem WebGL](lessons/2026-11-17-canvas-fallback-effects.md) — fallback montuje się zawsze; nie zgłaszaj z niego awarii efektem.
 - [2026-11-17] [Orientacja i prześwit przelotu](lessons/2026-11-17-flight-rotation-clearance.md) — odsłaniaj interakcje, kontroluj kolizje i interpoluj orientację kwaternionem.
 - [2026-11-17] [Bezwładność orbity a przelot](lessons/2026-11-17-orbit-flight-inertia.md) — usuń pozostały damping przed animacją bez zmiany pozycji kamery.

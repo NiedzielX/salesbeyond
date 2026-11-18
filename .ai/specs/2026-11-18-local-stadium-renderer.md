@@ -1,5 +1,5 @@
 ---
-status: draft
+status: in-progress
 created: 2026-11-18
 owner: NiedzielX
 related:
@@ -49,7 +49,17 @@ Sprzedaż, rezerwacje, płatności, konta, backend, event w zewnętrznej usłudz
 - Jeśli renderer nie odtworzy uproszczonego dachu i układu Enea bez ingerencji w prywatne źródła, porównać z proceduralnym MIT generatorem `whoistorres/stadium-seat-view` zamiast rozszerzać MVP.
 
 ## Niezależny przegląd
-Read-only review osobnej sesji gpt-6-luna: kierunek lokalnego core jest spójny z potwierdzonym API. Uwzględniono uwagi o callbacku kliknięcia, konkretnej starszej wersji, sprawdzeniu wszystkich zależności sieciowych od cold startu i osobnym silniku/teardown. Nie dodawać publicznych podziękowań; standardowe wymagane pliki cudzych zależności pozostają w pakietach. Integrator sam sprawdził deklaracje i metadane wersji. Dokument nie jest zatwierdzony i nie upoważnia do zmiany zależności.
+Read-only review osobnej sesji gpt-6-luna: kierunek lokalnego core jest spójny z potwierdzonym API. Uwzględniono uwagi o callbacku kliknięcia, konkretnej starszej wersji, sprawdzeniu wszystkich zależności sieciowych od cold startu i osobnym silniku/teardown. Nie dodawać publicznych podziękowań; standardowe wymagane pliki cudzych zależności pozostają w pakietach. Integrator sam sprawdził deklaracje i metadane wersji. Dokument następnie zatwierdzony przez właściciela; implementacja poniżej.
 
 ## Realizacja
-Research i przygotowanie planu; brak implementacji tej specyfikacji.
+Właściciel zatwierdził plan wiadomością „tak. uzyjmy tamtego jako szablonu ale celujmy w nasz wyglad [...] enea to pierwszy cel. dzialaj” 2026-11-18. Rozpoczęto lokalną próbę integracyjną na osobnej gałęzi/worktree. Produkt jest kierowany do klubów piłkarskich; pierwszy scenariusz demonstracyjny: Enea Stadion. Bez deklaracji oficjalnej współpracy.
+
+
+### Przyrost lokalnego renderera
+Zaimplementowano przypięty core0.109.1, lokalny chart/adapter648 ID, własną proceduralną bryłę GLB, przygotowaną scenę i niezależny wrapper DOM. Dokładne pozycje nowej sceny pochodzą z jej chartu i rozstawu .62m; stary demonstracyjny układ R3F pozostaje osobno do porównania. Brak zmian cen/statusów/znaczenia fotela. Nie dodano backendu i kluczy.
+
+Właściciel ponownie wskazał blueprint jako kierunek i oczekuje zgłaszania lepszych rozwiązań. Utrzymano historię panorama→sektor→rząd→fotel→karta. Kadr obejmuje całe własne założenie stadionowe, zamiast domyślnego kadru samych wybieralnych rzędów. Sektor kadruje cały sektor, zmiana rzędu przybliża rząd. Karta ma obsługę miniatury z tej samej kamery po potwierdzonym dotarciu; brak obrazu przy przerwaniu lub braku GPU. Te funkcje wymagają jeszcze odbioru GPU. Nie dodano fotografii AI, filmów ani VIP.
+
+Review wykryło mylenie rozwiązanej Promise lotu z dotarciem do fotela: reprodukcja testowa26/27 przed poprawką,27/27 po. Dodano rozróżnienie arrived, prawdziwy komunikat przerwania i retry. Ponowne review bez nowych potwierdzonych usterek. Log: `.ai/runs/2026-11-18-local-stadium-renderer.md`; QA: `docs/LOCAL_RENDERER_QA.md`.
+
+AC1 potwierdzone testami; AC2–AC5 mają niewykonane części GPU/sieci; AC6 bramki kodu i panel sprawdzone, pełne porównanie scen niewykonane. Cloud nie tworzy WebGL2. Z tego powodu zachowano wcześniejszą scenę jako domyślną, nowa jest dostępna przez `/?renderer=local`. Status pozostaje in-progress. Nie publikowano.

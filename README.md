@@ -7,7 +7,7 @@ Interaktywny prototyp modułu „Zobacz widok ze swojego miejsca”, inspirowany
 Wymagany Node.js 22.18+ (zalecany 24).
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 
@@ -53,7 +53,7 @@ To uproszczona proceduralna interpretacja, nie zweryfikowany bliźniak cyfrowy. 
 
 Na telefonie wybór miejsca przewija do sceny, a przy niedostępnym WebGL do podsumowania. Brak pełnego ekranu jest sygnalizowany komunikatem; nie blokuje wyboru miejsca.
 
-Brak logowania, sprzedaży biletów, płatności, rezerwacji i integracji z systemem klubowym. WebGL i nowoczesna przeglądarka są wymagane. Fonty Google są opcjonalne: bez sieci stosowany jest font systemowy.
+Brak logowania, sprzedaży biletów, płatności, rezerwacji i integracji z systemem klubowym. WebGL i nowoczesna przeglądarka są wymagane. Interfejs używa fontów systemowych; nie pobiera fontów Google.
 
 ## Wspólny model miejsc i kamery
 
@@ -65,3 +65,22 @@ W `src/data/stadium.ts` obiekt `layout` określa wysokość i głębokość rzę
 2. Dokładniejsze rzędy, przejścia, narożniki i architektura dachu.
 3. Profilowanie na fizycznych urządzeniach mobilnych i dopracowanie wydajności.
 4. Dane oficjalne i dalszy rozwój oferty premium po uzgodnieniu zakresu.
+
+
+## Lokalny renderer — wariant integracyjny
+
+Po `npm run dev` otwórz adres wypisany przez Vite z `/?renderer=local`. Bez tego parametru pozostaje poprzednia scena do porównania. Wariant lokalny nie jest jeszcze odebranym zamiennikiem: przeglądarka testowa nie tworzy WebGL2, więc nie potwierdzono wyglądu sceny, rzeczywistego przelotu ani przechwytywania miniatury. Nie usunięto poprzedniego renderera.
+
+Kierunek odpowiada blueprintowi: panorama całego stadionu → sektor → rząd → miejsce → ciągły przelot → perspektywa kibica → karta miejsca. Produkt jest kierowany do klubów piłkarskich; Enea Stadion jest pierwszym scenariuszem, bez deklaracji oficjalnej współpracy. Pozostaje uproszczoną koncepcją z danymi demonstracyjnymi.
+
+Wariant używa naszego lokalnego chartu i własnej lekkiej bryły GLB generowanej w pamięci. Tylko 648 miejsc ma detal i interakcje; pozostałe trybuny są uproszczoną geometrią. Nie wymaga tworzenia wydarzenia, konta ani klucza do usługi. Sieć całej ścieżki na działającym GPU pozostaje do sprawdzenia — nie deklarujemy zweryfikowanego działania offline.
+
+- `src/data/venueChart.ts`: profil pierwszego stadionu, sekcje/rzędy, mapowanie ID i fizyczny układ dla nowej sceny.
+- `src/data/venueShell.ts`: własne trybuny, zadaszenie i otoczenie, bez zewnętrznych tekstur/modeli.
+- `src/integrations/localScene.ts`: kompilacja sceny i kadr całej architektury.
+- `src/integrations/localVenue.ts`: jeden właściciel nawigacji; reset i nowy wybór unieważniają wynik starego lotu.
+- `src/components/LocalVenue.tsx`: montowanie, wybór w scenie, resize i sprzątanie zasobów.
+
+Domena zachowuje stare ID, ceny i dostępność. W nowym rendererze współrzędne wynikają z lokalnego chartu (fizyczny rozstaw .62 m), a nie z demonstracyjnych XYZ starej sceny. Adapter tłumaczy je bez zmiany znaczenia fotela. Testy porównują rzeczywistą geometrię skompilowanej sceny z tym chartem.
+
+Po potwierdzonym dotarciu kamera może zapisać miniaturę do karty z tej samej sceny. Przerwany lot jest odróżniany od dotarcia: wybrane miejsce pozostaje, obraz nie jest podstawiany, a przycisk pozwala ponowić przelot. Funkcje obrazu i przycisku wymagają jeszcze odbioru na działającym WebGL2. Szczegóły: `docs/LOCAL_RENDERER_QA.md`.

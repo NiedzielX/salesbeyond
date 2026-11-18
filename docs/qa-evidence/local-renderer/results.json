@@ -1,0 +1,259 @@
+{
+  "desktop": [
+    {
+      "sector": "101",
+      "row": "1",
+      "label": "Miejsce 1, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n101\nRZĄD\n01\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "101",
+      "row": "1",
+      "label": "Miejsce 18, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n101\nRZĄD\n01\nMIEJSCE\n18\nCena poglądowa"
+    },
+    {
+      "sector": "101",
+      "row": "6",
+      "label": "Miejsce 1, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n101\nRZĄD\n06\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "101",
+      "row": "6",
+      "label": "Miejsce 17, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n101\nRZĄD\n06\nMIEJSCE\n17\nCena poglądowa"
+    },
+    {
+      "sector": "101",
+      "row": "12",
+      "label": "Miejsce 1, 75 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n101\nRZĄD\n12\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "101",
+      "row": "12",
+      "label": "Miejsce 18, 75 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n101\nRZĄD\n12\nMIEJSCE\n18\nCena poglądowa"
+    },
+    {
+      "sector": "102",
+      "row": "1",
+      "label": "Miejsce 1, 85 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n102\nRZĄD\n01\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "102",
+      "row": "1",
+      "label": "Miejsce 18, 85 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n102\nRZĄD\n01\nMIEJSCE\n18\nCena poglądowa"
+    },
+    {
+      "sector": "102",
+      "row": "6",
+      "label": "Miejsce 1, 85 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n102\nRZĄD\n06\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "102",
+      "row": "6",
+      "label": "Miejsce 18, 85 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n102\nRZĄD\n06\nMIEJSCE\n18\nCena poglądowa"
+    },
+    {
+      "sector": "102",
+      "row": "12",
+      "label": "Miejsce 1, 95 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n102\nRZĄD\n12\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "102",
+      "row": "12",
+      "label": "Miejsce 18, 95 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n102\nRZĄD\n12\nMIEJSCE\n18\nCena poglądowa"
+    },
+    {
+      "sector": "103",
+      "row": "1",
+      "label": "Miejsce 1, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n103\nRZĄD\n01\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "103",
+      "row": "1",
+      "label": "Miejsce 18, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n103\nRZĄD\n01\nMIEJSCE\n18\nCena poglądowa"
+    },
+    {
+      "sector": "103",
+      "row": "6",
+      "label": "Miejsce 1, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n103\nRZĄD\n06\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "103",
+      "row": "6",
+      "label": "Miejsce 18, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n103\nRZĄD\n06\nMIEJSCE\n18\nCena poglądowa"
+    },
+    {
+      "sector": "103",
+      "row": "12",
+      "label": "Miejsce 1, 75 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n103\nRZĄD\n12\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "103",
+      "row": "12",
+      "label": "Miejsce 18, 75 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n103\nRZĄD\n12\nMIEJSCE\n18\nCena poglądowa"
+    }
+  ],
+  "mobile": [
+    {
+      "sector": "101",
+      "row": 1,
+      "label": "Miejsce 1, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n101\nRZĄD\n01\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "101",
+      "row": 1,
+      "label": "Miejsce 18, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n101\nRZĄD\n01\nMIEJSCE\n18\nCena poglądowa"
+    },
+    {
+      "sector": "101",
+      "row": 6,
+      "label": "Miejsce 1, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n101\nRZĄD\n06\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "101",
+      "row": 6,
+      "label": "Miejsce 17, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n101\nRZĄD\n06\nMIEJSCE\n17\nCena poglądowa"
+    },
+    {
+      "sector": "101",
+      "row": 12,
+      "label": "Miejsce 1, 75 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n101\nRZĄD\n12\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "101",
+      "row": 12,
+      "label": "Miejsce 18, 75 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n101\nRZĄD\n12\nMIEJSCE\n18\nCena poglądowa"
+    },
+    {
+      "sector": "102",
+      "row": 1,
+      "label": "Miejsce 1, 85 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n102\nRZĄD\n01\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "102",
+      "row": 1,
+      "label": "Miejsce 18, 85 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n102\nRZĄD\n01\nMIEJSCE\n18\nCena poglądowa"
+    },
+    {
+      "sector": "102",
+      "row": 6,
+      "label": "Miejsce 1, 85 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n102\nRZĄD\n06\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "102",
+      "row": 6,
+      "label": "Miejsce 18, 85 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n102\nRZĄD\n06\nMIEJSCE\n18\nCena poglądowa"
+    },
+    {
+      "sector": "102",
+      "row": 12,
+      "label": "Miejsce 1, 95 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n102\nRZĄD\n12\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "102",
+      "row": 12,
+      "label": "Miejsce 18, 95 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n102\nRZĄD\n12\nMIEJSCE\n18\nCena poglądowa"
+    },
+    {
+      "sector": "103",
+      "row": 1,
+      "label": "Miejsce 1, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n103\nRZĄD\n01\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "103",
+      "row": 1,
+      "label": "Miejsce 18, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n103\nRZĄD\n01\nMIEJSCE\n18\nCena poglądowa"
+    },
+    {
+      "sector": "103",
+      "row": 6,
+      "label": "Miejsce 1, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n103\nRZĄD\n06\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "103",
+      "row": 6,
+      "label": "Miejsce 18, 65 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n103\nRZĄD\n06\nMIEJSCE\n18\nCena poglądowa"
+    },
+    {
+      "sector": "103",
+      "row": 12,
+      "label": "Miejsce 1, 75 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n103\nRZĄD\n12\nMIEJSCE\n01\nCena poglądowa"
+    },
+    {
+      "sector": "103",
+      "row": 12,
+      "label": "Miejsce 18, 75 zł",
+      "correctPrice": true,
+      "summary": "SEKTOR\n103\nRZĄD\n12\nMIEJSCE\n18\nCena poglądowa"
+    }
+  ],
+  "scene": "WebGL2 unavailable; real 3D not verified"
+}

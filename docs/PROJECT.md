@@ -1,6 +1,6 @@
 # Projekt — SalesBeyond Stadium MVP
 
-Status: rozpoznanie na podstawie plików repozytorium i ustaleń właściciela; zatwierdzone przez właściciela 2026-11-17. Stan kodu: 3d3c307.
+Status: rozpoznanie na podstawie plików repozytorium i ustaleń właściciela; zatwierdzone przez właściciela 2026-11-17. Poniższa tabela zachowuje historię rozpoznania; aktualizacja zatwierdzonej próby renderera: 2026-11-18.
 
 | Pole | Wartość |
 |---|---|
@@ -10,7 +10,7 @@ Status: rozpoznanie na podstawie plików repozytorium i ustaleń właściciela; 
 | Struktura i granice | src/data/stadium.ts — dane domenowe i pozycje; src/components/Stadium.tsx — geometria, kamera i scena; src/App.tsx — stan wyboru/UI/tour; src/styles.css — styl; src/data/stadium.test.ts — testy danych. |
 | Architektura | Istniejące zależności: UI i scena → dane; dane nie importują UI ani Three.js. Brak monorepo i API. Zalecenie dla MVP: wspólne obliczenia miejsc dla sceny i kamery, jeden kontroler kamery. |
 | Niezmienniki | Dane demonstracyjne i jawne oznaczenie; brak sprzedaży i płatności; wybór sceny, panelu, widoku i podsumowania spójny. Brak obietnicy dokładności realnego fotela. Nie kupować assetów. |
-| Dane wrażliwe / wymogi | Kod nie zawiera formularzy ani mechanizmu trwałego zapisu danych osobowych. Logowanie prywatnego hostingu realizuje platforma Sites; repo nie implementuje własnego logowania. index.html korzysta z zewnętrznych Google Fonts. Brak deklaracji zgodności prawnej — wykracza poza obecne MVP. |
+| Dane wrażliwe / wymogi | Kod nie zawiera formularzy ani mechanizmu trwałego zapisu danych osobowych. Logowanie prywatnego hostingu realizuje platforma Sites; repo nie implementuje własnego logowania. Zewnętrzne Google Fonts usunięto w próbie lokalnego renderera; interfejs korzysta z fontów systemowych. Brak deklaracji zgodności prawnej — wykracza poza obecne MVP. |
 | Środowiska i hosting | Dev: Vite. Build statyczny: dist. Hosting istniejący: prywatny Sites; vercel.json zawiera alternatywną konfigurację. Dalsza publikacja tylko na wyraźne polecenie właściciela. Właściciel: użytkownik; aplikacja nie wymaga kluczy API ani sekretów runtime. |
 | Stan wyjściowy | npm ci: OK; typecheck: OK; npm test: 4/4; build: OK z ostrzeżeniem o paczce JS 1190,59 kB (gzip 337,37 kB). npm run lint: exit 1, brak skryptu. Brak CI w drzewie. Browser QA: nie sprawdzono w tym rozpoznaniu; poprzednia wersja również nie ma potwierdzonej kontroli. |
 
@@ -29,3 +29,14 @@ Status: rozpoznanie na podstawie plików repozytorium i ustaleń właściciela; 
 3. Pracować na gałęziach i przygotowywać zmiany do review; nie scalać ani ponownie publikować bez osobnego zlecenia.
 
 Nie są potrzebne pytania o dane klientów lub integracje: nie wchodzą do MVP. Brak ustalonej konwencji etykiet i PR — stosować zwięzły opis celu, spec/log, dowody weryfikacji, ryzyka; nie dodawać nieistniejących etykiet.
+
+
+## Przyrost zatwierdzony 2026-11-18
+
+Produkt dla klubów piłkarskich, Enea Stadion jako pierwszy scenariusz demonstracyjny. Blueprint Omnya określa kolejność doświadczenia, znaleziony projekt dostarcza opcjonalną bazę techniczną. Bez fotorealizmu i rozbudowy sprzedaży.
+
+Lokalny wariant `/?renderer=local` używa przypiętego `@seatlayer/core@0.109.1` (niskopoziomowy runtime OGL) we własnym kontenerze DOM. React/Vite/Three pozostają w poprzednich wersjach. Nie mieszać dwóch kontrolerów ani canvasów: jeden wariant aktywny, oba ładowane osobno. Splaytree przypięte override do3.2.3, ponieważ automatycznie rozwiązane3.2.4 było młodsze niż14dni; zgodność z zakresem polygon-clipping ^3.1.0 sprawdzona.
+
+Dane i własny GLB: `src/data/venueChart.ts`, `venueShell.ts`. Integracja i przygotowana scena: `src/integrations/`. Nowy fizyczny układ wynika z chartu; adapter zachowuje648 domenowych ID/cen/statusów, stary demonstracyjny układ jest nadal używany tylko w starej scenie. Moduły danych używają typów runtime bez importu jego implementacji do głównego interfejsu.
+
+Próba nie zastąpiła domyślnej sceny: realne WebGL2 jest niedostępne w cloud. Bramki27/27, a browser QA dotyczy panelu/fallbacku. Nie deklarować zatwierdzonego wyglądu, czasów lotu, miniatur ani pełnej niezależności od sieci. Szczegóły: `docs/LOCAL_RENDERER_QA.md` i aktywna specyfikacja `.ai/specs/2026-11-18-local-stadium-renderer.md`.

@@ -14,5 +14,7 @@ Wcześniejszy plan rozrastał się o fotorealizm, filmy i odwzorowanie obiektu p
 ## Reguła
 Realizuj ścieżkę stadion → sektor → rząd → miejsce → przelot → widok i proste podsumowanie. Zachowaj inspirację Enea Stadionem, ale nie wymagaj dokładnego bliźniaka. Nie dodawaj fotorealizmu, filmów AI, VIP, backendu ani płatności do MVP. Stosuj nowy AGENTS.md i deleguj ograniczone zadania tańszemu modelowi, sprawdzając samodzielnie jego ustalenia.
 
+Właściciel doprecyzował 2026-11-18: znaleziony projekt to baza techniczna, natomiast blueprint nadal określa flow i kierunek wizualny. Produkt dla klubów piłkarskich, Enea jako pierwszy scenariusz. Wskazuj od razu konkretne ulepszenia z uzasadnieniem; nie kopiuj bezrefleksyjnie flow znalezionej biblioteki.
+
 ## Jak sprawdzić
 Porównaj specyfikację i diff z powyższym zakresem; przejdź pełną ścieżkę wyboru. Sprawdź briefy pod-agentów i model użyty do audytu/review. Zgoda na tańsze modele nie oznacza zgody na słabszą weryfikację ani na publikację.
