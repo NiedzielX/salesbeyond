@@ -29,5 +29,8 @@ Kontynuacja produktu po korekcie właściciela: plan mylnie utożsamił zamknię
 ## Wynik
 Wdrożono w kodzie P1–P3 i skorygowano produktowy plan wykonania. Miniatura ma zgodność ID/arrived/flying w obu rendererach; odczyt jest natychmiast po renderze kamery. Nie zmieniono danych/ID/cen/punktów oczu ani domyślnego renderera. Gotowy build; brak publikacji, push i scalenia. Deploy P4 wymaga autoryzacji n-b334; P5–P7 wymagają prawdziwego odbioru WebGL. Status specyfikacji pozostaje in-progress. Kontynuacja po nadaniu dostępu do Vercel: odczytać dokładny projekt „sales” i jego repo, wdrożyć ten build w tym projekcie, odczytać READY i sprawdzić dostarczenie zasobów. Nie wznawiać zablokowanej przeglądarki przez obejście.
 
+### Gotowy materiał wdrożeniowy
+Kod zapisano w e03783f420031d9288b34d3e9b45bc3553310e5f. Przygotowano lokalnie jawny payload 30 plików źródeł (248059B) dla API Vercel, bez testów/sekretów/dokumentacji, oraz paczkę gotowego dist `/workspace/work/mvp-review/salesbeyond-mvp-e03783f.zip` (605665B). CRC i SHA256 wszystkich10 plików buildu sprawdzone; SHA256 ZIP `e5c126bf5802668e22929387c226931a38e0909d4d18cfe8e3abbcc2b6e758bf`. To lokalna paczka, nie wdrożenie; identyfikator docelowego projektu nadal niepotwierdzony z powodu 403. Przygotowany payload nie został wysłany. Po wygaśnięciu pierwszego linku odnowiono link autoryzacji zespołu do przekazania właścicielowi.
+
 ## Lekcje
 Uzupełniono istniejącą lekcję ciągłego wykonania: audyt integracji nie zastępuje porównania produktu z briefem.
