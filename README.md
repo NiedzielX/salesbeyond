@@ -100,3 +100,7 @@ To narzędzia developerskie, nie część aplikacji ani wymóg uruchomienia MVP.
 
 
 Pełny plan wykonawczy zatwierdzonego MVP: `.ai/EXECUTION_PLAN.md`. Materiał do lokalnego przeglądu i uruchomienia gotowego buildu bez instalowania zależności aplikacji: `docs/REVIEW.md`. Testy obejmują43 przypadki, w tym10 kontraktów cyklu życia; rzeczywiste bramkiGPU pozostają otwarte.
+
+
+## Aktualny przyrost: pełny katalog i wybór kibica
+Podgląd: https://salesbeyond.vercel.app — kod942fed8, production READY. Domyślna scena ma7614 poglądowych foteli4 trybun/15 bloków, wspólny plan2D/3D, podgląd także zajętych miejsc, koszyk demo do10 i dobór grupy w budżecie. Miejsca nie są rezerwowane. Eksperymentalne `?renderer=local` zachowuje wcześniejszy katalog648 do porównania. Bryła nadal generyczna; wskazany skan Enei nie został udostępniony jako plik i nie jest zintegrowany. Pełny cel oraz otwarte etapy: [plan doświadczenia kibica](docs/FAN_EXPERIENCE_ROADMAP.md). Nowe interakcje wymagają odbioru w przeglądarce mimo zielonych52 testów, lint/typecheck/build.

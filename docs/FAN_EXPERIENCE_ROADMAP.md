@@ -29,4 +29,8 @@ Plan integracji po otrzymaniu plików:
 Oficjalny [SeatPicker](https://docs.seatlayer.io/buyer-sdk/seat-picker/) obejmuje mapę, wiele miejsc, tray, dobór grup, 2D/3D i handoff; [przewodnik3D](https://docs.seatlayer.io/buyer-sdk/add-3d-seat-view/) wymaga wspólnego chartu i pełnego fallbacku2D. To punkt porównania zachowania, nie deklaracja osiągniętej równoważności. W obecnym pakiecie istnieje lokalny publiczny kontrakt renderera/picker/transport; nie odtwarzamy prywatnych źródeł. Eksperymentalny `?renderer=local` zachowuje poprzednie648 miejsc do porównania; pełny katalog tego przyrostu dotyczy domyślnej sceny.
 
 ## Obecne ograniczenia
-Nowe52 testy, lint/typecheck/build i read-only review nie zastępują odbioru przeglądarkowego. Przeglądarka była automatycznie zablokowana limitem; nie podejmowano obejścia. Dane dostępności/cen są deterministycznym demo. Brak trwałych holdów, płatności i rzeczywistego planu wszystkich43tys. miejsc Enei. Zakres4–9 pozostaje otwarty.
+Łącznie52 testy, lint/typecheck/build i read-only review nie zastępują odbioru przeglądarkowego. Przeglądarka była automatycznie zablokowana limitem; nie podejmowano obejścia. Dane dostępności/cen są deterministycznym demo. Brak trwałych holdów, płatności i rzeczywistego planu wszystkich43tys. miejsc Enei. Zakres4–9 pozostaje otwarty.
+
+
+## Wdrożenie obecnego przyrostu
+Kod942fed8 opublikowany na [salesbeyond.vercel.app](https://salesbeyond.vercel.app), production, READY. Potwierdzono HTML/JS/CSS i lazy moduły HTTP200. Nie zastępuje to odbioru nowych interakcji ani nie oznacza podłączenia skanu Enei. Nie wykonano push/scalenia GitHub; wdrożono zweryfikowany lokalny snapshot przez API.

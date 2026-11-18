@@ -91,7 +91,7 @@ Przegląd briefu z właścicielem i świeży audyt produktu ujawniły luki mimo 
 | P1 | Wyróżniony rząd w domyślnej scenie, hover fotela z numerem i ceną | kod/testy/review; obraz i raycast nieodebrane | Q1/Q2 na WebGL |
 | P2 | Podziały trybun, schody i przejście poprzeczne lokalnej bryły, segmenty skośnego dachu obu scen | kod/testy, obejrzany model CPU | Q1/Q3; CPU nie zastępuje aplikacji |
 | P3 | Miniatura z kamery fotela również w domyślnej scenie; zgodność z ID i stanem lotu | kod/testy/review; GPU nieodebrane | Q4/Q7, także wybór tuż przed końcem starego lotu |
-| P4 | Aktualny build dostępny na Vercel „sales” | e03783f wdrożone READY na salesbeyond.vercel.app po nadaniu dostępu; kolejny przyrost przygotowywany | odczytać READY i zasoby każdej nowej rewizji |
+| P4 | Aktualny build dostępny na Vercel „sales” | 942fed8 (pełny katalog/2D/koszyk) wdrożone READY na salesbeyond.vercel.app po e03783f | odczytać READY i zasoby każdej nowej rewizji |
 | P5 | Cały scenariusz panorama → sektor → rząd → fotel → widok → karta → zmiana miejsca na telefonie i desktopie | blocked przez dostęp do rzeczywistego WebGL/browser | Q1–Q8, bez zastępowania ich buildem |
 | P6 | Decyzja o docelowym rendererze i naprawa zauważonych różnic | po P5 | F3/F4, porównane obrazy/lot i wielkości ładowania |
 | P7 | Gotowe demo MVP pod linkiem, z odebranym flow i ograniczeniami opisanymi przy wydaniu | po P4/P5/P6 | F5, raport rzeczywistego działania |

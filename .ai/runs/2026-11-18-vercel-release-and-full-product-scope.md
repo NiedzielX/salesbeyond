@@ -1,6 +1,6 @@
 ---
 started: 2026-11-18
-ended: null
+ended: 2026-11-18
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md, .ai/specs/2026-11-18-local-stadium-renderer.md
 outcome: partial
@@ -27,7 +27,15 @@ Po potwierdzeniu właściciela „zrobiłem, działaj” wykonać wcześniej zle
 - Skan: przeczytano publiczną ofertę i obejrzano publiczny render, nie pobrano płatnych danych. Oferta glTF716MB, BLEND202MB,4.44mln polygonów,199.99USD; brak potwierdzenia jakości spod dachu, semantycznej siatki foteli i warunków osadzania z rzeczywistego pliku. Zadano właścicielowi, czy ma już pliki; bez odpowiedzi na tę chwilę. Nie kupowano modelu, nie pisano do sprzedawcy.
 
 ## Wynik
-Pierwszy przyrost opublikowany. Kolejny pełny katalog/2D/koszyk gotowy do wdrożenia po zapisie commitu. Nie ma jeszcze prawdziwego modelu Enei; numeracja/pozycje pozostają przykładem proceduralnym. Pełne doświadczenie kibica nie jest ukończone: model/kalibracja, docelowe kategorie/reguły, dostępność serwerowa/hold/checkout i rzeczywisty browser QA pozostają otwarte. Aktualna kolejka w docs/FAN_EXPERIENCE_ROADMAP.md. Eksperymentalny local zachowany jako historyczny wariant648 miejsc, nie jest pełnym nowym wariantem.
+Pierwszy przyrost opublikowany. Kolejny pełny katalog/2D/koszyk zapisany w942fed8332f74a4ab0f0fdbd80e757b927aff587 i wdrożony. Nie ma jeszcze prawdziwego modelu Enei; numeracja/pozycje pozostają przykładem proceduralnym. Pełne doświadczenie kibica nie jest ukończone: model/kalibracja, docelowe kategorie/reguły, dostępność serwerowa/hold/checkout i rzeczywisty browser QA pozostają otwarte. Aktualna kolejka w docs/FAN_EXPERIENCE_ROADMAP.md. Eksperymentalny local zachowany jako historyczny wariant648 miejsc, nie jest pełnym nowym wariantem.
+
+### Drugi deploy i kontrola originu
+- Źródła942fed8:34 pliki,270881B, zweryfikowane bajtowo z commitem; poza payload .env/.vercel/testy/dokumenty właściciela i publiczne obrazy referencyjne.
+- dpl_HzvYaXVgTTHGGaGGPaM8ChpWWoMR, production, READY; domeny salesbeyond.vercel.app i salesbeyond-n-b334.vercel.app. Unikalny deploy salesbeyond-kejk5h4gr-n-b334.vercel.app. Budowa1795007170928→1795007268407 (~97.5s).
+- Produkcyjny HTML200 wskazuje nowy index-TO7RZ1tX.js i index-Cmq7w28o.css. JS200 zawiera koszyk, przełącznik2D i katalog bloków. CSS i lazy chunks Stadium-5Q6fDxUO.js, LocalVenue-_AoOI5gl.js, StadiumMap-bz61IqyX.js zwracają200 i poprawne MIME; mapa zawiera nowy kod. To weryfikacja dostarczenia zasobów, nie browser/GPU QA.
+- Error/fatal logs dla tego deploymentu: brak wpisów (statyczna aplikacja, nie dowodzi braku błędów klienta). Brak skonfigurowanych drains. Nie dodawano monitoringu ani nie zmieniano ochrony/domen.
+- Brak push/scalenia GitHub. Publikacja odbyła się przez autoryzowany Vercel API z dokładnie zweryfikowanych źródeł. Przyszły deploy GitHub main nadal opiera się na starszej gałęzi, dopóki nie zostanie osobno zsynchronizowana.
+- Otwarta zależność: nie otrzymano plików skanu Enei ani odpowiedzi, czy właściciel je posiada. Nic nie kupiono. Sam link do oferty nie pozwala zaimportować płatnego modelu.
 
 ## Lekcje
 Cel pełnego produktu referencyjnego zapisany jako korekta zakresu; nie mylić z odbiorem poprzedniego małego wycinka.
