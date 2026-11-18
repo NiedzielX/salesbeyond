@@ -1,4 +1,20 @@
-# Lokalny przegląd demonstracji
+# Lokalny przegląd demonstracji — aktualna rekonstrukcja
+
+Aktualny kod źródeł: 06cd758. Domyślną scenę z modelem 38 078 miejsc otwiera się bez parametru renderer; przycisk „Plan 2D” uruchamia natywną mapę pełnego katalogu. Wariant `?renderer=local` i paczka 85e6977 opisana niżej są historycznym eksperymentem 648 miejsc. Nie są aktualną przebudową. Obecne dowody geometrii: [autorska Enea](qa-evidence/authored-enea/README.md); stan deploy i bramek: [log](../.ai/runs/2026-11-18-authored-enea-stadium.md).
+
+## Bieżąca checklista odbioru
+
+1. Otworzyć domyślną stronę na desktopie i telefonie: panorama ciągłej misy, łukowy dach, etykiety wszystkich bloków, odsłonięcie dachu i wybór narożników. Brak poziomego przewijania i błędów konsoli.
+2. Wybrać bloki każdej trybuny i narożników, pierwszy/środkowy/ostatni rząd i fotel. Kadr od strony boiska, podświetlenie bloku/rzędu, lot oraz widok z oczu. Podgląd zajętego fotela nie dodaje go do koszyka.
+3. Przełączyć 2D/3D z wybranym fotelem: te same ID i cena. Zoom/pan, wybór bloku i fotela w natywnym 2D, reset, przejście między rzędami.
+4. Sprawdzić koszyk wielu miejsc, grupę w budżecie, limit 10, usuwanie i zmianę miejsca. Brak udawanej rezerwacji.
+5. Przerwać i wznowić lot; sprawdzić miniaturę po dotarciu, klawiaturę, reduced-motion, resize i cold start. Zarejestrować rzeczywiste czasy/klatki na urządzeniu.
+
+Status: 59/59 testów, lint/typecheck/build; odbiór tej checklisty niewykonany z powodu odrzucenia dostępu do przeglądarki przez automatyczną kontrolę. Nie ponawiać z innego kanału bez rzeczywistego przywrócenia dostępu.
+
+---
+
+# Historyczny przegląd eksperymentu 648 miejsc
 
 Produkt dla klubów piłkarskich, pierwszy scenariusz inspirowany Enea Stadionem. Kierunek: panorama → sektor → rząd i fotel → płynny przelot → widok kibica → karta. Dane i ceny są poglądowe, bez sprzedaży i rezerwacji.
 

@@ -1,6 +1,6 @@
 ---
 started: 2026-11-18
-ended: null
+ended: 2026-11-18
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
 outcome: partial
@@ -27,7 +27,15 @@ Właściciel odrzucił uzależnienie prac od BLEND/GLB: blueprint buduje cały s
 ## Wynik
 Zaimplementowano własny model Enei bez zależności od pliku BLEND/GLB, katalog 38 078 foteli, kadry od strony boiska i natywną mapę 2D. To integracja publicznego runtime i własny model/UI/koszyk, nie przeniesienie całego produktu. Kryteria wizualne i pełne fan experience pozostają otwarte. Dokumentacja/plany poprawione: wcześniejsza deklaracja blokady na pliku modelu wycofana.
 
-Wdrożenie tej rewizji na istniejący Vercel salesbeyond: przygotowanie.
+Wdrożenie kodu 06cd758c75a53f21e2ebbd91259b8ad642f96db6 na istniejący Vercel salesbeyond w zespole n-b334: dpl_CqvJJhPkrjxEG5DN1KqGtLKa41A1, production. Snapshot 39 plików / 292 859 bajtów źródeł; każdy zweryfikowany bajtowo z git show SHA:path. Bez env, dokumentów właściciela, attachments, node_modules, testów i historii. API nie zwraca sourceCommit w meta, więc SHA jest potwierdzone lokalnym manifestem przekazanych źródeł, nie metadanymi Git na serwerze. Build zakończony READY; unikalny adres salesbeyond-252am9glv-n-b334.vercel.app. Nie zmieniano ustawień konta, domen ani ochrony. Nie wykonywano push ani scalenia GitHub.
 
 ## Lekcje
 Nie wymagaj gotowego modelu, gdy zaakceptowany blueprint i użytkownik zlecają stworzenie geometrii kodem. Ofertę skanu traktuj jako referencję, nie automatyczny obowiązek zakupu ani nową blokadę.
+
+
+## Odbiór wdrożenia
+- dpl_CqvJJhPkrjxEG5DN1KqGtLKa41A1: READY, production, projekt salesbeyond / zespół n-b334; brak aliasError. Alias salesbeyond.vercel.app i salesbeyond-n-b334.vercel.app. Build 90,5 s (buildingAt 1795013265058 → ready 1795013355576).
+- Stały adres zwraca HTTP 200 HTML z nowym index-CNvOwUcN.js i index-DW6puOZB.css. Main i CSS HTTP 200 z właściwymi MIME; potwierdzone nowe style native-map i koszyk/katalog.
+- Lazy Stadium-C9dD_GA2.js, StadiumMap-CmdpEx5e.js, fullChart-B6u69vuZ.js, nativeMap-b1FL3Ns-.js, właściwy runtime dist-ZNxK1pND.js, jego chunk-YPVYZYMH-CCk04Lzw.js i localeLoaders-M2TUVL75-Bpd4mrUi.js: HTTP 200/application/javascript. Potwierdzony własny Stepped bowl w module 3D. Osobny polski słownik pl-ADABFEA3-CUlNciu8.js także HTTP 200/application/javascript. Sprawdzenie zawartości i transportu nie wykonuje JavaScript/UI.
+- Scan runtime logs error/fatal za ostatnie 15 minut: brak wpisów. Statyczny hosting nie raportuje tym narzędziem konsoli przeglądarki; nie jest to dowód braku błędów klienta. Brak nowej konfiguracji monitoringu/drainów (wcześniej 0).
+- Brak ponownych zmian źródeł aplikacji po kodzie 06cd758; kolejne commity wyłącznie aktualizują dokumentację. Nadal brak push/merge GitHub. Pełne kryteria browser QA i całego fan experience pozostają otwarte; outcome partial oznacza tę granicę, nie nieudany deploy.

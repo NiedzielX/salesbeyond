@@ -110,6 +110,6 @@ Paczka `salesbeyond-mvp-review-85e6977.zip` zawiera poprzedni kod i pozostaje hi
 | A2: wszystkie fotele w 2D/3D i dokładny chart | Test rzeczywistego expandChart: 38 078 ID/pozycji i sekcji, błąd maks. ok. 3e-14 m |
 | A3: natywny renderer 2D, synchronizacja wyboru i fallback | Kod + testy kontraktu zdarzeń/cyklu życia; odbiór w aplikacji otwarty |
 | A4: kadr bloku od strony boiska i wspólne punkty oczu | Testy projekcji dla wszystkich bloków i proporcji .6/.95/1.6/2.4 |
-| A5: bieżący deploy Vercel | Przebieg i SHA w .ai/runs/2026-11-18-authored-enea-stadium.md |
+| A5: bieżący deploy Vercel | 06cd758, production READY, salesbeyond.vercel.app; zasoby HTTP 200, szczegóły w logu |
 | A6: pełny browser QA desktop/telefon | Blocked: automatyczna kontrola odrzuciła ponowne otwarcie, brak dowodu zdjęcia wcześniejszej blokady. Bez obejść |
 | A7: kolejne funkcje fan experience | Ready po przyroście: filtry cen/trybun i reguły wyboru; serwer hold/handoff pozostaje osobnym otwartym etapem |

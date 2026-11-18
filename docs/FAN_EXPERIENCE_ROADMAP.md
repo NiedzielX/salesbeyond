@@ -32,4 +32,4 @@ Najpierw rzeczywisty odbiór nowych interakcji, czytelności, czasu ładowania i
 
 ## Wdrożenie przyrostu
 
-Ostatnia zakończona rewizja przed tą przebudową: 942fed8, production READY. Stan nowego wdrożenia, jego SHA i kontrole zasobów zapisano w [logu](../.ai/runs/2026-11-18-authored-enea-stadium.md). Brak push/scalenia na GitHub w tym przebiegu; Vercel otrzymuje lokalny snapshot źródeł.
+Kod 06cd758 wdrożony na [salesbeyond.vercel.app](https://salesbeyond.vercel.app), production READY, dpl_CqvJJhPkrjxEG5DN1KqGtLKa41A1. HTML, JS, CSS i krytyczne moduły mapy/3D zweryfikowane HTTP 200. Szczegóły i granice w [logu](../.ai/runs/2026-11-18-authored-enea-stadium.md). Brak push/scalenia na GitHub w tym przebiegu; Vercel otrzymał lokalny snapshot źródeł. To wdrożony przyrost, nie odebrane pełne MVP.
