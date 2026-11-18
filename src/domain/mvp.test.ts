@@ -3,10 +3,9 @@ import assert from 'node:assert/strict';
 import {sectors,sectorSeats,layout} from '../data/stadium.ts';
 import {initialSelection,selectionReducer} from './selection.ts';
 import {eyePosition,flightPoint,lookTarget,flightDuration} from './camera.ts';
-test('wszystkie 648 miejsc synchronizują sektor, rząd i fotel; zajęte nie zmieniają stanu',()=>{
+test('wszystkie pierwotne 648 miejsc synchronizują podgląd sektora, rzędu i fotela',()=>{
  for(const seat of sectors.flatMap(s=>sectorSeats(s.id))){
  const next=selectionReducer(initialSelection,{type:'seat',seat});
- if(!seat.available){assert.equal(next,initialSelection);continue;}
  assert.equal(next.sector,seat.sectorId);assert.equal(next.row,seat.row);assert.deepEqual(next.seat,seat);
  const back=selectionReducer(next,{type:'back'});assert.equal(back.view,'sector');assert.equal(back.row,seat.row);
  assert.deepEqual(selectionReducer(back,{type:'reset'}),initialSelection);
@@ -46,14 +45,15 @@ test('przerwanie autotour usuwa timery i blokuje również spóźnione callbacki
  callbacks[1]();callbacks[2]();assert.equal(actions.length,1);assert.equal(finished,false);assert.equal(canceled.length,3);
 });
 
-test('wybór kanonizuje dane fotela i nie gubi poprzedniego wyboru dla zajętych',()=>{
+test('podgląd kanonizuje dane także dla zajętych i odrzuca nieznane ID',()=>{
  const seats=sectors.flatMap(s=>sectorSeats(s.id));
  const available=seats.find(s=>s.available)!;
  const occupied=seats.find(s=>!s.available)!;
  const altered={...available,price:0,position:[NaN,NaN,NaN] as [number,number,number]};
  const selected=selectionReducer(initialSelection,{type:'seat',seat:altered});
  assert.deepEqual(selected.seat,available);
- assert.equal(selectionReducer(selected,{type:'seat',seat:occupied}),selected);
+ assert.deepEqual(selectionReducer(selected,{type:'seat',seat:occupied}).seat,occupied);
+ assert.equal(selectionReducer(selected,{type:'seat',seat:{...available,id:'unknown'}}),selected);
  const changed=selectionReducer(selected,{type:'sector',id:'103'});
  assert.equal(changed.seat,null);assert.equal(changed.view,'sector');assert.equal(changed.sector,'103');
 });

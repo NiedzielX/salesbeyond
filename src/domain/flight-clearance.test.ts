@@ -1,10 +1,24 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {Box3,Quaternion,Ray,Vector3} from 'three';
-import {columnPositions} from '../components/structure.ts';
+import {columnPositions,showStructure} from '../components/structure.ts';
 import {aimRotation,rotateFlight} from '../components/cameraRotation.ts';
 import {eyePosition,flightProgress,overviewPosition} from './camera.ts';
-import {sectors,sectorSeats} from '../data/stadium.ts';
+import {sectors,allSectors,sectorSeats} from '../data/stadium.ts';
+test('reset z dowolnego fotela pozostawia dach i podpory odkryte do zakończenia lotu',()=>{
+ const staticColumns=[0,1,2,3].flatMap(side=>columnPositions(side,'overview')).map(p=>new Box3().setFromCenterAndSize(new Vector3(...p),new Vector3(.7,33,.7)));
+ const flyingColumns=[0,1,2,3].flatMap(side=>columnPositions(side,'overview',true)).map(p=>new Box3().setFromCenterAndSize(new Vector3(...p),new Vector3(.7,33,.7)));
+ let baselineHits=0;
+ for(const aspect of [1.6,.46])for(const sector of allSectors)for(const seat of sectorSeats(sector.id)){
+  const from=new Vector3(...eyePosition(seat)),to=new Vector3(...overviewPosition(aspect)),length=from.distanceTo(to),ray=new Ray(from,to.clone().sub(from).normalize());
+  const intersects=(box:Box3)=>{const hit=ray.intersectBox(box,new Vector3());return hit&&from.distanceTo(hit)<length;};
+  if(staticColumns.some(intersects))baselineHits++;
+  assert.equal(flyingColumns.some(intersects),false,seat.id);
+ }
+ assert.ok(baselineHits>0,'regresja obejmuje rzeczywiste przecięcia z przedwcześnie pokazanymi podporami');
+ assert.equal(showStructure('overview',true),false);assert.equal(showStructure('overview',false),true);
+ assert.equal(showStructure('seat',false),false);
+});
 test('lot z sektora do każdego dostępnego fotela omija widoczne słupy',()=>{
  const columns=[0,1,2,3].flatMap(side=>columnPositions(side,'seat'));
  for(const sector of sectors)for(const seat of sectorSeats(sector.id).filter(s=>s.available)){

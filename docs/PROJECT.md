@@ -43,3 +43,7 @@ Próba nie zastąpiła domyślnej sceny: realne WebGL2 jest niedostępne w cloud
 
 
 Ciągłe wykonanie (korekta właściciela2026-11-18): plan38 pozycji w `.ai/EXECUTION_PLAN.md`, nie kończyć po drobnych przyrostach. L3–L5 resource-owner wykonane w `venueSession.ts`, podłączone do LocalVenue i sprawdzone10 kontraktami. Całość43 testy. Granice testów i instrukcja lokalnego review: `docs/LOCAL_RENDERER_QA.md`, `docs/REVIEW.md`. Nowego zakresu nie dodano; gotowe prace podjęto bez ponownego pytania, GPU zadania pozostają jawnie blocked.
+
+
+## Aktualizacja celu i modelu danych2026-11-18
+Właściciel doprecyzował pełne doświadczenie kibica, bez edytora/panelu organizatora. Plan: `docs/FAN_EXPERIENCE_ROADMAP.md`. W obecnej scenie domyślnej wszystkie7614 krzesełka są rekordami wspólnego katalogu, używanego w2D/3D/panelu/koszyku. Stare648 ID zachowano, reszta to poglądowe bloki4 trybun; nie są oficjalną siatką Enei. Podgląd zajętego fotela jest dozwolony, koszyk nadal odrzuca zajęte miejsca. Kwoty i dostępność pozostają demo; brak serwera holdów/płatności. Wersja `?renderer=local` jest historyczną próbą648 miejsc, nie pełną nową ścieżką. Właściciel wskazał płatny skan Enei; jego pliki nie są w repo i nie ma jeszcze zintegrowanego cyfrowego bliźniaka.

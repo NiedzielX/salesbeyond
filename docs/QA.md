@@ -50,3 +50,13 @@ Wykryte i naprawione w browser QA:
 - Ukryte mobilnie br sklejało „swójpunkt” i „widok.Wielkie”. Dodano jawne spacje.
 
 Niezaliczone: panorama stadionu, klik fotela w 3D, wizualna kolizja lotu i autotour. W konsoli faktyczny błąd: WebGL context could not be created; GL_VENDOR/GL_RENDERER Disabled. Wewnętrzna strona diagnostyki GPU i DevTools są blokowane polityką narzędzia/przeglądarki — nie obchodzono blokad. Testy UI wykonano w rzeczywistym stanie bez WebGL. Znane błędy konsoli inicjalizacji WebGL i rozszerzenia przeglądarki nie są raportowane jako czysta konsola aplikacji.
+
+
+## Pełny katalog /2D/koszyk — nowe kroki odbioru
+Kod objął7614 miejsc bieżącego generycznego modelu. To nie jest oficjalny plan Enei. Nowy przyrost NIEODEBRANY w przeglądarce:
+- Każda z4 trybun, każdy blok i pierwszy/środkowy/ostatni rząd: podgląd pierwszego i ostatniego fotela, zajętego i wolnego; zgodność ID/panelu/kamery/karty.
+- Plan2D: sektory z klawiatury/dotyku, zoom/pan, przeciągnięcie nie wybiera fotela, wybór zajętego fotela. Przełączenie2D↔3D zachowuje ten sam fotel. AwariaWebGL: działający plan i panel, bez fałszywego widoku3D.
+- Koszyk:10 różnych foteli, duplikat, limit, usunięcie/czyszczenie, zajęty fotel można obejrzeć, ale nie dodać. Podsumowanie ma zgodne ceny i jawne demo. Brak rezerwacji/płatności.
+- Grupa2–6: jedna trybuna/sektor/rząd, fizyczne sąsiedztwo, zajęte/alejka/budżet wykluczają kandydatów. Istniejący wybór nie jest nadpisywany; limit10 jest atomowy.
+- Podsumowanie/info: Tab/Shift+Tab, Escape, powrót fokusu i brak scrolla poziomego na390×844 i1440×900.
+- Reset z fotela dowolnej trybuny: dach/podpory nie pojawiają się przed końcem lotu. Numerycznie znaleziono364 przecięcia przy starym wyświetlaniu podpór; nowa granica widoczności używa flying. Nie jest to pomiar płynności GPU.

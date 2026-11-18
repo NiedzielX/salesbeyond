@@ -67,6 +67,18 @@ Przeprowadzony 2026-11-17 przez osobną sesję gpt-6-luna (świeży kontekst, re
 - Integrator sam sprawdził dokument i wskazane miejsca kodu. Status pozostaje draft; akceptacja należy do właściciela.
 
 ## Realizacja
+### Rozszerzenie zlecone bezpośrednio przez właściciela 2026-11-18
+Właściciel wskazał jako cel pełne doświadczenie kibica (2D/3D, cały stadion, wielokrotny wybór i koszyk), wyłączając edytor/panel organizatora. Następnie zgłosił dwie konkretne luki obecnego przyrostu: generyczny model zamiast Enei oraz brak wyboru większości widocznych foteli. Podał konkretną ofertę fotogrametrycznego modelu Enei na CGTrader. To aktualizacja wymagań właściciela; wcześniejszy limit 648 miejsc opisuje tylko poprzedni etap.
+
+Najbliższy przyrost w ramach tego polecenia:
+- Pełny plan 2D dla tego samego katalogu i zaznaczenia, przełącznik 2D/3D zachowujący ID, zoom/pan i podgląd fotela. Przy braku WebGL automatycznie pozostać w działającym wyborze 2D, bez blokowania panelu. To część wskazanego wprost pełnego doświadczenia kibica; nie dodaje backendu ani rezerwacji.
+- Każde krzesełko renderowane w obecnej scenie musi pochodzić z katalogu i mieć stabilne ID, trybunę/sektor/rząd/numer/pozycję. Usunąć rozdział krzesełek dekoracyjnych i danych wyboru. Zachować stare ID 101–103 dla zgodności poprzedniego porównania.
+- Przewidzieć sektory i nawigację wszystkich czterech trybun; panel, kamera, etykieta i karta używają tego samego rekordu. Podgląd perspektywy dostępny także dla fotela poglądowo zajętego; to nie zmienia jego dostępności do zakupu. Obecny etap nie ma zakupu/rezerwacji.
+- Testy zgodności wszystkich instancji z katalogiem, kanonizacji wyboru oraz reprezentatywnych foteli każdej trybuny. Nie nazywać przykładowych numerów oficjalnym rozkładem Enei.
+- Model CGTrader: publiczna oferta, nie pobrane pliki. Osobna warstwa wizualna + dopasowana warstwa foteli, bez twierdzenia, że fotogrametryczna siatka zawiera semantyczny plan miejsc. Integracja rzeczywistego modelu zależy od jego plików; decyzja o zakupie nie została zlecona. Nie zastępować go kolejną generyczną bryłą i nie ogłaszać cyfrowego bliźniaka bez integracji/odbioru.
+
+Oryginalne wymagania odrzucania zajętego fotela dotyczące wyboru zakupowego nie obowiązują dla nowo zleconego podglądu każdego fotela. Rozdzielenie podglądu i koszyka jest wymaganiem aktualnym. Pozostałe etapy pełnego doświadczenia kibica wymagają opisania i realizacji, a nie zamknięcia tej specyfikacji po pierwszym przyroście. Odbiór WebGL nadal jawnie otwarty.
+
 Właściciel zatwierdził dokument i sekcję Projekt wiadomością „zatwierdzam” 2026-11-17. Rozpoczęto implementację.
 
 
@@ -96,3 +108,7 @@ Właściciel zezwolił na lokalne Vite zamiast managed preview. Commit 8d355e6: 
 
 ### Przyrost produktu po przeglądzie briefu
 W zakresie istniejących wymagań: wyróżnienie rzędu/hover fotela i etykieta ceny w klasycznej scenie, miniatura fotela w obu wariantach, podziały i przejścia lokalnych trybun oraz segmenty skośnego dachu w obu scenach. Zachowano 648 ID, ceny, statusy, punkty oczu i cel na boisko. Kamera klasyczna aktualizuje cel przed RAF; miniatura jest powiązana z ID i faktycznym zakończeniem lotu. Log `.ai/runs/2026-11-18-product-progress-and-vercel.md`. Status pozostaje in-progress: brak odbioru GPU. Osobne polecenie właściciela zezwala na deploy Vercel „sales”; API wymaga jeszcze nadania dostępu do zespołu, nie wykonano publikacji.
+
+
+### Przyrost pełnego katalogu i doświadczenia kibica
+Na podstawie bezpośrednio zleconego rozszerzenia: katalog7614 widocznych foteli4 trybun/15 bloków; instancje sceny i panel korzystają z tych samych danych. Plan2D z tym samym wyborem, zoom/pan i automatycznym fallbackiem. Lokalny koszyk do10, kanonizacja cen, atomowe dodawanie i grupy obok siebie w budżecie. Podsumowanie wyraźnie demo, bez udawania rezerwacji. Aktualny cel/pozostałe funkcje/model Enei: `docs/FAN_EXPERIENCE_ROADMAP.md`. Zakończenie tego przyrostu nie zamyka całego MVP. Status in-progress.

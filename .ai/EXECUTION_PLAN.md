@@ -6,7 +6,10 @@ Aktualizacja: 2026-11-18. To kolejka wykonania **już zatwierdzonego zakresu**, 
 - `.ai/specs/2026-11-18-local-stadium-renderer.md` — zatwierdzona próba nowego renderera.
 - Brief i blueprint załączone przez właściciela: panorama → trybuna/sektor → rząd/fotel → płynny lot → perspektywa kibica → karta.
 
-## Cel i granice
+## Aktualny cel po doprecyzowaniu właściciela
+Właściciel zlecił pełne doświadczenie kibica, a następnie wskazał brak podobieństwa do Enei i ograniczony wybór foteli. Aktualny plan produktu: `docs/FAN_EXPERIENCE_ROADMAP.md`. Poniższe tabele są historią węższego przyrostu, nie pełnym zakresem nowego celu. Odwołania do648 miejsc dotyczą porównawczej bazy; domyślny katalog rozszerzono do7614 foteli obecnej sceny,4 trybun i15 bloków. Właściciel podał ofertę rzeczywistego skanu Enei; plik nie został jeszcze udostępniony i nie jest zintegrowany. Nie nazywać obecnej bryły bliźniakiem.
+
+## Cel i granice poprzedniego przyrostu
 Demo dla klubów piłkarskich, pierwszy scenariusz inspirowany Enea Stadionem. Własny wygląd, lokalne dane648 miejsc i poglądowe ceny/statusy. Bez fotorealizmu, filmówAI, VIP, backendu, logowania, live inventory, rezerwacji i płatności. Zachować wcześniejszy renderer do uczciwego porównania. Scalanie nie należy do tego planu. Właściciel osobno zlecił wdrożenie na Vercel „sales”; ten krok jest autoryzowany, lecz wymaga dostępu do właściwego zespołu i potwierdzenia projektu w API.
 
 ## Sposób wykonania
@@ -88,7 +91,7 @@ Przegląd briefu z właścicielem i świeży audyt produktu ujawniły luki mimo 
 | P1 | Wyróżniony rząd w domyślnej scenie, hover fotela z numerem i ceną | kod/testy/review; obraz i raycast nieodebrane | Q1/Q2 na WebGL |
 | P2 | Podziały trybun, schody i przejście poprzeczne lokalnej bryły, segmenty skośnego dachu obu scen | kod/testy, obejrzany model CPU | Q1/Q3; CPU nie zastępuje aplikacji |
 | P3 | Miniatura z kamery fotela również w domyślnej scenie; zgodność z ID i stanem lotu | kod/testy/review; GPU nieodebrane | Q4/Q7, także wybór tuż przed końcem starego lotu |
-| P4 | Aktualny build dostępny na Vercel „sales” | blocked — API 403, właściciel dostał link nadania dostępu do n-b334 | odczyt właściwego projektu, deploy i status READY |
+| P4 | Aktualny build dostępny na Vercel „sales” | e03783f wdrożone READY na salesbeyond.vercel.app po nadaniu dostępu; kolejny przyrost przygotowywany | odczytać READY i zasoby każdej nowej rewizji |
 | P5 | Cały scenariusz panorama → sektor → rząd → fotel → widok → karta → zmiana miejsca na telefonie i desktopie | blocked przez dostęp do rzeczywistego WebGL/browser | Q1–Q8, bez zastępowania ich buildem |
 | P6 | Decyzja o docelowym rendererze i naprawa zauważonych różnic | po P5 | F3/F4, porównane obrazy/lot i wielkości ładowania |
 | P7 | Gotowe demo MVP pod linkiem, z odebranym flow i ograniczeniami opisanymi przy wydaniu | po P4/P5/P6 | F5, raport rzeczywistego działania |
@@ -96,4 +99,4 @@ Przegląd briefu z właścicielem i świeży audyt produktu ujawniły luki mimo 
 Nie traktować P1–P3 jako odebranych tylko dlatego, że kod istnieje. Nie kończyć po zielonym teście, jeżeli kolejne zadanie jest gotowe; nie omijać realnego braku autoryzacji ani blokady przeglądarki. Log bieżącego przyrostu: `.ai/runs/2026-11-18-product-progress-and-vercel.md`.
 
 ## Poprzedni materiał do review
-Paczka `salesbeyond-mvp-review-85e6977.zip` zawiera poprzedni kod i pozostaje historycznym materiałem. Nie zawiera przyrostu P1–P3. Nie nazywać jej aktualnym wdrożeniem. Żadne wdrożenie na Vercel nie zostało jeszcze wykonane.
+Paczka `salesbeyond-mvp-review-85e6977.zip` zawiera poprzedni kod i pozostaje historycznym materiałem. Nie zawiera przyrostu P1–P3. Nie nazywać jej aktualnym wdrożeniem. Pierwszy aktualny przyrost e03783f wdrożony na salesbeyond.vercel.app (production, READY); wcześniejsze ZIP pozostają historyczne.

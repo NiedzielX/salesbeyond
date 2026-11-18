@@ -13,6 +13,6 @@ test('wybrany i wskazany fotel odróżniają się od wyróżnionego rzędu, zaj�
  const color=(s:typeof selected)=>seatColor(s,selected.id,hover.id,6);
  assert.equal(new Set([color(selected),color(hover),color(row),color(other),color(unavailable)]).size,5);
  assert.equal(seatColor(selected,selected.id,selected.id,6),color(selected));
- assert.equal(seatColor(unavailable,unavailable.id,unavailable.id,6),color(unavailable));
+ assert.equal(seatColor(unavailable,unavailable.id,unavailable.id,6),color(selected));
  assert.equal(seatColor(other,null,null,null),color(other));
 });
