@@ -82,6 +82,7 @@ Wariant używa naszego lokalnego chartu i własnej lekkiej siatki architektury g
 - `src/integrations/localScene.ts`: kompilacja sceny i kadr całej architektury.
 - `src/integrations/localVenue.ts`: jeden właściciel nawigacji; reset i nowy wybór unieważniają wynik starego lotu.
 - `src/components/LocalVenue.tsx`: montowanie, wybór w scenie, resize i sprzątanie zasobów.
+- `src/integrations/venueSession.ts`: właściciel cyklu życia, anulowanie importu, cleanup po awarii i odtworzenie najnowszego wyboru.
 
 Domena zachowuje stare ID, ceny i dostępność. W nowym rendererze współrzędne wynikają z lokalnego chartu (fizyczny rozstaw .62 m), a nie z demonstracyjnych XYZ starej sceny. Adapter tłumaczy je bez zmiany znaczenia fotela. Testy porównują rzeczywistą geometrię skompilowanej sceny z tym chartem.
 
@@ -96,3 +97,6 @@ blender --background --factory-startup --threads 4 --python scripts/render-geome
 ```
 
 To narzędzia developerskie, nie część aplikacji ani wymóg uruchomienia MVP. Kontrolny render pomija instancjonowane fotele i nie odtwarza shaderów, materiałów, kamery ani animacji WebGL. Nie zastępuje odbioru przeglądarkowego. Opis prób i porównania: `docs/qa-evidence/geometry-review/README.md`.
+
+
+Pełny plan wykonawczy zatwierdzonego MVP: `.ai/EXECUTION_PLAN.md`. Materiał do lokalnego przeglądu i uruchomienia gotowego buildu bez instalowania zależności aplikacji: `docs/REVIEW.md`. Testy obejmują43 przypadki, w tym10 kontraktów cyklu życia; rzeczywiste bramkiGPU pozostają otwarte.

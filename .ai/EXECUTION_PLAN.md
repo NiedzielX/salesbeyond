@@ -1,0 +1,84 @@
+# Plan wykonawczy całego MVP
+
+Aktualizacja: 2026-11-18. To kolejka wykonania **już zatwierdzonego zakresu**, nie nowa specyfikacja ani samodzielna akceptacja agenta. Źródła wymagań:
+
+- `.ai/specs/2026-11-17-functional-stadium-mvp.md` — bazowe MVP.
+- `.ai/specs/2026-11-18-local-stadium-renderer.md` — zatwierdzona próba nowego renderera.
+- Brief i blueprint załączone przez właściciela: panorama → trybuna/sektor → rząd/fotel → płynny lot → perspektywa kibica → karta.
+
+## Cel i granice
+Demo dla klubów piłkarskich, pierwszy scenariusz inspirowany Enea Stadionem. Własny wygląd, lokalne dane648 miejsc i poglądowe ceny/statusy. Bez fotorealizmu, filmówAI, VIP, backendu, logowania, live inventory, rezerwacji i płatności. Zachować wcześniejszy renderer do uczciwego porównania. Publikacja/scalenie nie należą do tego planu.
+
+## Sposób wykonania
+- Integrator jest jedynym autorem w tym worktree; ograniczony research/review wykonuje tańszy agent read-only. Nie uruchamiać osobnej sesji do każdej drobnej zmiany.
+- Po każdym zadaniu: krótki review diffu, potrzebne testy, aktualizacja planu, następne gotowe zadanie. Commit nie jest powodem do zakończenia pracy.
+- Po zmianie kodu wykonać bramki projektu; nie powtarzać całego browser QA po samym komentarzu lub dokumentacji. Wymagające GPU kryteria pozostają jawnie otwarte.
+- Nie obchodzić ograniczeń przeglądarki ani nie podmieniać odbioru WebGL renderemCPU. Nie mnożyć nowych funkcji, aby zapełnić plan.
+
+Statusy: **done** = dowód w repo/logu; **ready** = możliwe teraz; **doing** = aktualne; **blocked** = konkretna zależność; **conditional** = tylko po ocenie rzeczywistych braków, w zatwierdzonym zakresie.
+
+## Etap1 — podstawa danych i ścieżka kibica
+| ID | Zadanie | Stan i dowód | Zależność |
+|---|---|---|---|
+| D1 | Stabilne648 ID,3 sektory,12×18 | done — stadium/selection tests | — |
+| D2 | Ceny, statusy i kanonizacja wyboru | done — test wszystkich foteli | D1 |
+| D3 | Jednoznaczny adapter nativeID ↔ domainID | done — venueChart.test.ts | D1 |
+| D4 | Metryczne boisko105×68 i lokalne pozycje | done — rzeczywisty kompilator sceny | D3 |
+| U1 | Sektor/rząd/fotel/karta/powrót w panelu | done —36 prób desktop/mobile | D2 |
+| U2 | Zajęte miejsca, ceny rzędów i zachowany powrót | done — browser QA i testy | U1 |
+| U3 | Klawiatura, fokus modala, Escape, brak overflow | done w panelu/fallbacku — QA | U1 |
+
+## Etap2 — własny stadion i historia blueprintu
+| ID | Zadanie | Stan i dowód | Zależność |
+|---|---|---|---|
+| G1 | Własna bryła: cztery trybuny, boisko, dach i teren | done kod/CPU; GPU odbiór niżej | D4 |
+| G2 | Cztery niebieskie trybuny i biały dach | done w przygotowanych danych/CPU, testkolorów | G1 |
+| G3 | Kadr obejmujący cały stadion | done dane bounds/fitPoints; GPU odbiór niżej | G1 |
+| G4 | Widoczność punktów boiska z foteli | done konserwatywny test2500 promieni; nie dowód cullinguGPU | G1 |
+| G5 | Przejścia i czytelne bloki pozostałych trybun | done audyt zakresu — brak nowego potwierdzonego braku niezależnego od Q1/Q8; nie rozbudowywać modelu na ślepo | G1 |
+| C1 | Osobne wejście do sektora i zbliżenie rzędu | done adapter/testy; GPU odbiór niżej | D3 |
+| C2 | Reset/nowy wybór unieważnia stary lot i obraz | done — localVenue.test.ts | C1 |
+| C3 | Odróżnienie dotarcia od anulowania, retry | done kod/testy; GPU odbiór niżej | C2 |
+| C4 | Miniatura z właściwej kamery na karcie | done kod; blocked odbiór naGPU | C3 |
+
+## Etap3 — niezawodna integracja i uruchomienie
+| ID | Zadanie | Stan i dowód | Zależność |
+|---|---|---|---|
+| L1 | Jawne wybory zamiast spóźnionych obserwacji kamery | done — venueEvents/testy | C2 |
+| L2 | Zdarzenia starej instancji nie zmieniają nowej | done — asynchroniczny test disposal | L1 |
+| L3 | Spóźniony import, StrictMode/remount i jeden właściciel zasobów | done kod + kontrakt10/10 — venueSession i podłączony LocalVenue; prawdziwy React/GPU nadal Q5 | L2 |
+| L4 | Jeden disposal/observer/listener i cleanup także po awarii montowania | done kontrakt — błędy load/mount/watch/observe, contextloss i wyjątek cleanup; wnętrze mount rzucającego przed zwrotem handle poza kontraktem | L3 |
+| L5 | Wznowiony mount odtwarza najnowszy wybór dokładnie raz | done kontrakt — aktualny wybór z kolejki, revision retry i roofremount; prawdziwy runtime nadal Q5 | L3 |
+| L6 | Komunikat ładowania/gotowości zgodny z faktycznym stanem | done audyt — nie dodawać osobnego subsystemu bez dowodu problemu; onReady nie oznacza pierwszej wyrenderowanej klatki | L3 |
+| L7 | Lokalne chunks i własne assety; brak konta/eventu/klucza | done kod/build; pełna siećGPU niżej | G1 |
+| L8 | Reprodukowalne uruchomienie, testy, build i bezpieczny wariant porównawczy | done — README/package-lock; finalnie powtórzyć po zmianach | L4 |
+
+## Etap4 — odbiór faktycznej sceny
+Te zadania są **blocked**, nie pozostały backlog. Dotychczas WebGL2 niedostępny, ostatnio dodatkowo CUA getTab zwracał timeout przed odczytem strony. HTTP aplikacji działa. Nie zmieniać zabezpieczeń ani odpalać alternatywnego kanału do obchodzenia blokady.
+
+| ID | Zadanie | Dowód wymagany | Zależność |
+|---|---|---|---|
+| Q1 | Panorama/sektor/fotel — duży ekran i telefon | obejrzane zrzuty prawdziwegoWebGL | dostępnyGPU/browser |
+| Q2 | Kliknięcie sektora i fotela synchronizuje panel |18 próbek + niedostępnyfotel | Q1 |
+| Q3 | Płynny przelot2–3s, dach/prześwit i rozglądanie z oczu | rzeczywisty pomiar i obserwacja | Q1 |
+| Q4 | Reset w locie,10 zmian, przerwanie i retry | przejście bez błędów i złego obrazu | Q2/Q3 |
+| Q5 | Reduced motion, resize, context loss i remount | prawdziwe zachowanie/runtime | L3/Q1 |
+| Q6 | Cold start, wszystkie requesty i lokalne lazy assets | brak zewnętrznych originów wymaganych do demo | Q1 |
+| Q7 | Miniatura przedstawia wybrany fotel | zdjęcie z tej samej kamery po rzeczywistym dotarciu | C4/Q3 |
+| Q8 | Czytelny highlight natywnych sektorów przy naszej bryle | obejrzana scena; nie dodawać filtrów sektorów | G2/Q2 |
+
+## Etap5 — domknięcie i decyzja o wariancie
+| ID | Zadanie | Stan | Zależność |
+|---|---|---|---|
+| F1 | Lint/typecheck/test/build i odtwarzalna instalacja po zmianach | done — npm ci/lint/typecheck/test43/43/build exit0 po integracji | L4/L5 |
+| F2 | Niezależny review i poprawki potwierdzonych usterek | done — osobna świeża sesja gpt-6-luna,10/10 focusedtests, bez potwierdzonej usterki | L3/G5 |
+| F3 | Porównanie scen i rozmiarów ładowania | część rozmiarów done; zachowanie blocked | Q1–Q8 |
+| F4 | Zastąpienie domyślnej sceny tylko po odbiorze | blocked | F3 |
+| F5 | Spójny README/QA/spec/log i status wszystkichAC | blocked końcowe zamknięcie po Q/F3/F4; raport bieżącego etapu uaktualniony | F1–F4 |
+| F6 | Materiał do przeglądu właściciela i jawne ograniczenia | doing — lokalna paczka statycznego buildu + instrukcja, bez publikacji i zmiany domyślnego renderera | F1/F2 + raport etapu |
+
+## Bieżąca kolejka
+1. L3→L4→L5 wykonane, następnie audyty G5/L6 zamknięte bez sztucznego poszerzania zakresu.
+2. F1/F2 zakończone, raport etapu uaktualniony. F6 w toku: gotowa lokalna paczka do przeglądu; końcowe F5 pozostaje zależne od Q/F3/F4.
+3. Po ukończeniu tego ciągu nie ma potwierdzonego gotowego zadania implementacyjnego niezależnego od Q1–Q8. Nie wymyślać nowych funkcji, by ukryć realną blokadę odbioru.
+4. Q1–Q8: jedna próba przy dostępnej możliwości; bez ponawiania tego samego błędu w pętli. Gdy brak dostępu blokuje wszystkie pozostałeAC, raport dotyczy całego etapu i konkretnej blokady.

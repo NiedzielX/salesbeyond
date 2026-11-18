@@ -1,5 +1,7 @@
 # Lekcje projektu
 
+- [2026-11-18] [Ciągłe wykonanie zatwierdzonego MVP](lessons/2026-11-18-continuous-execution.md) — po przyroście wybierz następne gotowe zadanie; blokada GPU nie blokuje całego backlogu.
+
 - [2026-11-18] [Materiały w przygotowanej geometrii](lessons/2026-11-18-prepared-geometry-colors.md) — weryfikuj faktyczne kolory/bufory; CPU i backface-culling nie zastępują odbioru WebGL.
 - [2026-11-18] [Promise lotu a faktyczne dotarcie](lessons/2026-11-18-flight-promise-arrival.md) — resolve może oznaczać anulowanie; sprawdzaj stan kamery przed komunikatem i miniaturą.
 - [2026-11-17] [Fallback Canvas nie jest testem WebGL](lessons/2026-11-17-canvas-fallback-effects.md) — fallback montuje się zawsze; nie zgłaszaj z niego awarii efektem.

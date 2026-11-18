@@ -73,3 +73,11 @@ Usunięto tylko generowany beton material5 w zakresach natywnych sektorów nasze
 Mostek zdarzeń odrzuca callbacki odmontowanej instancji, deduplikuje jawne wybory i chroni przed synchronicznymi echami metod kamery. Natywny onViewTargetChange nie służy już do zmiany wybranego fotela; wybór pochodzi z onSeatPick, wbudowane steppery pozostają wyłączone. Zmiany nie modyfikują znaczenia miejsca i panelu.
 
 33/33 testy, lint/typecheck/build zielone. Niezależne review buforów/zakresów/bridge, integrator sprawdził wyniki. Odbiór GPU nadal niewykonany; próba CUA zakończyła się timeoutem protokołu przed stanem strony. Status in-progress, wariant lokalny nadal opt-in. Log: `.ai/runs/2026-11-18-continue-local-renderer.md`.
+
+
+### Ciągły plan wykonania i właściciel sesji
+Po korekcie właściciela utworzono `.ai/EXECUTION_PLAN.md`:38 pozycji, zależności, wykonane dowody i odrębne blokadyGPU. To operacyjny podział dwóch już zatwierdzonych specyfikacji; nie jest akceptacją nowego zakresu. Kolejno wykonano L3/L4/L5, następnie audyt G5/L6 bez nieuzasadnionej rozbudowy modelu i końcowe bramki/review.
+
+R2/AC5: LocalVenue korzysta z resource-owner venueSession, który obsługuje opóźniony import, failure cleanup, listener/observer/handle, aktualny wybór i revision retry.10/10 focusedtests oraz43/43 wszystkich testów. Świeży niezależny review potwierdził spójność kontraktu, bez potwierdzonej usterki. Testy z kontrolowanymi factories nie są odbiorem React/GPU. Zewnętrzny mount rzucający przed zwróceniem handle pozostaje granicą API, bez dowodu wystąpienia.
+
+Npm ci/lint/typecheck/test/build exit0; dokumentacja i materiał do lokalnego review. Q1–Q8 oraz końcowe porównanie/zastąpienie sceny pozostają blocked. Nie oznaczać implemented. Log: `.ai/runs/2026-11-18-continuous-mvp-execution.md`.

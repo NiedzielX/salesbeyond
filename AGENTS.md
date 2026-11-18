@@ -78,6 +78,8 @@ Szablon: front matter (`status`, `created`, `owner`, `related`), sekcje **Proble
 
 ## 6. Autonomia i decyzje
 
+- Przy dłuższym zadaniu utrzymuj plan wykonawczy zatwierdzonego zakresu (`.ai/EXECUTION_PLAN.md`). Po przyroście wybieraj następne gotowe zadanie; nie kończ tury tylko z powodu commitu lub zielonych testów. Oddziel blokady konkretnych zadań od reszty pracy. Nie rozszerzaj zakresu, żeby sztucznie przedłużać wykonanie.
+
 - Przy pytaniu z rekomendacją **wykonaj rekomendację** i zapisz wybór; pytaj tylko o decyzje nieodwracalne, wychodzące na zewnątrz, dotyczące zakresu lub zachowania produktu albo gdy nie masz rekomendacji.
 - **Zastrzeżone dla człowieka** (nie rób bez jego wyraźnego polecenia): zatwierdzanie specyfikacji, scalanie PR-ów, wydania i tagi, publikacja, wysyłka wiadomości i płatności, zmiana ustawień konta, hostingu, domeny i sekretów, kroki kosztowne lub nieodwracalne. Zgoda na jedno nie rozciąga się na inne.
 - **Nigdy nie obchodź zabezpieczeń** (hooków, reguł uprawnień, ochrony gałęzi, odmowy narzędzia). Gdy coś jest zablokowane: zatrzymaj się, wyjaśnij, co chciałeś zrobić i dlaczego, i oddaj decyzję człowiekowi. Człowiek może zmienić zasadę; Ty nie.

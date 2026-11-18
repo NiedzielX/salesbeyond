@@ -39,4 +39,7 @@ Lokalny wariant `/?renderer=local` używa przypiętego `@seatlayer/core@0.109.1`
 
 Dane, własna kolorowa siatka i eksport GLB: `src/data/venueChart.ts`, `venueShell.ts`. Integracja i przygotowana scena: `src/integrations/`. Nowy fizyczny układ wynika z chartu; adapter zachowuje648 domenowych ID/cen/statusów, stary demonstracyjny układ jest nadal używany tylko w starej scenie. Moduły danych używają typów runtime bez importu jego implementacji do głównego interfejsu.
 
-Próba nie zastąpiła domyślnej sceny: realne WebGL2 jest niedostępne w cloud. Bramki33/33, a browser QA dotyczy panelu/fallbacku. Nie deklarować zatwierdzonego wyglądu, czasów lotu, miniatur ani pełnej niezależności od sieci. Szczegóły: `docs/LOCAL_RENDERER_QA.md` i aktywna specyfikacja `.ai/specs/2026-11-18-local-stadium-renderer.md`.
+Próba nie zastąpiła domyślnej sceny: realne WebGL2 jest niedostępne w cloud. Bramki43/43, a browser QA dotyczy panelu/fallbacku. Nie deklarować zatwierdzonego wyglądu, czasów lotu, miniatur ani pełnej niezależności od sieci. Szczegóły: `docs/LOCAL_RENDERER_QA.md` i aktywna specyfikacja `.ai/specs/2026-11-18-local-stadium-renderer.md`.
+
+
+Ciągłe wykonanie (korekta właściciela2026-11-18): plan38 pozycji w `.ai/EXECUTION_PLAN.md`, nie kończyć po drobnych przyrostach. L3–L5 resource-owner wykonane w `venueSession.ts`, podłączone do LocalVenue i sprawdzone10 kontraktami. Całość43 testy. Granice testów i instrukcja lokalnego review: `docs/LOCAL_RENDERER_QA.md`, `docs/REVIEW.md`. Nowego zakresu nie dodano; gotowe prace podjęto bez ponownego pytania, GPU zadania pozostają jawnie blocked.
