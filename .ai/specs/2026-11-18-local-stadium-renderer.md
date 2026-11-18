@@ -63,3 +63,13 @@ Właściciel ponownie wskazał blueprint jako kierunek i oczekuje zgłaszania le
 Review wykryło mylenie rozwiązanej Promise lotu z dotarciem do fotela: reprodukcja testowa26/27 przed poprawką,27/27 po. Dodano rozróżnienie arrived, prawdziwy komunikat przerwania i retry. Ponowne review bez nowych potwierdzonych usterek. Log: `.ai/runs/2026-11-18-local-stadium-renderer.md`; QA: `docs/LOCAL_RENDERER_QA.md`.
 
 AC1 potwierdzone testami; AC2–AC5 mają niewykonane części GPU/sieci; AC6 bramki kodu i panel sprawdzone, pełne porównanie scen niewykonane. Cloud nie tworzy WebGL2. Z tego powodu zachowano wcześniejszą scenę jako domyślną, nowa jest dostępna przez `/?renderer=local`. Status pozostaje in-progress. Nie publikowano.
+
+
+### Dalszy przyrost: własne kolory, geometria i granica zdarzeń
+Kontynuacja w tym samym zatwierdzonym zakresie R2/R3/R6, bez nowych zależności i funkcji sprzedaży. Dopasowano przygotowaną siatkę poprzez publiczny kontrakt modelu. Import zarejestrowanego GLB nie zachowywał kolorów trzech trybun, również bez override shell. Własne powierzchnie teraz trafiają do przygotowanej siatki z ich kolorami; GLB pozostaje opcjonalnym eksportem z tych samych powierzchni.
+
+Usunięto tylko generowany beton material5 w zakresach natywnych sektorów naszej syntetycznej konfiguracji; pozostawiono stopnie i podstopnice oraz autorską architekturę. Przeliczono wszystkie bufory i zakresy. Test2500 linii do5 punktów boiska:14→0 przecięć w geometrii dwustronnej. Z włączonym backface-culling baseline także miał0: to nie dowód usterki GPU. Kontrolne rendery CPU nie zastępują AC2.
+
+Mostek zdarzeń odrzuca callbacki odmontowanej instancji, deduplikuje jawne wybory i chroni przed synchronicznymi echami metod kamery. Natywny onViewTargetChange nie służy już do zmiany wybranego fotela; wybór pochodzi z onSeatPick, wbudowane steppery pozostają wyłączone. Zmiany nie modyfikują znaczenia miejsca i panelu.
+
+33/33 testy, lint/typecheck/build zielone. Niezależne review buforów/zakresów/bridge, integrator sprawdził wyniki. Odbiór GPU nadal niewykonany; próba CUA zakończyła się timeoutem protokołu przed stanem strony. Status in-progress, wariant lokalny nadal opt-in. Log: `.ai/runs/2026-11-18-continue-local-renderer.md`.

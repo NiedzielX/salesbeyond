@@ -73,10 +73,12 @@ Po `npm run dev` otwórz adres wypisany przez Vite z `/?renderer=local`. Bez teg
 
 Kierunek odpowiada blueprintowi: panorama całego stadionu → sektor → rząd → miejsce → ciągły przelot → perspektywa kibica → karta miejsca. Produkt jest kierowany do klubów piłkarskich; Enea Stadion jest pierwszym scenariuszem, bez deklaracji oficjalnej współpracy. Pozostaje uproszczoną koncepcją z danymi demonstracyjnymi.
 
-Wariant używa naszego lokalnego chartu i własnej lekkiej bryły GLB generowanej w pamięci. Tylko 648 miejsc ma detal i interakcje; pozostałe trybuny są uproszczoną geometrią. Nie wymaga tworzenia wydarzenia, konta ani klucza do usługi. Sieć całej ścieżki na działającym GPU pozostaje do sprawdzenia — nie deklarujemy zweryfikowanego działania offline.
+Wariant używa naszego lokalnego chartu i własnej lekkiej siatki architektury generowanej w pamięci. Ten sam model można też wyeksportować do samowystarczalnego GLB. Tylko 648 miejsc ma detal i interakcje; pozostałe trybuny są uproszczoną geometrią. Nie wymaga tworzenia wydarzenia, konta ani klucza do usługi. Sieć całej ścieżki na działającym GPU pozostaje do sprawdzenia — nie deklarujemy zweryfikowanego działania offline.
 
 - `src/data/venueChart.ts`: profil pierwszego stadionu, sekcje/rzędy, mapowanie ID i fizyczny układ dla nowej sceny.
-- `src/data/venueShell.ts`: własne trybuny, zadaszenie i otoczenie, bez zewnętrznych tekstur/modeli.
+- `src/data/venueShell.ts`: własne kolorowe trybuny, zadaszenie i otoczenie, wspólne powierzchnie dla sceny i eksportu GLB.
+- `src/integrations/architecture.ts`: zachowanie autorskich kolorów i dopasowanie wygenerowanych elementów do naszego demonstracyjnego modelu.
+- `src/integrations/venueEvents.ts`: jawny wybór fotela, deduplikacja zdarzeń i odrzucanie callbacków odmontowanej sceny.
 - `src/integrations/localScene.ts`: kompilacja sceny i kadr całej architektury.
 - `src/integrations/localVenue.ts`: jeden właściciel nawigacji; reset i nowy wybór unieważniają wynik starego lotu.
 - `src/components/LocalVenue.tsx`: montowanie, wybór w scenie, resize i sprzątanie zasobów.
@@ -84,3 +86,13 @@ Wariant używa naszego lokalnego chartu i własnej lekkiej bryły GLB generowane
 Domena zachowuje stare ID, ceny i dostępność. W nowym rendererze współrzędne wynikają z lokalnego chartu (fizyczny rozstaw .62 m), a nie z demonstracyjnych XYZ starej sceny. Adapter tłumaczy je bez zmiany znaczenia fotela. Testy porównują rzeczywistą geometrię skompilowanej sceny z tym chartem.
 
 Po potwierdzonym dotarciu kamera może zapisać miniaturę do karty z tej samej sceny. Przerwany lot jest odróżniany od dotarcia: wybrane miejsce pozostaje, obraz nie jest podstawiany, a przycisk pozwala ponowić przelot. Funkcje obrazu i przycisku wymagają jeszcze odbioru na działającym WebGL2. Szczegóły: `docs/LOCAL_RENDERER_QA.md`.
+
+
+Do kontroli samej geometrii można użyć zainstalowanego Blendera w trybie CPU:
+
+```sh
+node --experimental-strip-types scripts/export-geometry-review.mjs /tmp/stadium-geometry.json
+blender --background --factory-startup --threads 4 --python scripts/render-geometry-review.py -- /tmp/stadium-geometry.json /tmp/stadium-review current
+```
+
+To narzędzia developerskie, nie część aplikacji ani wymóg uruchomienia MVP. Kontrolny render pomija instancjonowane fotele i nie odtwarza shaderów, materiałów, kamery ani animacji WebGL. Nie zastępuje odbioru przeglądarkowego. Opis prób i porównania: `docs/qa-evidence/geometry-review/README.md`.

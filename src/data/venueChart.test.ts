@@ -46,3 +46,20 @@ test('własny GLB jest samowystarczalny, dach zmienia geometrię bez zmiany miej
  assert.ok(Array.from(closed.prepared.model.solids.position).every(Number.isFinite));
  assert.ok(closed.prepared.model.solids.count<25000);
 });
+
+
+test('własna architektura zachowuje niebieski kolor czterech trybun i spójne bufory',()=>{
+ const {prepared:{model}}=prepareLocalScene(true),solids=model.solids;
+ for(const [attribute,stride] of [['position',3],['normal',3],['color',3],['floor',1],['material',1]] as const)assert.equal(solids[attribute].length,solids.count*stride);
+ const blue=[0,0,0,0];
+ for(let vertex=0;vertex<solids.count;vertex++){
+  const [r,g,b]=solids.color.slice(vertex*3,vertex*3+3);if(b<r*1.5||b<g*1.2)continue;
+  const [x,,z]=solids.position.slice(vertex*3,vertex*3+3);
+  if(x>60)blue[0]++;if(x< -60)blue[1]++;if(z>40)blue[2]++;if(z< -40)blue[3]++;
+ }
+ assert.ok(blue.every(count=>count>0),`niebieskie wierzchołki stron: ${blue}`);
+ for(const range of model.sectionSolidRanges){
+  assert.equal(range.start%3,0);assert.equal(range.count%3,0);assert.ok(range.start+range.count<=solids.count);
+  assert.ok(Array.from(solids.material.slice(range.start,range.start+range.count)).every(value=>value!==5));
+ }
+});

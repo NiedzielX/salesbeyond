@@ -4,7 +4,7 @@
 Próba integracyjna pozostaje **in-progress**. Włączana przez `/?renderer=local`; domyślny wcześniejszy renderer zachowany. Bez publikacji, push i scalenia.
 
 ## Sprawdzone
-- 27 testów Node: obecne 20 oraz mapowanie wszystkich 648 ID, pozycje/statusy/metryczna skala boiska w rzeczywistym kompilatorze sceny, własny samowystarczalny GLB, nawigacja sektora/rzędu/fotela, unieważnianie starych lotów, disposal i odróżnienie lotu przerwanego od dotarcia.
+- 33 testy Node (po dalszym przyroście geometrii i mostka zdarzeń): obecne 20 oraz mapowanie wszystkich 648 ID, pozycje/statusy/metryczna skala boiska w rzeczywistym kompilatorze sceny, własny samowystarczalny GLB, nawigacja sektora/rzędu/fotela, unieważnianie starych lotów, disposal i odróżnienie lotu przerwanego od dotarcia.
 - Lint, typecheck i build; wynik finalnego `npm ci` i bramek w logu przebiegu.
 - Niezależne review osobnej sesji gpt-6-luna. Zgłoszony błąd anulowanego lotu naprawiony i ponownie przejrzany.
 - Browser QA rzeczywistego panelu/fallbacku: 18 wyborów dla 1440×900 i 18 dla ramki 390×844. Sektory 101/102/103, rzędy 1/6/12, pierwsze i ostatnie wolne miejsce; cena i numery zgodne, powrót zachowuje rząd. Mobile odczyt viewportu: szerokość390, wysokość843 przy ramce844; nie udawać pomiaru innej wysokości.
@@ -22,3 +22,15 @@ Próba integracyjna pozostaje **in-progress**. Włączana przez `/?renderer=loca
 
 ## Następny odbiór
 Uruchomić `npm ci && npm run dev`, otworzyć `/?renderer=local` w środowisku z działającym WebGL2. Przejść powyższe bramki i porównać z domyślną sceną. Bez przechodzenia przez ustawienia zabezpieczeń lub zmieniania polityki przeglądarki.
+
+
+## Dalsza kontrola geometrii i zdarzeń
+
+- Z prawdziwego skompilowanego modelu wyeksportowano pozycje i kolory trójkątów oraz648 punktów oczu. Dostępnych foteli jest500. Test obejmuje2500 linii: każdy dostępny fotel → środek i cztery punkty przy narożnikach boiska.
+- Przy liczeniu obu stron trójkątów poprzedni model miał14 przecięć, głównie z automatycznie wygenerowanymi bocznymi ściankami pierwszego rzędu. Po dopasowaniu naszej syntetycznej architektury0. Kontrola z backface-culling dała0 już przed poprawką. To **konserwatywna kontrola dwustronnej geometrii**, nie dowód błędu natywnego renderera ani jego polityki cullingu. Nie deklarować naprawionej widoczności w WebGL bez testu GPU.
+- Publiczny bufor sceny z importowanego GLB tracił niebieski kolor trzech niewybieralnych trybun. Usunięcie theme.venue3d.shell nie pomagało: w obu wariantach blue-vertex count północ7866, pozostałe strony0. Własna przygotowana siatka zachowuje kolory wszystkich czterech trybun. Tylko autogenerowany beton material5 wewnątrz sectionSolidRanges jest zastąpiony; stopnie, podstopnice i cała własna architektura pozostają. Nie stosować takiej polityki do zweryfikowanej geometrii prawdziwego stadionu.
+- Kontrola buforów: stride3/3/3/1/1, wyrównanie do trójkątów, poprawione sectionSolidRanges i render/clip bounds. Miejsca, ID, ceny i dostępność bez zmian.
+- Cztery testy mostka zdarzeń: echo polecenia nie dispatchuje, duplikat przed commitem React nie dispatchuje drugi raz, callback z odmontowanej instancji odrzucony, błędny/zajęty fotel odrzucony. Zmianą miejsca kieruje jawne onSeatPick; obserwacja celu kamery nie zmienia wyboru, wbudowane next/previous nadal wyłączone.
+- Render CyclesCPU w Blender4.3.2 pomógł obejrzeć model przed i po. Są to obrazy kontrolne geometrii, bez instancjonowanych foteli i shaderów WebGL. Obejrzano trzy obrazy w qa-evidence/geometry-review; szczegóły reprodukcji w tamtejszym README.
+- Próba ponownego odbioru w przeglądarce nie doszła do sceny: cua.getTab zwracał Emulation.setFocusEmulationEnabled timeout (ponowiono raz na potwierdzonym ID karty). HTTP lokalnej aplikacji200. Nie ogłoszono nowego browser QA ani ponownego testu WebGL. Nie zmieniano ustawień przeglądarki.
+- Niezależny przegląd nie znalazł potwierdzonego błędu kompaktowania ani mostka. Do GPU QA pozostaje czytelność highlightu: własna dopisana bryła nie należy do sectionSolidRanges, natywne treads/risers nadal należą. Nie ma filtra sektorów w MVP.

@@ -5,7 +5,7 @@ type Part={center:Vec;size:Vec;color:number};
 const colors:Vec[]=[[.82,.86,.81],[.74,.78,.78],[.64,.69,.75],[.08,.25,.52],[.91,.94,.97]];
 
 /** Own lightweight architectural shell. No downloaded models or textures. */
-export function createVenueShell(roof:boolean):ArrayBuffer{
+function architectureParts(roof:boolean):Part[]{
  const parts:Part[]=[];
  const box=(center:Vec,size:Vec,color:number)=>parts.push({center,size,color});
  box([0,-.6,0],[204,.4,170],0);
@@ -35,6 +35,37 @@ export function createVenueShell(roof:boolean):ArrayBuffer{
  box([0,23,61],[124,1,25],4);box([0,23,-61],[124,1,25],4);
  box([79,23,0],[25,1,122],4);box([-79,23,0],[25,1,122],4);
  }
+ return parts;
+}
+function surfaces(roof:boolean){
+ const parts=architectureParts(roof);
+ return colors.map((color,colorIndex)=>{
+ const position:number[]=[],normal:number[]=[];
+ for(const p of parts.filter(p=>p.color===colorIndex)){
+ for(let axis=0;axis<3;axis++)for(const sign of [-1,1]){
+ const u=(axis+1)%3,v=(axis+2)%3;
+ const corners=[[-1,-1],[1,-1],[1,1],[-1,1]];
+ const order=sign>0?[0,1,2,0,2,3]:[0,2,1,0,3,2];
+ for(const i of order){const point=[...p.center];point[axis]+=sign*p.size[axis]/2;point[u]+=corners[i][0]*p.size[u]/2;point[v]+=corners[i][1]*p.size[v]/2;position.push(...point);normal.push(...[0,1,2].map(a=>a===axis?sign:0));}
+ }
+ }
+ return {position,normal,color};
+ });
+
+}
+
+/** Direct prepared-mesh input retains our blue benches; the GLB shell importer recolours materials. */
+export function createVenueGeometry(roof:boolean){
+ const chunks=surfaces(roof);
+ const position=new Float32Array(chunks.flatMap(chunk=>chunk.position));
+ const normal=new Float32Array(chunks.flatMap(chunk=>chunk.normal));
+ const color=new Float32Array(chunks.flatMap(chunk=>Array.from({length:chunk.position.length/3},()=>chunk.color).flat()));
+ const count=position.length/3;
+ return {position,normal,color,floor:new Float32Array(count),material:new Float32Array(count),count};
+}
+
+/** Standalone, self-contained model export, generated from the same authored surfaces. */
+export function createVenueShell(roof:boolean):ArrayBuffer{
  const buffers:Float32Array[]=[];const bufferViews:object[]=[];const accessors:object[]=[];const meshes:object[]=[];
  let offset=0;
  const accessor=(values:number[],kind:'POSITION'|'NORMAL')=>{
@@ -44,18 +75,10 @@ export function createVenueShell(roof:boolean):ArrayBuffer{
  for(let i=0;i<values.length;i++) {min[i%3]=Math.min(min[i%3],values[i]);max[i%3]=Math.max(max[i%3],values[i]);}
  const index=accessors.length;accessors.push({bufferView:view,componentType:5126,count:values.length/3,type:'VEC3',...(kind==='POSITION'?{min,max}:{})});return index;
  };
- for(let color=0;color<colors.length;color++){
- const position:number[]=[],normal:number[]=[];
- for(const p of parts.filter(p=>p.color===color)){
- for(let axis=0;axis<3;axis++)for(const sign of [-1,1]){
- const u=(axis+1)%3,v=(axis+2)%3;
- const corners=[[-1,-1],[1,-1],[1,1],[-1,1]];
- const order=sign>0?[0,1,2,0,2,3]:[0,2,1,0,3,2];
- for(const i of order){const point=[...p.center];point[axis]+=sign*p.size[axis]/2;point[u]+=corners[i][0]*p.size[u]/2;point[v]+=corners[i][1]*p.size[v]/2;position.push(...point);normal.push(...[0,1,2].map(a=>a===axis?sign:0));}
- }
- }
- if(!position.length)continue;
- meshes.push({primitives:[{attributes:{POSITION:accessor(position,'POSITION'),NORMAL:accessor(normal,'NORMAL')},material:color}]});
+
+ for(const [color,chunk] of surfaces(roof).entries()){
+ if(!chunk.position.length)continue;
+ meshes.push({primitives:[{attributes:{POSITION:accessor(chunk.position,'POSITION'),NORMAL:accessor(chunk.normal,'NORMAL')},material:color}]});
  }
  const doc={asset:{version:'2.0',generator:'SalesBeyond procedural stadium'},scene:0,scenes:[{nodes:meshes.map((_,i)=>i)}],
  nodes:meshes.map((_,i)=>({mesh:i})),meshes,buffers:[{byteLength:offset}],bufferViews,accessors,
