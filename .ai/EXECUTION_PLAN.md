@@ -7,7 +7,7 @@ Aktualizacja: 2026-11-18. To kolejka wykonania **już zatwierdzonego zakresu**, 
 - Brief i blueprint załączone przez właściciela: panorama → trybuna/sektor → rząd/fotel → płynny lot → perspektywa kibica → karta.
 
 ## Aktualny cel po doprecyzowaniu właściciela
-Właściciel zlecił pełne doświadczenie kibica, a następnie wskazał brak podobieństwa do Enei i ograniczony wybór foteli. Aktualny plan produktu: `docs/FAN_EXPERIENCE_ROADMAP.md`. Poniższe tabele są historią węższego przyrostu, nie pełnym zakresem nowego celu. Odwołania do648 miejsc dotyczą porównawczej bazy; domyślny katalog rozszerzono do7614 foteli obecnej sceny,4 trybun i15 bloków. Właściciel podał ofertę rzeczywistego skanu Enei; plik nie został jeszcze udostępniony i nie jest zintegrowany. Nie nazywać obecnej bryły bliźniakiem.
+Właściciel zlecił pełne doświadczenie kibica i budowę Enei kodem według blueprintu. Aktualny plan produktu: `docs/FAN_EXPERIENCE_ROADMAP.md`. Domyślny katalog ma 38 078 foteli w 19 blokach, ciągłą misę i różne poziomy. Domyślne 2D korzysta z natywnego renderera biblioteki; 3D z własnej geometrii R3F. Plik GLB/BLEND ani zakup skanu nie są blokadą. Poniższe tabele obejmują również historię wcześniejszych, węższych przyrostów. Nie deklarować oficjalnego cyfrowego bliźniaka ani pełnego przeniesienia produktu.
 
 ## Cel i granice poprzedniego przyrostu
 Demo dla klubów piłkarskich, pierwszy scenariusz inspirowany Enea Stadionem. Własny wygląd, lokalne dane648 miejsc i poglądowe ceny/statusy. Bez fotorealizmu, filmówAI, VIP, backendu, logowania, live inventory, rezerwacji i płatności. Zachować wcześniejszy renderer do uczciwego porównania. Scalanie nie należy do tego planu. Właściciel osobno zlecił wdrożenie na Vercel „sales”; ten krok jest autoryzowany, lecz wymaga dostępu do właściwego zespołu i potwierdzenia projektu w API.
@@ -100,3 +100,16 @@ Nie traktować P1–P3 jako odebranych tylko dlatego, że kod istnieje. Nie koń
 
 ## Poprzedni materiał do review
 Paczka `salesbeyond-mvp-review-85e6977.zip` zawiera poprzedni kod i pozostaje historycznym materiałem. Nie zawiera przyrostu P1–P3. Nie nazywać jej aktualnym wdrożeniem. Pierwszy aktualny przyrost e03783f wdrożony na salesbeyond.vercel.app (production, READY); wcześniejsze ZIP pozostają historyczne.
+
+
+## Aktualny przyrost A — autorska Enea i natywne 2D
+
+| Zadanie | Stan / dowód |
+|---|---|
+| A1: połączona misa, różne poziomy, gęsty katalog, membranowy dach i kratownice | Kod; obejrzane rendery CPU w docs/qa-evidence/authored-enea, nie odbiór WebGL |
+| A2: wszystkie fotele w 2D/3D i dokładny chart | Test rzeczywistego expandChart: 38 078 ID/pozycji i sekcji, błąd maks. ok. 3e-14 m |
+| A3: natywny renderer 2D, synchronizacja wyboru i fallback | Kod + testy kontraktu zdarzeń/cyklu życia; odbiór w aplikacji otwarty |
+| A4: kadr bloku od strony boiska i wspólne punkty oczu | Testy projekcji dla wszystkich bloków i proporcji .6/.95/1.6/2.4 |
+| A5: bieżący deploy Vercel | Przebieg i SHA w .ai/runs/2026-11-18-authored-enea-stadium.md |
+| A6: pełny browser QA desktop/telefon | Blocked: automatyczna kontrola odrzuciła ponowne otwarcie, brak dowodu zdjęcia wcześniejszej blokady. Bez obejść |
+| A7: kolejne funkcje fan experience | Ready po przyroście: filtry cen/trybun i reguły wyboru; serwer hold/handoff pozostaje osobnym otwartym etapem |

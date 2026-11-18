@@ -1,17 +1,17 @@
-# SalesBeyond — Stadion 3D
+# SalesBeyond — stadion dla kibica
 
-Interaktywny prototyp modułu „Zobacz widok ze swojego miejsca”, inspirowany stadionem Lecha Poznań. React + TypeScript + Vite, Three.js / React Three Fiber, Drei i Tailwind CSS. Bez backendu i płatnych kluczy API.
+Prototyp pełnego doświadczenia kibica: stadion → blok → rząd → miejsce → przelot → widok z fotela → koszyk demo. Pierwszy scenariusz to Enea Stadion. React + TypeScript + Vite, Three.js / React Three Fiber, Drei i Tailwind CSS; natywna mapa 2D korzysta z `@seatlayer/core@0.109.1`.
 
 ## Uruchomienie
 
-Wymagany Node.js 22.18+ (zalecany 24).
+Node.js 22.18+ (zalecany 24):
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Vite wypisze lokalny adres aplikacji. Produkcja:
+Weryfikacja i produkcyjny build:
 
 ```sh
 npm run lint
@@ -21,86 +21,39 @@ npm run build
 npm exec vite preview
 ```
 
-Katalog `dist` można opublikować na dowolnym hostingu statycznym (np. Vercel). `npm run dev` jest jedyną komendą potrzebną do kolejnych uruchomień po instalacji.
+`dist` jest aplikacją statyczną. Podgląd: https://salesbeyond.vercel.app. Stan konkretnego wdrożenia: [log bieżącego przyrostu](.ai/runs/2026-11-18-authored-enea-stadium.md).
 
-## Implementacja i stan weryfikacji
+## Obecna implementacja
 
-Kontrole kodu i browser QA panelu przechodzą: 36 wyborów w rozmiarach 1440×900 i 390×844, ceny, powroty, klawiatura, modal i odświeżenie. Realny widok 3D i przeloty pozostają niezweryfikowane, ponieważ cloud Chromium ma niedostępny WebGL. Nie traktuj testów panelu jako odbioru sceny. Wyniki i zrzuty: `docs/QA.md`.
+- Własna misa stadionu tworzona kodem: połączone zaokrąglone narożniki, zróżnicowane wysokości czterech trybun, dwa/trzy poziomy, przejścia, portale i ciągły łukowy dach membranowy z kratownicami. Boisko 105 × 68 m.
+- Wspólny katalog **38 078 foteli w 19 blokach**. Każdy widoczny fotel ma ID i jest dostępny do podglądu także wtedy, gdy demonstracyjny status wyklucza dodanie do koszyka. Zachowano 648 wcześniejszych ID.
+- Domyślny plan 2D używa rzeczywistego `createRenderer` biblioteki: zoom/pan, bloki, rzędy, podgląd i mapowanie na domenowe ID. W razie awarii jego inicjalizacji zostaje prostszy plan SVG. Po awarii WebGL można używać planu 2D.
+- Domyślne 3D używa R3F i własnej geometrii. Instancjonowane siedziska/oparcia, podświetlenie całego bloku, wybór fotela, kadr bloku od strony boiska, lot 2,4 s i perspektywa oczu z tego samego modelu.
+- Koszyk demo do 10 miejsc, grupy 2–6 obok siebie z budżetem, ceny z katalogu, ochrona przed wyborem przez alejkę lub zajęty fotel. Podsumowanie wyraźnie demonstracyjne.
+- Polski interfejs, wybór w panelu, reset, przełącznik dachu, wycieczka i miniatura z kamery po dotarciu. Nowe zachowanie wymaga jeszcze odbioru w działającej przeglądarce.
 
-## Co zaimplementowano
+## Co pochodzi z biblioteki
 
-- Proceduralna bryła stadionu: boisko z oznaczeniami, cztery trybuny, krzesełka, częściowo odkryty dach, kolumny i otoczenie.
-- Orbitowanie i zoom; reset kamery, dopasowanie panoramy do proporcji ekranu, przełączanie dachu i pełny ekran.
-- Trzy sektory demonstracyjne (101–103); hover oraz wybór w scenie i panelu.
-- Każdy sektor ma 12 rzędów po 18 miejsc. Wybór rzędu, statusy miejsc i ceny demonstracyjne.
-- Wybór miejsca w panelu lub kliknięciem siedziska/oparcia krzesełka 3D. Reset przywraca możliwość kliknięcia sektora.
-- Przelot kamery (2,4 s) do poziomu oczu i karta biletu zgodna z wyborem. Orientacja interpolowana kwaternionem; przednie słupy są odsłaniane wraz z dachem przy wejściu na trybunę. Etykiety sektorów nie zasłaniają foteli.
-- Powrót do wyboru bez przeładowania, 24-sekundowa wycieczka z możliwością przerwania.
-- Interfejs po polsku, układ mobilny, przyciski dostępne z klawiatury oraz komunikat o błędzie WebGL i utracie kontekstu GPU. Modal utrzymuje fokus i zwraca go do przycisku po zamknięciu.
+Repo używa przypiętego skompilowanego pakietu przez jego publiczny kontrakt. **Nie przeniesiono całego produktu ani źródeł prywatnego silnika.** Natywny renderer 2D działa na naszym charcie, geometrii i identyfikatorach. UI, katalog, model 3D, kamera i koszyk są własne.
 
-## Struktura i dodawanie sektorów
+`/?renderer=local` zachowuje wcześniejszy eksperyment natywnego 3D z 648 miejscami. Nie jest nowym pełnym modelem i nie stanowi domyślnej ścieżki. Kod porównawczy: `venueChart.ts`, `venueShell.ts`, `src/integrations/localVenue.ts` i `LocalVenue.tsx`; [checklista](docs/LOCAL_RENDERER_QA.md).
 
-- `src/data/stadium.ts`: typy, definicje sektorów, stabilne identyfikatory miejsc, pozycje, ceny i deterministyczna dostępność.
-- `src/components/Stadium.tsx`: geometria, instancjonowane krzesełka, interakcje i kontroler kamery.
-- `src/App.tsx`: wybór, panel, bilet i automatyczna wycieczka.
-- `src/styles.css`: warstwa wizualna i breakpointy.
+## Wspólna geometria i miejsca
 
-Aby dodać sektor, rozszerz `SectorId` i listę `sectors` w pliku danych, przypisz jego `center` i cenę. Ta wersja pozycjonuje sektory na trybunie północnej. Dla innych trybun należy też rozszerzyć funkcję `getSeat` o orientację i współrzędne oraz punkty kamery w `Camera`. Testy sprawdzają spójność danych, unikalność identyfikatorów, ceny, dostępność i walidację parametrów.
+- `src/data/eneaLayout.ts`: rozstaw, profile poziomów, połączone proste/narożniki i powierzchnia dachu.
+- `src/data/stadium.ts`: kanoniczne fotele, indeksy bloków/rzędów, statusy i kadry.
+- `src/integrations/eneaModel.ts`: buforowa geometria architektury używana przez 3D i eksport kontrolny.
+- `src/data/fullChart.ts`: chart 2D, jawne mapy ID i dokładne przesunięcia foteli, także w łukach.
+- `src/integrations/nativeMap.ts`: cykl życia natywnej mapy i synchronizacja wyboru bez echa zdarzeń.
+- `src/components/Stadium.tsx`: instancje foteli, interakcje i kamera; `StadiumMap.tsx`: plan 2D i fallback.
+- `src/domain`: kamera, wybór, wycieczka i koszyk. `App.tsx`: wspólny stan i interfejs.
 
-## Zakres demonstracyjny
+## Weryfikacja i ograniczenia
 
-To uproszczona proceduralna interpretacja, nie zweryfikowany bliźniak cyfrowy. Oznaczenie „Demo koncepcyjne — dane poglądowe” jest stale widoczne. Numeracja sektorów, nazwy trybun, rzędy, dostępność i ceny są przykładowe. Perspektywa wynika z modelu 3D, ale nie gwarantuje dokładnego widoku z rzeczywistego fotela. Weryfikacja wymaga oficjalnych planów i konsultacji z klubem. Nie wykorzystano oficjalnego herbu ani zewnętrznych modeli lub zdjęć.
+Lint/typecheck/testy/build przechodzą. Testy obejmują rzeczywisty kompilator chartu i wszystkie 38 078 ID/pozycji, ciągłość dachu, podparcie foteli przez geometrię, kadry w różnych proporcjach i kontrakty zdarzeń mapy. [Obejrzane kontrolne rendery CPU](docs/qa-evidence/authored-enea/README.md) pokazują geometrię; nie są zrzutami aplikacji ani dowodem działania WebGL.
 
-Na telefonie wybór miejsca przewija do sceny, a przy niedostępnym WebGL do podsumowania. Brak pełnego ekranu jest sygnalizowany komunikatem; nie blokuje wyboru miejsca.
+Odbiór obecnego 2D/3D i koszyka na desktopie/telefonie pozostaje otwarty: automatyczna kontrola odrzuciła otwarcie przeglądarki z powodu nierozwiązanej wcześniejszej blokady dostępu. Nie używano innego kanału jako obejścia. Historyczne testy starego panelu w `docs/QA.md` nie są odbiorem tego przyrostu.
 
-Brak logowania, sprzedaży biletów, płatności, rezerwacji i integracji z systemem klubowym. WebGL i nowoczesna przeglądarka są wymagane. Interfejs używa fontów systemowych; nie pobiera fontów Google.
+To autorska rekonstrukcja inspirowana Eneą, **nie zweryfikowany skan ani oficjalna siatka miejsc**. Nie wymaga pliku BLEND/GLB od użytkownika ani zakupu modelu. Ceny, dostępność i numeracja są poglądowe. Brak rzeczywistych holdów, logowania, płatności i połączenia z systemem klubowym; koszyk nie rezerwuje miejsc.
 
-## Wspólny model miejsc i kamery
-
-W `src/data/stadium.ts` obiekt `layout` określa wysokość i głębokość rzędów oraz rozstaw siedzeń. `getSeat()` zwraca środek siedziska; stopnie i instancje krzeseł korzystają z tych samych parametrów. Dekoracyjne krzesełka są pomijane w obszarze 648 miejsc demo. `src/domain/camera.ts` wyznacza oczy nad górną powierzchnią siedziska i interpolację lotu; rozglądanie zmienia kierunek, zachowując pozycję oczu. Kontroler usuwa starą bezwładność orbity przed lotem, a panorama oblicza dystans z kątów widzenia i rozmiaru bryły. `selection.ts` synchronizuje sektor, rząd i fotel. `tour.ts` anuluje wszystkie zaplanowane kroki przy ręcznej interakcji.
-
-## Następne kroki
-
-1. Walidacja bryły i orientacji trybun na podstawie planów stadionu.
-2. Dokładniejsze rzędy, przejścia, narożniki i architektura dachu.
-3. Profilowanie na fizycznych urządzeniach mobilnych i dopracowanie wydajności.
-4. Dane oficjalne i dalszy rozwój oferty premium po uzgodnieniu zakresu.
-
-
-## Lokalny renderer — wariant integracyjny
-
-Po `npm run dev` otwórz adres wypisany przez Vite z `/?renderer=local`. Bez tego parametru pozostaje poprzednia scena do porównania. Wariant lokalny nie jest jeszcze odebranym zamiennikiem: przeglądarka testowa nie tworzy WebGL2, więc nie potwierdzono wyglądu sceny, rzeczywistego przelotu ani przechwytywania miniatury. Nie usunięto poprzedniego renderera.
-
-Kierunek odpowiada blueprintowi: panorama całego stadionu → sektor → rząd → miejsce → ciągły przelot → perspektywa kibica → karta miejsca. Produkt jest kierowany do klubów piłkarskich; Enea Stadion jest pierwszym scenariuszem, bez deklaracji oficjalnej współpracy. Pozostaje uproszczoną koncepcją z danymi demonstracyjnymi.
-
-Wariant używa naszego lokalnego chartu i własnej lekkiej siatki architektury generowanej w pamięci. Ten sam model można też wyeksportować do samowystarczalnego GLB. Tylko 648 miejsc ma detal i interakcje; pozostałe trybuny są uproszczoną geometrią. Nie wymaga tworzenia wydarzenia, konta ani klucza do usługi. Sieć całej ścieżki na działającym GPU pozostaje do sprawdzenia — nie deklarujemy zweryfikowanego działania offline.
-
-- `src/data/venueChart.ts`: profil pierwszego stadionu, sekcje/rzędy, mapowanie ID i fizyczny układ dla nowej sceny.
-- `src/data/venueShell.ts`: własne kolorowe trybuny, zadaszenie i otoczenie, wspólne powierzchnie dla sceny i eksportu GLB.
-- `src/integrations/architecture.ts`: zachowanie autorskich kolorów i dopasowanie wygenerowanych elementów do naszego demonstracyjnego modelu.
-- `src/integrations/venueEvents.ts`: jawny wybór fotela, deduplikacja zdarzeń i odrzucanie callbacków odmontowanej sceny.
-- `src/integrations/localScene.ts`: kompilacja sceny i kadr całej architektury.
-- `src/integrations/localVenue.ts`: jeden właściciel nawigacji; reset i nowy wybór unieważniają wynik starego lotu.
-- `src/components/LocalVenue.tsx`: montowanie, wybór w scenie, resize i sprzątanie zasobów.
-- `src/integrations/venueSession.ts`: właściciel cyklu życia, anulowanie importu, cleanup po awarii i odtworzenie najnowszego wyboru.
-
-Domena zachowuje stare ID, ceny i dostępność. W nowym rendererze współrzędne wynikają z lokalnego chartu (fizyczny rozstaw .62 m), a nie z demonstracyjnych XYZ starej sceny. Adapter tłumaczy je bez zmiany znaczenia fotela. Testy porównują rzeczywistą geometrię skompilowanej sceny z tym chartem.
-
-Po potwierdzonym dotarciu kamera może zapisać miniaturę do karty z tej samej sceny. Przerwany lot jest odróżniany od dotarcia: wybrane miejsce pozostaje, obraz nie jest podstawiany, a przycisk pozwala ponowić przelot. Funkcje obrazu i przycisku wymagają jeszcze odbioru na działającym WebGL2. Szczegóły: `docs/LOCAL_RENDERER_QA.md`.
-
-
-Do kontroli samej geometrii można użyć zainstalowanego Blendera w trybie CPU:
-
-```sh
-node --experimental-strip-types scripts/export-geometry-review.mjs /tmp/stadium-geometry.json
-blender --background --factory-startup --threads 4 --python scripts/render-geometry-review.py -- /tmp/stadium-geometry.json /tmp/stadium-review current
-```
-
-To narzędzia developerskie, nie część aplikacji ani wymóg uruchomienia MVP. Kontrolny render pomija instancjonowane fotele i nie odtwarza shaderów, materiałów, kamery ani animacji WebGL. Nie zastępuje odbioru przeglądarkowego. Opis prób i porównania: `docs/qa-evidence/geometry-review/README.md`.
-
-
-Pełny plan wykonawczy zatwierdzonego MVP: `.ai/EXECUTION_PLAN.md`. Materiał do lokalnego przeglądu i uruchomienia gotowego buildu bez instalowania zależności aplikacji: `docs/REVIEW.md`. Testy obejmują43 przypadki, w tym10 kontraktów cyklu życia; rzeczywiste bramkiGPU pozostają otwarte.
-
-
-## Aktualny przyrost: pełny katalog i wybór kibica
-Podgląd: https://salesbeyond.vercel.app — kod942fed8, production READY. Domyślna scena ma7614 poglądowych foteli4 trybun/15 bloków, wspólny plan2D/3D, podgląd także zajętych miejsc, koszyk demo do10 i dobór grupy w budżecie. Miejsca nie są rezerwowane. Eksperymentalne `?renderer=local` zachowuje wcześniejszy katalog648 do porównania. Bryła nadal generyczna; wskazany skan Enei nie został udostępniony jako plik i nie jest zintegrowany. Pełny cel oraz otwarte etapy: [plan doświadczenia kibica](docs/FAN_EXPERIENCE_ROADMAP.md). Nowe interakcje wymagają odbioru w przeglądarce mimo zielonych52 testów, lint/typecheck/build.
+Dalsze prace: [plan doświadczenia kibica](docs/FAN_EXPERIENCE_ROADMAP.md), [plan wykonawczy](.ai/EXECUTION_PLAN.md), [zatwierdzona specyfikacja](.ai/specs/2026-11-17-functional-stadium-mvp.md).

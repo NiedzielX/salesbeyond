@@ -1,57 +1,86 @@
-export type SectorId = string;
-export type Seat = { id: string; sectorId: SectorId; standId: string; row: number; number: number; price: number; available: boolean; position: [number, number, number]; side?:number };
-export const sectors = [
-  { id: '101' as const, name: 'Bliżej bramki', description: 'Szeroka perspektywa na całe boisko', price: 65, center: -36 },
-  { id: '102' as const, name: 'Na linii środka', description: 'W samym sercu piłkarskich emocji', price: 85, center: 0 },
-  { id: '103' as const, name: 'Druga perspektywa', description: 'Obserwuj akcję z nowej strony', price: 65, center: 36 },
-];
-export const layout = { rowRise: .82, rowDepth: 1.28, firstStepY: 1.1, stepHeight: .8, seatThickness: .24, get firstSeatY(){ return this.firstStepY + this.stepHeight/2 + this.seatThickness/2; }, firstRowZ: 43, seatSpacing: 1.75 };
-export const rows = 12;
-export const seatsPerRow = 18;
-export function getSeat(sectorId: SectorId, row: number, number: number): Seat {
-  const sector = sectors.find(s => s.id === sectorId);
-  if(!sector){const seat=bowlByKey.get(`${sectorId}-${row}-${number}`);if(!seat)throw new RangeError('Nieprawidłowe miejsce');return {...seat,position:[...seat.position]};}
-  if (!sector || !Number.isInteger(row) || row < 1 || row > rows || !Number.isInteger(number) || number < 1 || number > seatsPerRow) throw new RangeError('Nieprawidłowe miejsce');
-  return {id:`${sectorId}-${row}-${number}`, sectorId, standId:'Trybuna I', row, number, price:sector.price + (row > 7 ? 10 : 0), available: (row * 7 + number * 3 + Number(sectorId)) % 13 > 2, position:[sector.center + (number-9.5)*layout.seatSpacing, layout.firstSeatY + (row-1)*layout.rowRise, layout.firstRowZ + (row-1)*layout.rowDepth]};
-}
-export function sectorSeats(id: SectorId) {return sectors.some(s=>s.id===id)?Array.from({length:rows*seatsPerRow},(_,i)=>getSeat(id,Math.floor(i/seatsPerRow)+1,i%seatsPerRow+1)):bowlInventory.filter(s=>s.sectorId===id).map(s=>({...s,position:[...s.position] as [number,number,number]}));}
-
-export const stands=[{side:0,name:'Trybuna I'},{side:1,name:'Trybuna III'},{side:2,name:'Trybuna II'},{side:3,name:'Trybuna IV'}];
+import {eneaLayout,standProfiles,standRow,straightPoint,corners,cornerRow,cornerSeats} from './eneaLayout.ts';
+export type SectorId=string;
+export type Seat={id:string;sectorId:SectorId;standId:string;row:number;number:number;price:number;available:boolean;position:[number,number,number];side?:number;heading?:number;tier?:number;accent?:boolean};
 export type SectorDefinition={id:SectorId;name:string;description:string;price:number;center:number;side:number};
-const otherSectors:SectorDefinition[]=stands.flatMap(({side,name})=>Array.from({length:3},(_,band)=>({
- id:`${side===0?'I':side===1?'III':side===2?'II':'IV'}-${band+1}`,name:`${name} · blok ${band+1}`,description:'Poglądowy blok miejsc',price:band===1?85:65,center:0,side,
-})));
-/** Full catalogue for the existing procedural bowl, not an official Enea seating survey. */
-const bowlInventory:Seat[]=[];
-for(const {side,name} of stands){
- const count=Math.floor((side<2?118:82)/1.25);
- for(let r=0;r<27;r++){
+export const sectors=[
+ {id:'101' as const,name:'Bliżej bramki',description:'Szeroka perspektywa na całe boisko',price:65,center:-36},
+ {id:'102' as const,name:'Na linii środka',description:'W samym sercu piłkarskich emocji',price:85,center:0},
+ {id:'103' as const,name:'Druga perspektywa',description:'Obserwuj akcję z nowej strony',price:65,center:36},
+];
+export const layout={rowRise:.62,rowDepth:eneaLayout.rowDepth,firstStepY:1.1,stepHeight:.8,seatThickness:eneaLayout.seatThickness,get firstSeatY(){return this.firstStepY+this.stepHeight/2+this.seatThickness/2;},firstRowZ:43,seatSpacing:eneaLayout.seatSpacing};
+export const rows=12,seatsPerRow=18;
+export const stands=standProfiles.map(s=>({side:s.side,name:s.name}));
+const otherSectors:SectorDefinition[]=stands.flatMap(({side,name})=>Array.from({length:3},(_,band)=>({id:`${side===0?'I':side===1?'III':side===2?'II':'IV'}-${band+1}`,name:`${name} · blok ${band+1}`,description:'Poglądowy blok miejsc',price:band===1?85:65,center:0,side})));
+const cornerSectors:SectorDefinition[]=corners.map(c=>({id:c.id,name:`Łącznik ${c.id}`,description:'Zaokrąglony narożnik trybun',price:65,center:0,side:c.longSide}));
+export const allSectors:SectorDefinition[]=[...sectors.map(s=>({...s,side:0})),...otherSectors,...cornerSectors];
+const definitions=new Map(allSectors.map(s=>[s.id,s]));
+const byId=new Map<string,Seat>(),bySector=new Map<string,Seat[]>(),byRow=new Map<string,Map<number,Seat[]>>();
+const inventory:Seat[]=[];
+const glyphs=['11110100011000111110100001000010000','01110100011000110001100011000101110','11111000100010000100010001000011111','10001110011010110011100011000110001','01110100011000111111100011000110001','10001110011010110011100011000110001'];
+function cityLetter(side:number,row:number,column:number,total:number){
+ if(side!==1||row<26||row>32)return false;
+ const x=Math.floor((column-(total-72)/2)/2);if(x<0||x>=36)return false;
+ const letter=Math.floor(x/6),pixel=x%6;return pixel<5&&glyphs[letter][(row-26)*5+pixel]==='1';
+}
+function append(seat:Seat){
+ inventory.push(seat);byId.set(seat.id,seat);
+ if(!bySector.has(seat.sectorId)){bySector.set(seat.sectorId,[]);byRow.set(seat.sectorId,new Map());}
+ bySector.get(seat.sectorId)!.push(seat);
+ const rowMap=byRow.get(seat.sectorId)!;if(!rowMap.has(seat.row))rowMap.set(seat.row,[]);rowMap.get(seat.row)!.push(seat);
+}
+function addToDeck(position:[number,number,number]):[number,number,number]{return [position[0],position[1]+layout.seatThickness/2,position[2]];}
+// Preserve the first 648 identities while moving every visible chair onto the same authored bowl.
+for(const sector of sectors)for(let row=1;row<=rows;row++)for(let number=1;number<=seatsPerRow;number++){
+ append({id:`${sector.id}-${row}-${number}`,sectorId:sector.id,standId:'Trybuna I',row,number,price:sector.price+(row>7?10:0),available:(row*7+number*3+Number(sector.id))%13>2,position:addToDeck(straightPoint(0,row-1,sector.center+(number-9.5)*layout.seatSpacing)),side:0,heading:0,tier:1});
+}
+for(const profile of standProfiles){
+ const side=profile.side,span=side<2?108:70,count=Math.floor(span/layout.seatSpacing);
+ const blocks=otherSectors.filter(s=>s.side===side);
+ for(let r=0;r<profile.rows;r++){
  const counters=[0,0,0];
  for(let c=0;c<count;c++){
- const along=(c-(count-1)/2)*1.25;
- if(c%24<2||side===0&&r<rows&&sectors.some(s=>Math.abs(along-s.center)<16.5))continue;
- const band=Math.min(2,Math.floor(c*3/count));const sector=otherSectors.find(s=>s.side===side&&s.id.endsWith(`-${band+1}`))!;
- const number=++counters[band],row=r+1;
- const position:[number,number,number]=side<2?[along,layout.firstSeatY+r*layout.rowRise,(side===0?1:-1)*(43+r*layout.rowDepth)]:[(side===2?1:-1)*(61+r*layout.rowDepth),layout.firstSeatY+r*layout.rowRise,along];
- bowlInventory.push({id:`${sector.id}-${row}-${number}`,sectorId:sector.id,standId:name,row,number,price:sector.price+(row>7?10:0),available:(row*7+number*3+side)%13>2,position,side});
+ const along=(c-(count-1)/2)*layout.seatSpacing;
+ if(c%33<3||side===0&&r<rows&&sectors.some(s=>Math.abs(along-s.center)<seatsPerRow*layout.seatSpacing/2+.12))continue;
+ const band=Math.min(2,Math.floor(c*3/count)),sector=blocks[band],number=++counters[band],row=r+1;
+ append({id:`${sector.id}-${row}-${number}`,sectorId:sector.id,standId:profile.name,row,number,price:sector.price+(row>22?10:0),available:(row*7+number*3+side)%31>1,position:addToDeck(straightPoint(side,r,along)),side,heading:side===0?0:side===1?Math.PI:side===2?Math.PI/2:-Math.PI/2,tier:standRow(side,r).tier,accent:cityLetter(side,r,c,count)});
  }
  }
 }
-const bowlByKey=new Map(bowlInventory.map(s=>[s.id,s]));
-export const allSectors:SectorDefinition[]=[...sectors.map(s=>({...s,side:0})),...otherSectors];
-export function bowlSeats(side:number){return bowlInventory.filter(s=>s.side===side).map(s=>({...s,position:[...s.position] as [number,number,number]}));}
-export function seatsInRow(id:SectorId,row:number){return sectorSeats(id).filter(s=>s.row===row);}
-export function sectorRows(id:SectorId){return [...new Set(sectorSeats(id).map(s=>s.row))];}
-export function resolveSeat(id:string):Seat|null{
- const extra=bowlByKey.get(id);if(extra)return getSeat(extra.sectorId,extra.row,extra.number);
- const match=/^(101|102|103)-([1-9]|1[0-2])-([1-9]|1[0-8])$/.exec(id);
- return match?getSeat(match[1],Number(match[2]),Number(match[3])):null;
+for(const corner of corners){
+ const count=cornerRow(corner,0).count;
+ for(let r=0;r<count;r++)cornerSeats(corner,r).forEach((sample,i)=>{
+ const row=r+1,number=i+1;
+ append({id:`${corner.id}-${row}-${number}`,sectorId:corner.id,standId:`Łącznik ${corner.id}`,row,number,price:65+(r>22?10:0),available:(row*7+number*3)%31>1,position:addToDeck(sample.point),side:corner.longSide,heading:sample.heading,tier:standRow(corner.longSide,Math.min(r,standProfiles[corner.longSide].rows-1)).tier});
+ });
 }
-export function sectorFrame(id:SectorId):{position:[number,number,number];target:[number,number,number]}{
- const definition=allSectors.find(s=>s.id===id);const seats=sectorSeats(id);
- if(!definition||!seats.length)return {position:[0,48,96],target:[0,6,49]};
- if(sectors.some(s=>s.id===id))return {position:[definition.center,48,96],target:[definition.center,6,49]};
- const target=seats.reduce((sum,s)=>sum.map((v,i)=>v+s.position[i]/seats.length) as [number,number,number],[0,0,0] as [number,number,number]);
- const normal=definition.side===0?[0,0,1]:definition.side===1?[0,0,-1]:definition.side===2?[1,0,0]:[-1,0,0];
- return {target,position:[target[0]+normal[0]*48,target[1]+42,target[2]+normal[2]*48]};
+const copy=(s:Seat):Seat=>({...s,position:[...s.position]});
+export function resolveSeat(id:string):Seat|null{const seat=byId.get(id);return seat?copy(seat):null;}
+export function getSeat(sectorId:SectorId,row:number,number:number):Seat{
+ if(!Number.isInteger(row)||!Number.isInteger(number))throw new RangeError('Nieprawidłowe miejsce');
+ const seat=resolveSeat(`${sectorId}-${row}-${number}`);if(!seat)throw new RangeError('Nieprawidłowe miejsce');return seat;
+}
+export function sectorSeats(id:SectorId){return (bySector.get(id)??[]).map(copy);}
+export function bowlSeats(side:number){return inventory.filter(s=>s.side===side&&!sectors.some(legacy=>legacy.id===s.sectorId)).map(copy);}
+export function seatsInRow(id:SectorId,row:number){return (byRow.get(id)?.get(row)??[]).map(copy);}
+export function sectorRows(id:SectorId){return [...(byRow.get(id)?.keys()??[])];}
+export function stadiumSeats(){return inventory.map(copy);}
+export function sectorFrame(id:SectorId,aspect=1.5):{position:[number,number,number];target:[number,number,number]}{
+ const seats=bySector.get(id),definition=definitions.get(id);
+ if(!seats?.length||!definition)return {position:[0,56,10],target:[0,8,52]};
+ const min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];
+ for(const seat of seats)for(let i=0;i<3;i++){min[i]=Math.min(min[i],seat.position[i]);max[i]=Math.max(max[i],seat.position[i]);}
+ const target=min.map((v,i)=>(v+max[i])/2) as [number,number,number];
+ const radial=Math.hypot(target[0],target[2])||1;
+ const normal:[number,number,number]=[-target[0]/radial*.7808688,.624695,-target[2]/radial*.7808688];
+ const horizontal=Math.hypot(normal[0],normal[2]);
+ const right=[normal[2]/horizontal,0,-normal[0]/horizontal];
+ const up=[-normal[1]*normal[0]/horizontal,horizontal,-normal[1]*normal[2]/horizontal];
+ const dot=(a:number[],b:number[])=>a.reduce((sum,v,i)=>sum+v*b[i],0);
+ const tan=Math.tan(43*Math.PI/360)*.85;
+ let distance=42;
+ for(const x of [min[0]-.5,max[0]+.5])for(const y of [min[1],max[1]+.8])for(const z of [min[2]-.5,max[2]+.5]){
+ const p=[x-target[0],y-target[1],z-target[2]];
+ distance=Math.max(distance,dot(p,normal)+Math.max(Math.abs(dot(p,right))/(tan*Math.max(.3,aspect)),Math.abs(dot(p,up))/tan));
+ }
+ return {target,position:target.map((v,i)=>v+normal[i]*distance) as [number,number,number]};
 }

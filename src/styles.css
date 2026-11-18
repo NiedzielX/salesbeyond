@@ -3,6 +3,8 @@
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 /* Keep touch drags inside the 3D viewport; the page still scrolls outside it. */
 .scene canvas{touch-action:none}.panel-content:focus-visible{outline:2px solid #8eb8ff;outline-offset:-3px}
+.native-map{position:absolute;inset:0;overflow:hidden}.map-loading{position:absolute;inset:0;background:#eef1f3dc;pointer-events:none}
+@media(min-width:701px){.experience{height:660px;min-height:660px}.viewport{height:100%;min-height:0}.selection{min-height:0}.panel-content{overflow-y:auto;min-height:0;scrollbar-width:thin;scrollbar-color:#cfddf0 transparent}.steps,.panel-footer{flex-shrink:0}}
 .control-message{position:absolute;z-index:12;bottom:62px;left:20px;right:20px;text-align:center;font-size:10px;color:#52647b;pointer-events:none}.control-message:not(:empty){background:#ffffffed;border:1px solid #dce2eb;border-radius:6px;padding:9px}.scene-top-right button:disabled{opacity:.4;cursor:not-allowed}.viewport{scroll-margin-top:16px}
 
 .local-venue{position:absolute;inset:0;overflow:hidden}.scene-loading{height:100%;display:grid;place-content:center;color:#65778d;font-size:12px}.ticket-preview{margin:16px 0 0;overflow:hidden;border-radius:6px;background:#e5ebf2}.ticket-preview img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}.ticket-preview figcaption{font-size:8px;color:#71829b;padding:7px 9px}.local-venue canvas{display:block;max-width:100%}

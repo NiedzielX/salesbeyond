@@ -45,5 +45,11 @@ Próba nie zastąpiła domyślnej sceny: realne WebGL2 jest niedostępne w cloud
 Ciągłe wykonanie (korekta właściciela2026-11-18): plan38 pozycji w `.ai/EXECUTION_PLAN.md`, nie kończyć po drobnych przyrostach. L3–L5 resource-owner wykonane w `venueSession.ts`, podłączone do LocalVenue i sprawdzone10 kontraktami. Całość43 testy. Granice testów i instrukcja lokalnego review: `docs/LOCAL_RENDERER_QA.md`, `docs/REVIEW.md`. Nowego zakresu nie dodano; gotowe prace podjęto bez ponownego pytania, GPU zadania pozostają jawnie blocked.
 
 
-## Aktualizacja celu i modelu danych2026-11-18
-Właściciel doprecyzował pełne doświadczenie kibica, bez edytora/panelu organizatora. Plan: `docs/FAN_EXPERIENCE_ROADMAP.md`. W obecnej scenie domyślnej wszystkie7614 krzesełka są rekordami wspólnego katalogu, używanego w2D/3D/panelu/koszyku. Stare648 ID zachowano, reszta to poglądowe bloki4 trybun; nie są oficjalną siatką Enei. Podgląd zajętego fotela jest dozwolony, koszyk nadal odrzuca zajęte miejsca. Kwoty i dostępność pozostają demo; brak serwera holdów/płatności. Wersja `?renderer=local` jest historyczną próbą648 miejsc, nie pełną nową ścieżką. Właściciel wskazał płatny skan Enei; jego pliki nie są w repo i nie ma jeszcze zintegrowanego cyfrowego bliźniaka.
+## Aktualizacja celu i modelu danych 2026-11-18
+Właściciel doprecyzował pełne doświadczenie kibica, bez edytora/panelu organizatora. Aktualny plan: `docs/FAN_EXPERIENCE_ROADMAP.md`. Domyślna scena zawiera 38 078 foteli w 19 blokach, z połączonymi narożnikami i różnymi poziomami trybun. Wszystkie są rekordami wspólnego katalogu 2D/3D/panelu/koszyka. Zachowano 648 wcześniejszych ID. Podgląd zajętego fotela jest dozwolony, dodanie go do koszyka jest odrzucane.
+
+Właściciel odrzucił czekanie na BLEND/GLB. Model tworzony kodem z `eneaLayout.ts` i `eneaModel.ts` odpowiada kierunkowi blueprintu i referencjom Enei, bez zakupu/importu skanu. Nie jest zweryfikowanym cyfrowym bliźniakiem ani oficjalnym planem miejsc. Dane i ceny pozostają demonstracyjne; brak serwera holdów/płatności.
+
+Domyślna mapa 2D używa prawdziwego createRenderer z @seatlayer/core, chartu wszystkich foteli i jawnych map ID; SVG służy jako fallback po błędzie inicjalizacji. Domyślne 3D to własna geometria R3F, a `?renderer=local` zachowuje historyczny eksperyment natywnego 3D z 648 miejscami. Nie przeniesiono całego produktu. Moduły danych importują jedynie typy pakietu, właściwy runtime mapy jest ładowany dopiero przy użyciu 2D.
+
+Wcześniejsze sekcje opisują historię węższego wariantu integracyjnego. Aktualny stan weryfikacji: kontrole kodu i rendery CPU przechodzą; odbiór nowych 2D/3D w przeglądarce pozostaje otwarty z powodu odrzucenia dostępu przez automatyczną kontrolę. Log: `.ai/runs/2026-11-18-authored-enea-stadium.md`.

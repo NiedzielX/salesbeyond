@@ -7,7 +7,7 @@ import {eyePosition} from '../domain/camera.ts';
 test('każdy renderowany fotel czterech trybun ma unikalny rekord i podgląd, także poglądowo zajęty',()=>{
  const rendered=[...sectors.flatMap(s=>sectorSeats(s.id)),...[0,1,2,3].flatMap(bowlSeats)];
  const catalogue=allSectors.flatMap(s=>sectorSeats(s.id));
- assert.ok(catalogue.length>6000);
+ assert.ok(catalogue.length>30000&&catalogue.length<50000);
  assert.deepEqual(new Set(rendered.map(s=>s.id)),new Set(catalogue.map(s=>s.id)));
  assert.equal(new Set(catalogue.map(s=>s.id)).size,catalogue.length);
  assert.equal(new Set(catalogue.map(s=>s.position.join(':'))).size,catalogue.length);
@@ -35,8 +35,9 @@ test('panel i kadr sektora obejmują wszystkie rzędy oraz różne strony stadio
   assert.ok(position.every(Number.isFinite)&&target.every(Number.isFinite));
   assert.ok(position[1]>target[1]);
  }
- assert.ok(sectorFrame('III-2').position[2]<0);
- assert.ok(sectorFrame('II-2').position[0]>0);
- assert.ok(sectorFrame('IV-2').position[0]<0);
+ for(const id of ['III-2','II-2','IV-2']){
+ const frame=sectorFrame(id);
+ assert.ok(frame.position[0]*frame.target[0]+frame.position[2]*frame.target[2]<frame.target[0]**2+frame.target[2]**2);
+ }
  assert.equal(selectionReducer(initialSelection,{type:'sector',id:'missing'}),initialSelection);
 });

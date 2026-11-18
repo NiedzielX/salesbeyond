@@ -1,4 +1,4 @@
-import {resolveSeat,sectorRows,seatsInRow,type Seat,type SectorId} from '../data/stadium.ts';
+import {resolveSeat,sectorRows,seatsInRow,type Seat,type SectorId,layout} from '../data/stadium.ts';
 export const basketLimit=10;
 export type BasketAction={type:'add';ids:string[]}|{type:'remove';id:string}|{type:'clear'};
 export function basketReducer(state:Seat[],action:BasketAction):Seat[]{
@@ -20,7 +20,7 @@ export function adjacentSeats(sectors:SectorId[],quantity:number,excluded:string
  for(let i=0;i<=seats.length-quantity;i++){
  const group=seats.slice(i,i+quantity);
  if(group.some(s=>!s.available||s.price>maxPrice||excludedIds.has(s.id)))continue;
- if(group.some((s,j)=>j>0&&(s.number!==group[j-1].number+1||Math.hypot(s.position[0]-group[j-1].position[0],s.position[2]-group[j-1].position[2])>2.2)))continue;
+ if(group.some((s,j)=>j>0&&(s.number!==group[j-1].number+1||Math.hypot(s.position[0]-group[j-1].position[0],s.position[2]-group[j-1].position[2])>layout.seatSpacing*1.45)))continue;
  const center=group.reduce((p,s)=>[p[0]+s.position[0]/quantity,p[1]+s.position[2]/quantity],[0,0]);
  const next=center[0]**2+center[1]**2;
  if(next<score){score=next;best=group;}

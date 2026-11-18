@@ -6,5 +6,5 @@ export function seatColor(seat:Seat,selectedId:string|null,hoveredId:string|null
  if(!seat.available)return '#88929c';
  if(seat.id===hoveredId)return '#ffdf91';
  if(seat.row===focusedRow)return '#8fd9ff';
- return '#397bd4';
+ return seat.accent?'#dce8f5':'#205da9';
 }

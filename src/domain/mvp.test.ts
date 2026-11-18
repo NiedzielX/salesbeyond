@@ -14,9 +14,9 @@ test('wszystkie pierwotne 648 miejsc synchronizują podgląd sektora, rzędu i f
 test('fotele spoczywają na stopniach; oczy znajdują się nad siedziskiem',()=>{
  for(const seat of sectors.flatMap(s=>sectorSeats(s.id))){
  const top=1.1+(seat.row-1)*layout.rowRise+.4;
- assert.ok(Math.abs(seat.position[1]-.12-top)<.001);
+ assert.ok(Math.abs(seat.position[1]-layout.seatThickness/2-top)<.001);
  assert.equal(seat.position[2],layout.firstRowZ+(seat.row-1)*layout.rowDepth);
- assert.ok(Math.abs(eyePosition(seat)[1]-seat.position[1]-1.22)<.001);
+ assert.ok(Math.abs(eyePosition(seat)[1]-seat.position[1]-(layout.seatThickness/2+1.1))<.001);
  }
 });
 test('przelot ma ciągłe skończone próbki, dokładne końce i obsługę reduced-motion',()=>{
