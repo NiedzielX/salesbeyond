@@ -7,7 +7,7 @@ Aktualizacja: 2026-11-18. To kolejka wykonania **już zatwierdzonego zakresu**, 
 - Brief i blueprint załączone przez właściciela: panorama → trybuna/sektor → rząd/fotel → płynny lot → perspektywa kibica → karta.
 
 ## Cel i granice
-Demo dla klubów piłkarskich, pierwszy scenariusz inspirowany Enea Stadionem. Własny wygląd, lokalne dane648 miejsc i poglądowe ceny/statusy. Bez fotorealizmu, filmówAI, VIP, backendu, logowania, live inventory, rezerwacji i płatności. Zachować wcześniejszy renderer do uczciwego porównania. Publikacja/scalenie nie należą do tego planu.
+Demo dla klubów piłkarskich, pierwszy scenariusz inspirowany Enea Stadionem. Własny wygląd, lokalne dane648 miejsc i poglądowe ceny/statusy. Bez fotorealizmu, filmówAI, VIP, backendu, logowania, live inventory, rezerwacji i płatności. Zachować wcześniejszy renderer do uczciwego porównania. Scalanie nie należy do tego planu. Właściciel osobno zlecił wdrożenie na Vercel „sales”; ten krok jest autoryzowany, lecz wymaga dostępu do właściwego zespołu i potwierdzenia projektu w API.
 
 ## Sposób wykonania
 - Integrator jest jedynym autorem w tym worktree; ograniczony research/review wykonuje tańszy agent read-only. Nie uruchamiać osobnej sesji do każdej drobnej zmiany.
@@ -35,7 +35,7 @@ Statusy: **done** = dowód w repo/logu; **ready** = możliwe teraz; **doing** = 
 | G2 | Cztery niebieskie trybuny i biały dach | done w przygotowanych danych/CPU, testkolorów | G1 |
 | G3 | Kadr obejmujący cały stadion | done dane bounds/fitPoints; GPU odbiór niżej | G1 |
 | G4 | Widoczność punktów boiska z foteli | done konserwatywny test2500 promieni; nie dowód cullinguGPU | G1 |
-| G5 | Przejścia i czytelne bloki pozostałych trybun | done audyt zakresu — brak nowego potwierdzonego braku niezależnego od Q1/Q8; nie rozbudowywać modelu na ślepo | G1 |
+| G5 | Przejścia i czytelne bloki pozostałych trybun | kod + kontrola CPU: podział ławek, schody z posadzką, poprzeczne przejście; odbiór wyglądu nadal Q1/Q8 | G1 |
 | C1 | Osobne wejście do sektora i zbliżenie rzędu | done adapter/testy; GPU odbiór niżej | D3 |
 | C2 | Reset/nowy wybór unieważnia stary lot i obraz | done — localVenue.test.ts | C1 |
 | C3 | Odróżnienie dotarcia od anulowania, retry | done kod/testy; GPU odbiór niżej | C2 |
@@ -79,16 +79,21 @@ Aktualizacja z `.ai/runs/2026-11-18-live-acceptance.md`: normalne okno pozwolił
 | F5 | Spójny README/QA/spec/log i status wszystkichAC | blocked końcowe zamknięcie po Q/F3/F4; raport bieżącego etapu uaktualniony | F1–F4 |
 | F6 | Materiał do przeglądu właściciela i jawne ograniczenia | done lokalny materiał — ZIP608338B, source85e6977, CRC i10 plikówHTTP sprawdzone; bez publikacji i zmiany domyślnego renderera | F1/F2 + raport etapu |
 
-## Bieżąca kolejka
-1. L3→L4→L5 wykonane, następnie audyty G5/L6 zamknięte bez sztucznego poszerzania zakresu.
-2. F1/F2/F6 zakończone, raport etapu uaktualniony. Gotowa lokalna paczka do przeglądu source85e6977; końcowe F5 pozostaje zależne od Q/F3/F4.
-3. Po ukończeniu tego ciągu nie ma potwierdzonego gotowego zadania implementacyjnego niezależnego od Q1–Q8. Nie wymyślać nowych funkcji, by ukryć realną blokadę odbioru.
-4. Q1–Q8: jedna próba przy dostępnej możliwości; bez ponawiania tego samego błędu w pętli. Gdy brak dostępu blokuje wszystkie pozostałeAC, raport dotyczy całego etapu i konkretnej blokady.
+## Bieżąca kolejka produktu — po korekcie właściciela
 
+Przegląd briefu z właścicielem i świeży audyt produktu ujawniły luki mimo zamkniętej listy technicznej. Wcześniejsze stwierdzenie braku gotowych prac nie obejmowało jakości doświadczenia. Poniższy przyrost nadal realizuje zatwierdzone R2/R3/R5/R6; nie dodaje systemu sprzedaży.
 
-## Osiągnięty kamień milowy
-Zakończono wszystkie potwierdzone zadania implementacyjne niezależne od GPU oraz przygotowanie materiału do lokalnego review. W tym ciągu nie było pauzy po samym planie, po L3 ani po zielonych testach: nastąpiły kolejne L4/L5, review, finalne bramki i paczka.
+| ID | Widoczny rezultat | Stan | Następny dowód |
+|---|---|---|---|
+| P1 | Wyróżniony rząd w domyślnej scenie, hover fotela z numerem i ceną | kod/testy/review; obraz i raycast nieodebrane | Q1/Q2 na WebGL |
+| P2 | Podziały trybun, schody i przejście poprzeczne lokalnej bryły, segmenty skośnego dachu obu scen | kod/testy, obejrzany model CPU | Q1/Q3; CPU nie zastępuje aplikacji |
+| P3 | Miniatura z kamery fotela również w domyślnej scenie; zgodność z ID i stanem lotu | kod/testy/review; GPU nieodebrane | Q4/Q7, także wybór tuż przed końcem starego lotu |
+| P4 | Aktualny build dostępny na Vercel „sales” | blocked — API 403, właściciel dostał link nadania dostępu do n-b334 | odczyt właściwego projektu, deploy i status READY |
+| P5 | Cały scenariusz panorama → sektor → rząd → fotel → widok → karta → zmiana miejsca na telefonie i desktopie | blocked przez dostęp do rzeczywistego WebGL/browser | Q1–Q8, bez zastępowania ich buildem |
+| P6 | Decyzja o docelowym rendererze i naprawa zauważonych różnic | po P5 | F3/F4, porównane obrazy/lot i wielkości ładowania |
+| P7 | Gotowe demo MVP pod linkiem, z odebranym flow i ograniczeniami opisanymi przy wydaniu | po P4/P5/P6 | F5, raport rzeczywistego działania |
 
-Paczka: `/workspace/work/mvp-review/salesbeyond-mvp-review-85e6977.zip`, rewizja źródeł85e69777f9256b65b37cbc57728b4e750559aeb7. W ZIP są wyłącznie gotowy dist, instrukcja, opis ograniczeń, rewizja i manifest SHA256. Test CRC odczytał wszystkie14 pozycji;10 plikówdist przeszło HTTP200 z porównaniem bajtów i typówMIME. To dowód dostarczenia plików, nie wykonania JS/GPU.
+Nie traktować P1–P3 jako odebranych tylko dlatego, że kod istnieje. Nie kończyć po zielonym teście, jeżeli kolejne zadanie jest gotowe; nie omijać realnego braku autoryzacji ani blokady przeglądarki. Log bieżącego przyrostu: `.ai/runs/2026-11-18-product-progress-and-vercel.md`.
 
-Pozostaje Q1–Q8, F3/F4 oraz końcowe zamknięcie F5. Nie oznaczać implemented i nie wybierać nowej sceny domyślnej bez tych dowodów. Kolejne „kontynuuj” przy niezmienionych możliwościach środowiska nie uzasadnia dodania niezamówionych funkcji.
+## Poprzedni materiał do review
+Paczka `salesbeyond-mvp-review-85e6977.zip` zawiera poprzedni kod i pozostaje historycznym materiałem. Nie zawiera przyrostu P1–P3. Nie nazywać jej aktualnym wdrożeniem. Żadne wdrożenie na Vercel nie zostało jeszcze wykonane.

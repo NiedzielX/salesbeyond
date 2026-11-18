@@ -1,39 +1,73 @@
 import {sectors, rows, seatsPerRow} from './stadium.ts';
 import {venueLayout} from './venueChart.ts';
 type Vec=[number,number,number];
-type Part={center:Vec;size:Vec;color:number};
-const colors:Vec[]=[[.82,.86,.81],[.74,.78,.78],[.64,.69,.75],[.08,.25,.52],[.91,.94,.97]];
+type Part={center:Vec;size:Vec;color:number;tiltX:number;tiltZ:number};
+const colors:Vec[]=[[.82,.86,.81],[.74,.78,.78],[.64,.69,.75],[.08,.25,.52],[.91,.94,.97],[.22,.43,.70]];
+
+/** Clear circulation lanes split the decorative seating, without changing selectable seats. */
+function seatingBays(from:number,to:number,excluded:[number,number][]=[],aisles=true):[number,number][]{
+ const gaps=[...excluded];
+ if(aisles)for(let x=from+18;x<to;x+=24)gaps.push([x-.9,x+.9]);
+ gaps.sort((a,b)=>a[0]-b[0]);
+ const bays:[number,number][]=[];let cursor=from;
+ for(const [start,end] of gaps){
+  if(end<=cursor||start>=to)continue;
+  if(start>cursor)bays.push([cursor,Math.min(start,to)]);
+  cursor=Math.max(cursor,end);
+ }
+ if(cursor<to)bays.push([cursor,to]);
+ return bays;
+}
 
 /** Own lightweight architectural shell. No downloaded models or textures. */
 function architectureParts(roof:boolean):Part[]{
  const parts:Part[]=[];
- const box=(center:Vec,size:Vec,color:number)=>parts.push({center,size,color});
+ const box=(center:Vec,size:Vec,color:number,tiltX=0,tiltZ=0)=>parts.push({center,size,color,tiltX,tiltZ});
  box([0,-.6,0],[204,.4,170],0);
  box([0,-.35,0],[178,.2,145],1);
  for(let row=0;row<27;row++){
  const z=venueLayout.firstRowZ+row*venueLayout.rowDepth;
  const y=venueLayout.firstDeckY+row*venueLayout.rowRise;
- const bands:[number,number][]=[];
- let from=-60;
  const half=seatsPerRow*venueLayout.seatSpacing/2+.3;
- if(row<rows){for(const sector of sectors){bands.push([from,sector.center-half]);from=sector.center+half;}}
- bands.push([from,60]);
- for(const [a,b] of bands){
- if(b<=a)continue;
+ const holes:[number,number][]=row<rows?sectors.map(sector=>[sector.center-half,sector.center+half]):[];
+ // Concrete excludes the interactive native decks; blue seating also leaves stair aisles.
+ const decks=seatingBays(-60,60,holes,false);
+ for(const [a,b] of decks){
  box([(a+b)/2,y/2,z],[b-a,y,venueLayout.rowDepth],2);
- box([(a+b)/2,y+.15,z+.3],[b-a,.3,.4],3);
  }
  box([0,y/2,-z],[120,y,venueLayout.rowDepth],2);
- box([0,y+.15,-z-.3],[120,.3,.4],3);
  for(const sign of [-1,1]){
  const x=sign*(61+row*venueLayout.rowDepth);
  box([x,y/2,0],[venueLayout.rowDepth,y,84],2);
- box([x+sign*.3,y+.15,0],[.4,.3,84],3);
  }
+ // A two-row concourse separates lower and upper seating. Only decorative rows are removed.
+ if(row===13||row===14)continue;
+ for(const [a,b] of seatingBays(-60,60,holes))box([(a+b)/2,y+.25,z+.25],[b-a,.5,.25],row%8===0?5:3);
+ for(const [a,b] of seatingBays(-60,60))box([(a+b)/2,y+.25,-z-.25],[b-a,.5,.25],row%8===0?5:3);
+ for(const sign of [-1,1]){
+ const x=sign*(61+row*venueLayout.rowDepth);
+ for(const [a,b] of seatingBays(-42,42))box([x+sign*.25,y+.25,(a+b)/2],[.25,.5,b-a],row%8===0?5:3);
+ }
+ }
+ // Restrained blue fascia and rear supports give the four stands a common silhouette.
+ for(const sign of [-1,1]){
+ box([0,16.8,sign*72],[120,1,1],3);
+ box([sign*90,16.8,0],[1,1,84],3);
+ for(let x=-54;x<=54;x+=18)box([x,10.5,sign*73],[.6,21,.6],4);
+ for(let z=-36;z<=36;z+=18)box([sign*90,10.5,z],[.6,21,.6],4);
  }
  if(roof){
- box([0,23,61],[124,1,25],4);box([0,23,-61],[124,1,25],4);
- box([79,23,0],[25,1,122],4);box([-79,23,0],[25,1,122],4);
+ // Slender pitched canopy panels with seams, rather than four thick flat slabs.
+ for(const sign of [-1,1]){
+ for(let x=-55;x<=55;x+=10){
+ box([x,22,sign*61],[9.85,.28,25],4,-sign*.09);
+ box([x-4.9,21.75,sign*61],[.16,.3,25],1,-sign*.09);
+ }
+ for(let z=-40;z<=40;z+=10){
+ box([sign*79,22,z],[25,.28,9.85],4,0,sign*.09);
+ box([sign*79,21.75,z-4.9],[25,.3,.16],1,0,sign*.09);
+ }
+ }
  }
  return parts;
 }
@@ -46,7 +80,12 @@ function surfaces(roof:boolean){
  const u=(axis+1)%3,v=(axis+2)%3;
  const corners=[[-1,-1],[1,-1],[1,1],[-1,1]];
  const order=sign>0?[0,1,2,0,2,3]:[0,2,1,0,3,2];
- for(const i of order){const point=[...p.center];point[axis]+=sign*p.size[axis]/2;point[u]+=corners[i][0]*p.size[u]/2;point[v]+=corners[i][1]*p.size[v]/2;position.push(...point);normal.push(...[0,1,2].map(a=>a===axis?sign:0));}
+ const rotate=(point:number[])=>{
+ const [x,y,z]=point;const cx=Math.cos(p.tiltX),sx=Math.sin(p.tiltX),cz=Math.cos(p.tiltZ),sz=Math.sin(p.tiltZ);
+ const ry=y*cx-z*sx,rz=y*sx+z*cx;
+ return [x*cz-ry*sz,x*sz+ry*cz,rz];
+ };
+ for(const i of order){const point=[0,0,0];point[axis]=sign*p.size[axis]/2;point[u]=corners[i][0]*p.size[u]/2;point[v]=corners[i][1]*p.size[v]/2;position.push(...rotate(point).map((value,axis)=>value+p.center[axis]));normal.push(...rotate([0,1,2].map(a=>a===axis?sign:0)));}
  }
  }
  return {position,normal,color};

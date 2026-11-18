@@ -16,3 +16,7 @@ blender --background --factory-startup --threads 4 --python scripts/render-geome
 ```
 
 Model przed zmianą wyeksportowano z950d7f7 przy użyciu tego samego formatu danych. Surowy JSON to artefakt roboczy poza repo, nie asset aplikacji. Render CPU używa16 próbek, bez denoisingu (instalacja Blendera nie ma OpenImageDenoise). Zrzuty obejrzane przez integratora.
+
+
+## Przyrost produktu: podziały trybun i dach
+`geometry-overview-product.png` i `geometry-corner-product.png`: lokalna geometria po dodaniu schodów/podziałów ławek, poprzecznego przejścia i segmentów skośnego dachu. Eksport 11888 trójkątów i 648 punktów foteli, Blender 4.3.2 Cycles CPU, te same parametry skryptu. Oba obrazy obejrzane przez integratora. Brak instancji krzesełek runtime, materiałów/shaderów WebGL i interfejsu. To nie jest zrzut działającej aplikacji ani odbiór 3D.

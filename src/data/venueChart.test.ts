@@ -44,7 +44,10 @@ test('własny GLB jest samowystarczalny, dach zmienia geometrię bez zmiany miej
  assert.ok(closed.prepared.model.solids.count>open.prepared.model.solids.count);
  assert.deepEqual(closed.prepared.model.seats.iPosition,open.prepared.model.seats.iPosition);
  assert.ok(Array.from(closed.prepared.model.solids.position).every(Number.isFinite));
- assert.ok(closed.prepared.model.solids.count<25000);
+ // Segmented seating, circulation and canopy seams stay below 14k static triangles.
+ assert.ok(closed.prepared.model.solids.count<42000);
+ const normals=closed.prepared.model.solids.normal;
+ for(let i=0;i<normals.length;i+=3)assert.ok(Math.abs(Math.hypot(normals[i],normals[i+1],normals[i+2])-1)<1e-5);
 });
 
 

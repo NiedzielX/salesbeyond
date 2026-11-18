@@ -25,7 +25,7 @@ export function overviewScale(aspect:number){
  const dot=(a:Point,b:Point)=>a.reduce((sum,v,i)=>sum+v*b[i],0);
  const tan=Math.tan(43*Math.PI/360)*.9; // ten percent framing margin
  let required=distance;
- for(const x of [-112,112])for(const y of [0,33])for(const z of [-94,94]){
+ for(const x of [-112,112])for(const y of [0,34])for(const z of [-94,94]){
  const corner:Point=[x,y,z];
  required=Math.max(required,dot(corner,n)+Math.max(Math.abs(dot(corner,right))/(tan*Math.max(.3,aspect)),Math.abs(dot(corner,up))/tan));
  }

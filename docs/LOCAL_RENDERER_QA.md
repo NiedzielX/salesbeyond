@@ -45,3 +45,11 @@ Właściciel sesji `src/integrations/venueSession.ts` jest używany przez prawdz
 Te testy używają kontrolowanych factories/handle i nie potwierdzają realnego React StrictMode, natywnego ResizeObserver lub GPU. Nie pozwalają odzyskać zasobów, których zewnętrzny runtime nie udostępnił, gdyby rzucił wewnątrz mount przed zwróceniem handle. Nie ma dowodu takiego błędu. Odbiór Q1–Q8 pozostaje otwarty; bez nowego browser QA w tym ciągu i bez ponawiania znanego timeoutu w pętli.
 
 Cała kolejka zatwierdzonego zakresu: `.ai/EXECUTION_PLAN.md` (38 pozycji). Materiał do lokalnego przeglądu: `docs/REVIEW.md`. Nie dodano nowych funkcji ani zależności.
+
+
+### Przyrost produktu P1–P3
+- Wariant klasyczny: wyróżnienie wybranego rzędu; hover dostępnego fotela, numer/cena, zajęte szare. Sprawdzić również przejście pomiędzy siedziskiem/oparciem, wyjście kursora i powrót po wybraniu miejsca.
+- Oba warianty: segmenty dachu; lokalny dodatkowo podzielone ławki, przejścia i tylne podpory. Numeryczny test ciągłej posadzki i wolnych przejść; kontrola 2500 linii do boiska pozostaje zielona.
+- Miniatura dostępna także w klasycznym rendererze: render z kamery po ukończeniu lotu, odczyt JPEG w tej samej klatce. Panel wymaga pasującego ID, arrived, !flying i dostępnego 3D. Błąd odczytu oznacza brak miniatury. Zmienić miejsce tuż przed końcem poprzedniego lotu, resetować w locie, wracać i ponawiać ten sam fotel; żaden stary obraz nie powinien być przedstawiony jako nowy.
+- Nowy target kamery klasycznej publikowany w useLayoutEffect przed RAF; review źródeł zidentyfikowało i poprawiło okno mieszania nowego wyboru ze starym zegarem lotu. Bez runtime reprodukcji w obecnym środowisku.
+- Te kroki pozostają NIEODEBRANE wizualnie. Kontrola CPU w `qa-evidence/geometry-review` nie zastępuje WebGL.

@@ -81,3 +81,7 @@ Po korekcie właściciela utworzono `.ai/EXECUTION_PLAN.md`:38 pozycji, zależno
 R2/AC5: LocalVenue korzysta z resource-owner venueSession, który obsługuje opóźniony import, failure cleanup, listener/observer/handle, aktualny wybór i revision retry.10/10 focusedtests oraz43/43 wszystkich testów. Świeży niezależny review potwierdził spójność kontraktu, bez potwierdzonej usterki. Testy z kontrolowanymi factories nie są odbiorem React/GPU. Zewnętrzny mount rzucający przed zwróceniem handle pozostaje granicą API, bez dowodu wystąpienia.
 
 Npm ci/lint/typecheck/test/build exit0; dokumentacja i materiał do lokalnego review. Q1–Q8 oraz końcowe porównanie/zastąpienie sceny pozostają blocked. Nie oznaczać implemented. Log: `.ai/runs/2026-11-18-continuous-mvp-execution.md`.
+
+
+### Przyrost produktu po przeglądzie briefu
+W zakresie istniejących wymagań: wyróżnienie rzędu/hover fotela i etykieta ceny w klasycznej scenie, miniatura fotela w obu wariantach, podziały i przejścia lokalnych trybun oraz segmenty skośnego dachu w obu scenach. Zachowano 648 ID, ceny, statusy, punkty oczu i cel na boisko. Kamera klasyczna aktualizuje cel przed RAF; miniatura jest powiązana z ID i faktycznym zakończeniem lotu. Log `.ai/runs/2026-11-18-product-progress-and-vercel.md`. Status pozostaje in-progress: brak odbioru GPU. Osobne polecenie właściciela zezwala na deploy Vercel „sales”; API wymaga jeszcze nadania dostępu do zespołu, nie wykonano publikacji.

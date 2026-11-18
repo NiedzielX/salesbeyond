@@ -12,6 +12,8 @@ Agent kończył turę po lokalnym przyroście i bramkach, mimo że pozostawały 
 Commit i raport potraktowano jak koniec celu, a blokadę GPU jak blokadę całej pracy. Brakowało kolejki zależnych i niezależnych prac obejmującej cały odbiór.
 
 ## Reguła
+Porównuj postęp również z briefem i widocznym doświadczeniem użytkownika. Nie uznawaj audytu integracji i zielonych testów za dowód braku dalszych prac produktowych. Rozdziel gotowy kod, jakość doświadczenia i faktyczny odbiór. Po wskazaniu przez właściciela, że MVP jest daleko od celu, ponownie oceń konkretne luki produktu zamiast powtarzać własną deklarację ukończenia planu.
+
 Prowadź jeden plan wykonawczy całego zatwierdzonego MVP. Po przyroście wybierz kolejną gotową pozycję bez oddawania tury tylko z powodu zielonych testów lub commitu. Zablokuj wyłącznie zadania zależne od brakującej możliwości i realizuj pozostałe. Dawaj krótkie aktualizacje w trakcie. Nie wymyślaj nowych funkcji ani kosmetycznych zadań, żeby pozornie przedłużać pracę. Zakończ przy osiągniętym kamieniu milowym, koniecznej decyzji właściciela albo rzeczywistej blokadzie pozostałych działań.
 
 ## Jak sprawdzić

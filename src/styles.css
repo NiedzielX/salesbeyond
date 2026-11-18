@@ -8,3 +8,8 @@
 .local-venue{position:absolute;inset:0;overflow:hidden}.scene-loading{height:100%;display:grid;place-content:center;color:#65778d;font-size:12px}.ticket-preview{margin:16px 0 0;overflow:hidden;border-radius:6px;background:#e5ebf2}.ticket-preview img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}.ticket-preview figcaption{font-size:8px;color:#71829b;padding:7px 9px}.local-venue canvas{display:block;max-width:100%}
 
 .retry-view{display:flex;align-items:center;justify-content:center;gap:7px;margin:12px auto 0;padding:9px;background:#eef4ff;border:1px solid #cedef8;border-radius:6px;color:#386aa8;font-size:10px}
+
+/* A row and a hovered chair remain legible against the wider blue bowl. */
+.row-marker{display:block;white-space:nowrap;background:#173d70;color:#fff;border:1px solid #a4cfff;border-radius:5px;padding:5px 8px;font-size:9px;font-weight:650;box-shadow:0 3px 12px #173d7030;pointer-events:none}
+.seat-tooltip{min-width:185px;background:#fff;color:#29415f;border:1px solid #d4e3f8;border-radius:9px;padding:11px 13px;box-shadow:0 8px 28px #173d7026;pointer-events:none;transform:translateY(-50%)}
+.seat-tooltip strong{display:block;font-size:10px;margin-bottom:8px;white-space:nowrap}.seat-tooltip>span{display:flex;justify-content:space-between;gap:14px;font-size:12px}.seat-tooltip b{color:#2466cf}.seat-tooltip small{display:block;color:#8191a7;font-size:9px;margin-top:8px;white-space:nowrap}

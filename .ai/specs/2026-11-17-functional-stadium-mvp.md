@@ -92,3 +92,7 @@ Commit 5d61dfb: etykiety sektorów tylko w panoramie, odsłonięcie przednich s�
 
 ### Rzeczywisty browser QA panelu i poprawka montowania sceny
 Właściciel zezwolił na lokalne Vite zamiast managed preview. Commit 8d355e6: czysty neutralny fallback HTML canvas zamiast efektu wyłączającego scenę, spacje mobilnych nagłówków. W realnej przeglądarce wykonano 36 wyborów (18 na 1440×900, 18 na 390×844), ceny, powroty, reset, klawiaturę, modal, reload i brak overflow. Obejrzane zrzuty w docs/qa-evidence. Kontrole kodu 20/20, lint/typecheck/build zielone. Review niezależne. Realne renderowanie 3D, raycast i lot pozostają niepotwierdzone: cloud nie może utworzyć WebGL, diagnostyka GPU/DevTools zablokowana polityką. Nie oznaczać implemented; AC2/3/5/7 zaliczone jedynie w zakresie panelu/fallbacku. Log: .ai/runs/2026-11-17-local-browser-qa.md.
+
+
+### Przyrost produktu po przeglądzie briefu
+W zakresie istniejących wymagań: wyróżnienie rzędu/hover fotela i etykieta ceny w klasycznej scenie, miniatura fotela w obu wariantach, podziały i przejścia lokalnych trybun oraz segmenty skośnego dachu w obu scenach. Zachowano 648 ID, ceny, statusy, punkty oczu i cel na boisko. Kamera klasyczna aktualizuje cel przed RAF; miniatura jest powiązana z ID i faktycznym zakończeniem lotu. Log `.ai/runs/2026-11-18-product-progress-and-vercel.md`. Status pozostaje in-progress: brak odbioru GPU. Osobne polecenie właściciela zezwala na deploy Vercel „sales”; API wymaga jeszcze nadania dostępu do zespołu, nie wykonano publikacji.
