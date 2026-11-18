@@ -27,3 +27,10 @@ Dotychczasowy browser QA panelu obejmuje36 wyborów desktop/mobile i prawidłowy
 
 ## Granica montowania runtime
 Jeżeli mount zwróci handle, właściciel sesji sprząta go wraz z ukończonymi subskrypcjami przy błędzie lub unmount. Jeżeli zewnętrzny runtime alokuje wewnętrzne zasoby i rzuci wyjątek przed zwróceniem handle, wrapper nie ma API do ich zwolnienia. Nie stwierdzono takiej awarii; wymaga to rzeczywistego testu integracji. DOM kontenera jest czyszczony przez komponent.
+
+
+## Paczka tego przyrostu
+
+Rewizja źródeł:85e69777f9256b65b37cbc57728b4e750559aeb7. Lokalny plik: `/workspace/work/mvp-review/salesbeyond-mvp-review-85e6977.zip` (608338 bajtów). SHA256: `caf61319f959415f4fc66dc904ac82119559b343bd79c319382ce2dd0c293cd2`.
+
+Archiwum odczytano ponownie i sprawdzono CRC wszystkich14 pozycji. Każdy z10 plikówdist serwowany przez tymczasowy lokalny serwer zwrócił HTTP200, zgodne bajty i właściwy typMIME JS/CSS. Nie wykonywano przy tym JavaScript ani WebGL; test potwierdza spójność paczki, nie kompletność odbioru aplikacji. Paczka nie aktualizuje publicznego repo ani hostingu.

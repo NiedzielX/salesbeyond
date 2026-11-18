@@ -75,10 +75,18 @@ Te zadania są **blocked**, nie pozostały backlog. Dotychczas WebGL2 niedostęp
 | F3 | Porównanie scen i rozmiarów ładowania | część rozmiarów done; zachowanie blocked | Q1–Q8 |
 | F4 | Zastąpienie domyślnej sceny tylko po odbiorze | blocked | F3 |
 | F5 | Spójny README/QA/spec/log i status wszystkichAC | blocked końcowe zamknięcie po Q/F3/F4; raport bieżącego etapu uaktualniony | F1–F4 |
-| F6 | Materiał do przeglądu właściciela i jawne ograniczenia | doing — lokalna paczka statycznego buildu + instrukcja, bez publikacji i zmiany domyślnego renderera | F1/F2 + raport etapu |
+| F6 | Materiał do przeglądu właściciela i jawne ograniczenia | done lokalny materiał — ZIP608338B, source85e6977, CRC i10 plikówHTTP sprawdzone; bez publikacji i zmiany domyślnego renderera | F1/F2 + raport etapu |
 
 ## Bieżąca kolejka
 1. L3→L4→L5 wykonane, następnie audyty G5/L6 zamknięte bez sztucznego poszerzania zakresu.
-2. F1/F2 zakończone, raport etapu uaktualniony. F6 w toku: gotowa lokalna paczka do przeglądu; końcowe F5 pozostaje zależne od Q/F3/F4.
+2. F1/F2/F6 zakończone, raport etapu uaktualniony. Gotowa lokalna paczka do przeglądu source85e6977; końcowe F5 pozostaje zależne od Q/F3/F4.
 3. Po ukończeniu tego ciągu nie ma potwierdzonego gotowego zadania implementacyjnego niezależnego od Q1–Q8. Nie wymyślać nowych funkcji, by ukryć realną blokadę odbioru.
 4. Q1–Q8: jedna próba przy dostępnej możliwości; bez ponawiania tego samego błędu w pętli. Gdy brak dostępu blokuje wszystkie pozostałeAC, raport dotyczy całego etapu i konkretnej blokady.
+
+
+## Osiągnięty kamień milowy
+Zakończono wszystkie potwierdzone zadania implementacyjne niezależne od GPU oraz przygotowanie materiału do lokalnego review. W tym ciągu nie było pauzy po samym planie, po L3 ani po zielonych testach: nastąpiły kolejne L4/L5, review, finalne bramki i paczka.
+
+Paczka: `/workspace/work/mvp-review/salesbeyond-mvp-review-85e6977.zip`, rewizja źródeł85e69777f9256b65b37cbc57728b4e750559aeb7. W ZIP są wyłącznie gotowy dist, instrukcja, opis ograniczeń, rewizja i manifest SHA256. Test CRC odczytał wszystkie14 pozycji;10 plikówdist przeszło HTTP200 z porównaniem bajtów i typówMIME. To dowód dostarczenia plików, nie wykonania JS/GPU.
+
+Pozostaje Q1–Q8, F3/F4 oraz końcowe zamknięcie F5. Nie oznaczać implemented i nie wybierać nowej sceny domyślnej bez tych dowodów. Kolejne „kontynuuj” przy niezmienionych możliwościach środowiska nie uzasadnia dodania niezamówionych funkcji.

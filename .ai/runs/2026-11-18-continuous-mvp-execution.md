@@ -1,6 +1,6 @@
 ---
 started: 2026-11-18
-ended: null
+ended: 2026-11-18
 agent: Codex
 spec: .ai/specs/2026-11-18-local-stadium-renderer.md
 outcome: partial
@@ -19,10 +19,10 @@ Kolejno: zapisano plan i podjęto L3, zaimplementowano resource-owner i podłąc
 - Świeża niezależna sesja gpt-6-luna: read-only review venueSession i LocalVenue, focusedtests10/10, brak potwierdzonej usterki. Integrator sprawdził kod i uruchomił bramki sam.
 - Kontrolowane factories/handle w testach: symulacja StrictMode, deferred import, nowy wybór/revision, roofremount, awarie load/mount/watch/observe, context loss, rejestracja listenera z natychmiastową awarią, wyjątek cleanup, echo mount. Nie deklarować realnego React/GPU testu.
 - Finalny build główny246.24kB/gzip78.40, LocalVenue4.71kB/gzip2.22, runtime452.35kB/gzip158.55, stara scena951.45kB/gzip262.37.
-- Brak nowego browser QA: nie ponawiano znanego timeoutu w pętli. Q1–Q8 nadal blocked. Paczka do review w przygotowaniu.
+- Brak nowego browser QA: nie ponawiano znanego timeoutu w pętli. Q1–Q8 nadal blocked. Paczka F6: /workspace/work/mvp-review/salesbeyond-mvp-review-85e6977.zip,608338B, source85e69777f9256b65b37cbc57728b4e750559aeb7, SHA256 caf61319f959415f4fc66dc904ac82119559b343bd79c319382ce2dd0c293cd2. OdczytZIP14 pozycji/CRC/bajtów zgodny;10 plikówdist z tymczasowego HTTP servera200, zgodne bajty iMIME. Serwer zamknięty po teście. Bez wykonaniaJS/GPU, brak fałszywej akceptacjiQ6.
 
 ## Wynik
-Plan operacyjny38 pozycji oraz reguła ciągłości zapisane. Wykonano ciąg L3/L4/L5 i pełne bramki zamiast kończyć po pierwszym przyroście. Audyt G5/L6 nie uzasadnił nowej funkcjonalności. Przygotowanie lokalnego materiału F6 w toku; końcowe Q/F3/F4/F5 zależne od faktycznego GPU/browser. Specyfikacja in-progress, bez push/publikacji/scalenia.
+Plan operacyjny38 pozycji oraz reguła ciągłości zapisane. Wykonano ciąg L3/L4/L5 i pełne bramki zamiast kończyć po pierwszym przyroście. Audyt G5/L6 nie uzasadnił nowej funkcjonalności. Lokalny materiał F6 ukończony; końcowe Q/F3/F4/F5 zależne od faktycznego GPU/browser. Specyfikacja in-progress, bez push/publikacji/scalenia. Osiągnięto cały kamień milowy kodu niezależnego odGPU i materiału do review. Nie pozostało potwierdzone gotowe zadanie implementacyjne bez zależnościQ1–Q8; potwierdził to odrębny read-only audyt backlogu. Nie dodawano funkcji, żeby pozornie wydłużyć pracę.
 
 ## Lekcje
 .ai/lessons/2026-11-18-continuous-execution.md.
