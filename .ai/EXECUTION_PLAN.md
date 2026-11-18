@@ -56,6 +56,8 @@ Statusy: **done** = dowód w repo/logu; **ready** = możliwe teraz; **doing** = 
 ## Etap4 — odbiór faktycznej sceny
 Te zadania są **blocked**, nie pozostały backlog. Dotychczas WebGL2 niedostępny, ostatnio dodatkowo CUA getTab zwracał timeout przed odczytem strony. HTTP aplikacji działa. Nie zmieniać zabezpieczeń ani odpalać alternatywnego kanału do obchodzenia blokady.
 
+Aktualizacja z `.ai/runs/2026-11-18-live-acceptance.md`: normalne okno pozwoliło sprawdzić kartę101/06/01,65zł, lecz nadal pokazywało BRAK3D. Potem okno zniknęło, a ponowne otwarcie narzędziem zostało **automatycznie odrzucone z powodu wyczerpanego limitu użycia**. Do czasu przywrócenia dostępu nie wykonywać tej akcji przez subagenta, inny interfejs, rawCDP ani pośrednie wykonanie. Dwa równoległe audyty gpt-6-luna źródeł i paczki wykonano bez przeglądarki, bez nowej potwierdzonej usterki.
+
 | ID | Zadanie | Dowód wymagany | Zależność |
 |---|---|---|---|
 | Q1 | Panorama/sektor/fotel — duży ekran i telefon | obejrzane zrzuty prawdziwegoWebGL | dostępnyGPU/browser |
