@@ -54,3 +54,10 @@ test('grupy w łukach zachowują fizyczne sąsiedztwo i nie przeskakują alejki 
  assert.deepEqual(adjacentSeats([block],2,all.filter(s=>!gapPair.includes(s.id)).map(s=>s.id)),[]);
  }
 });
+test('zamknięty lub wyprzedany wybór nie pokazuje wolnych wyników, ale pozostawia podgląd katalogu',()=>{
+ const ids=searchSectors(-1).map(s=>s.id);
+ const closed=summarizeSeats(ids,{maxPrice:0,availableOnly:true},false);
+ assert.equal(closed.reduce((sum,s)=>sum+s.matching,0),0);
+ const preview=summarizeSeats(ids,{maxPrice:0,availableOnly:false},false);
+ assert.equal(preview.reduce((sum,s)=>sum+s.matching,0),stadiumSeats().length);assert.equal(preview.reduce((sum,s)=>sum+s.available,0),0);
+});

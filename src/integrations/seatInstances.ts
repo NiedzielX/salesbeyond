@@ -1,0 +1,39 @@
+import {Color,InstancedMesh,Object3D} from 'three';
+import {eneaLayout} from '../data/eneaLayout.ts';
+import type {Seat} from '../data/stadium.ts';
+import {seatColor} from '../components/seatFeedback.ts';
+type Feedback={selectedId:string|null;hoveredId:string|null;row:number|null;emphasized:boolean;chosen:ReadonlySet<string>};
+export function writeSeatTransforms(seats:readonly Seat[],base:InstancedMesh,backs:InstancedMesh){
+ const object=new Object3D();
+ seats.forEach((seat,index)=>{
+ const heading=seat.heading??0;
+ object.rotation.set(0,heading,0);object.scale.set(eneaLayout.seatWidth,1,1);object.position.set(...seat.position);object.updateMatrix();base.setMatrixAt(index,object.matrix);
+ object.position.y+=.32;object.position.x+=Math.sin(heading)*.19;object.position.z+=Math.cos(heading)*.19;object.updateMatrix();backs.setMatrixAt(index,object.matrix);
+ });
+ for(const mesh of [base,backs]){mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();}
+}
+/** Hover changes colours only. Skip unchanged attributes without touching transform buffers. */
+export function createSeatColors(seats:readonly Seat[],base:InstancedMesh,backs:InstancedMesh){
+ const previous:string[]=[],color=new Color(),byId=new Map(seats.map((seat,index)=>[seat.id,index])),byRow=new Map<number,number[]>();
+ seats.forEach((seat,index)=>{const row=byRow.get(seat.row)??[];row.push(index);byRow.set(seat.row,row);});
+ let last:Feedback|null=null;
+ return {update(feedback:Feedback){
+ let changed=0;const candidates=new Set<number>();
+ const add=(id:string|null)=>{const index=id===null?undefined:byId.get(id);if(index!==undefined)candidates.add(index);};
+ if(!last||last.emphasized!==feedback.emphasized)seats.forEach((_,index)=>candidates.add(index));
+ else{
+ if(last.selectedId!==feedback.selectedId){add(last.selectedId);add(feedback.selectedId);}
+ if(last.hoveredId!==feedback.hoveredId){add(last.hoveredId);add(feedback.hoveredId);}
+ if(last.row!==feedback.row){if(last.row!==null)byRow.get(last.row)?.forEach(i=>candidates.add(i));if(feedback.row!==null)byRow.get(feedback.row)?.forEach(i=>candidates.add(i));}
+ for(const id of last.chosen)if(!feedback.chosen.has(id))add(id);
+ for(const id of feedback.chosen)if(!last.chosen.has(id))add(id);
+ }
+ for(const index of candidates){const seat=seats[index];
+ const value=feedback.emphasized&&!feedback.chosen.has(seat.id)&&feedback.selectedId!==seat.id?'#f6a63c':seatColor(seat,feedback.selectedId,feedback.hoveredId,feedback.row,feedback.chosen.has(seat.id));
+ if(previous[index]===value)continue;previous[index]=value;color.set(value);base.setColorAt(index,color);backs.setColorAt(index,color);changed++;
+ }
+ last={...feedback,chosen:new Set(feedback.chosen)};
+ if(changed)for(const mesh of [base,backs])if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;
+ return changed;
+ }};
+}

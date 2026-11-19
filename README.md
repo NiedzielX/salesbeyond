@@ -21,7 +21,7 @@ npm run build
 npm exec vite preview
 ```
 
-`dist` jest aplikacją statyczną. Podgląd: https://salesbeyond.vercel.app. Stan aktualnego przyrostu i wdrożenia: [log wznowienia wyboru](.ai/runs/2026-11-19-fan-session.md).
+`dist` jest aplikacją statyczną. Podgląd: https://salesbeyond.vercel.app. Stan aktualnego przyrostu i wdrożenia: [log większego etapu](.ai/runs/2026-11-19-sustained-fan-mvp.md).
 
 ## Obecna implementacja
 
@@ -34,6 +34,8 @@ npm exec vite preview
 - Wszystkie ID koszyka są odtwarzane na domyślnej mapie 2D i oznaczane w 3D/SVG/panelu; aktywny podgląd zachowuje odrębne wyróżnienie. To wybór demonstracyjny, nie rezerwacja.
 - Powrót po odświeżeniu: koszyk, ostatni fotel/blok/rząd, filtry i 2D/3D. Zapis lokalny zawiera ID i preferencje; ceny/statusy pochodzą z bieżącego katalogu, a nie zapisu. Wariant pełny i historyczny mają osobne klucze. Brak zapisu nie blokuje bieżącego wyboru.
 - Link do fotela, przycisk kopiowania i ręczna alternatywa, synchronizacja adresu z aktualnym miejscem. Link otwiera fotel, zachowując własny koszyk odbiorcy. Podsumowanie ponownie sprawdza katalog demo; nie wykonuje serwerowej rezerwacji.
+- Preferencja „Nie zostawiaj pojedynczych miejsc” działa wspólnie dla nowych dodań i rekomendacji, uwzględniając fizyczne alejki/narożniki. Usuwanie i podgląd pozostają dostępne. Stany open/closed/sold-out są polityką lokalnego wydarzenia demo, bez twierdzenia, że to reguły klubu.
+- Domyślne 3D ma indeks przestrzenny trafień i osobne, stabilne transformacje foteli; zmiana hover/wyboru aktualizuje tylko kolory zmienionych instancji. [Dowody CPU i ograniczenia](docs/qa-evidence/seat-picking/README.md).
 - Polski interfejs, wybór w panelu, reset, przełącznik dachu, wycieczka i miniatura z kamery po dotarciu. Nowe zachowanie wymaga jeszcze odbioru w działającej przeglądarce.
 
 ## Co pochodzi z biblioteki
@@ -54,7 +56,7 @@ Repo używa przypiętego skompilowanego pakietu przez jego publiczny kontrakt. *
 
 ## Weryfikacja i ograniczenia
 
-Lint/typecheck/build i 72 testy przechodzą. Testy obejmują rzeczywisty kompilator chartu i wszystkie 38 078 ID/pozycji, ciągłość dachu, podparcie foteli przez geometrię, kadry w różnych proporcjach i kontrakty zdarzeń mapy. [Obejrzane kontrolne rendery CPU](docs/qa-evidence/authored-enea/README.md) pokazują geometrię; nie są zrzutami aplikacji ani dowodem działania WebGL.
+Lint/typecheck/build i 87 testów przechodzą. Testy obejmują rzeczywisty kompilator chartu i wszystkie 38 078 ID/pozycji, ciągłość dachu, podparcie foteli przez geometrię, kadry w różnych proporcjach i kontrakty zdarzeń mapy. [Obejrzane kontrolne rendery CPU](docs/qa-evidence/authored-enea/README.md) pokazują geometrię; nie są zrzutami aplikacji ani dowodem działania WebGL.
 
 Odbiór obecnego 2D/3D i koszyka na desktopie/telefonie pozostaje otwarty: automatyczna kontrola odrzuciła otwarcie przeglądarki z powodu nierozwiązanej wcześniejszej blokady dostępu. Nie używano innego kanału jako obejścia. Historyczne testy starego panelu w `docs/QA.md` nie są odbiorem tego przyrostu.
 

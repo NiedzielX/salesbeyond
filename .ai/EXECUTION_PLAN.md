@@ -121,3 +121,7 @@ S1 cena/dostępność + liczniki bez wyłączania podglądu: kod/testy. S2 zakre
 
 ## Przyrost P — wznowienie wyboru
 P1 zapis samych ID/preferencji i oddzielne klucze pełnego/legacy: kod/testy. P2 odtworzenie kanonicznych cen/statusów i obsługa awarii zapisu: kod/testy. P3 kontrola koszyka przed podsumowaniem: kod/testy zmiany ceny/zajętości, bez fake holda. P4 link do fotela i aktualizacja adresu przy nawigacji: kod/testy. P5 kopiowanie/ręczna alternatywa i komunikaty: kod, odbiór UI otwarty. P6 deploy a8010c1 production READY, salesbeyond.vercel.app, zasoby HTTP 200. Log .ai/runs/2026-11-19-fan-session.md. Dalej pozostałe reguły wydarzenia i rzeczywisty backend hold/handoff; nie zastępować go procesową Map w statycznym hostingu.
+
+
+## Większy etap Q — polityka + interakcje
+Q-S1: wspólny evaluator dodatków/grup, fizyczne single, stany wydarzenia i liczniki — kod/testy. Q-S2: BVH trafień, stabilne transformacje i delty kolorów — kod/testy/diagnostyka CPU, bez browser proof. Q-S3: backend hold/handoff — konkretny przejrzany kontrakt docs/SEAT_HOLD_CONTRACT.md, brak połączonego Supabase; nowy zasób/sekrety wymagają operacji infrastrukturalnej. Q-S4: końcowe bramki i większy deploy w toku; Q-S5: browser QA nadal dotychczasowa blokada, bez prób obejścia. Log .ai/runs/2026-11-19-sustained-fan-mvp.md. Nie kończono po samych patchach/testach; oba przyrosty integrowane razem.

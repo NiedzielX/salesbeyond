@@ -13,7 +13,7 @@ export function basketReducer(state:Seat[],action:BasketAction):Seat[]{
 export function basketTotal(seats:Seat[]){return seats.reduce((sum,s)=>sum+Math.round(s.price*100),0)/100;}
 
 /** Local demo suggestion only. A server must validate/hold inventory before a real checkout. */
-export function adjacentSeats(sectors:SectorId[],quantity:number,excluded:string[]=[],maxPrice=Infinity):Seat[]{
+export function adjacentSeats(sectors:SectorId[],quantity:number,excluded:string[]=[],maxPrice=Infinity,accept?:(candidate:Seat[])=>boolean):Seat[]{
  if(!Number.isInteger(quantity)||quantity<1||quantity>basketLimit||maxPrice<0||!Number.isFinite(maxPrice)&&maxPrice!==Infinity)return [];
  const excludedIds=new Set(excluded);let best:Seat[]=[];let score=Infinity;
  for(const id of sectors)for(const row of sectorRows(id)){
@@ -24,7 +24,7 @@ export function adjacentSeats(sectors:SectorId[],quantity:number,excluded:string
  if(group.some((s,j)=>j>0&&(s.number!==group[j-1].number+1||Math.hypot(s.position[0]-group[j-1].position[0],s.position[2]-group[j-1].position[2])>layout.seatSpacing*1.45)))continue;
  const center=group.reduce((p,s)=>[p[0]+s.position[0]/quantity,p[1]+s.position[2]/quantity],[0,0]);
  const next=center[0]**2+center[1]**2;
- if(next<score){score=next;best=group;}
+ if(next<score&&(!accept||accept(group))){score=next;best=group;}
  }
  }
  return best;

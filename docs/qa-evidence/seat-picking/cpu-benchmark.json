@@ -1,0 +1,14 @@
+{
+  "kind": "CPU_ONLY",
+  "seats": 38078,
+  "renderedInstances": 76156,
+  "rays": 8,
+  "buildMs": 378.8,
+  "baselineMedianMs": 10.75,
+  "indexedMedianMs": 0.38,
+  "baselineInstanceTestsPerRun": 90628,
+  "indexedInstanceTestsPerRun": 8,
+  "hitCount": 8,
+  "matchingHitCounts": true,
+  "note": "Node CPU diagnostic; actual mobile/WebGL latency and appearance remain unverified."
+}

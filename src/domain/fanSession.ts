@@ -2,7 +2,7 @@ import {canonicalBasket} from './basket.ts';
 import {defaultSeatFilters,type SeatFilters} from './seatSearch.ts';
 import {initialSelection,selectionReducer,type Selection} from './selection.ts';
 import {resolveSeat,sectors,sectorRows,type Seat} from '../data/stadium.ts';
-export type FanState={basket:Seat[];selection:Selection;filters:SeatFilters;stand:number;surface:'map'|'3d'};
+export type FanState={basket:Seat[];selection:Selection;filters:SeatFilters;stand:number;surface:'map'|'3d';avoidSingles?:boolean};
 export type FanStorage=Pick<Storage,'getItem'|'setItem'>;
 const scope=(legacyOnly:boolean)=>legacyOnly?'legacy':'full';
 export const fanSessionKey=(legacyOnly=false)=>`salesbeyond:enea-demo:fan:v1:${scope(legacyOnly)}`;
@@ -29,12 +29,12 @@ export function decodeFanSession(raw:string|null,legacyOnly=false){
  }
  const filters={maxPrice:[0,65,75,85,95].includes(doc.filters?.maxPrice)?doc.filters.maxPrice:0,availableOnly:typeof doc.filters?.availableOnly==='boolean'?doc.filters.availableOnly:true};
  const stand=[-1,0,1,2,3].includes(doc.stand)&&(!legacyOnly||doc.stand===0||doc.stand===-1)?doc.stand:-1;
- const state:FanState={basket:cart.seats,selection,filters,stand,surface:doc.surface==='map'?'map':'3d'};
+ const state:FanState={basket:cart.seats,selection,filters,stand,surface:doc.surface==='map'?'map':'3d',...(typeof doc.avoidSingles==='boolean'?{avoidSingles:doc.avoidSingles}:{})};
  return {state,restored:true,discarded:cart.discarded,invalid:false};
  }catch{return {...fallback,invalid:true};}
 }
 export function encodeFanSession(state:FanState,legacyOnly=false){
- return JSON.stringify({version:1,scope:scope(legacyOnly),cart:state.basket.map(s=>s.id),seatId:state.selection.view==='seat'?state.selection.seat?.id??null:null,sector:state.selection.sector,row:state.selection.row,view:state.selection.view,filters:state.filters,stand:state.stand,surface:state.surface});
+ return JSON.stringify({version:1,scope:scope(legacyOnly),cart:state.basket.map(s=>s.id),seatId:state.selection.view==='seat'?state.selection.seat?.id??null:null,sector:state.selection.sector,row:state.selection.row,view:state.selection.view,filters:state.filters,stand:state.stand,surface:state.surface,...(typeof state.avoidSingles==='boolean'?{avoidSingles:state.avoidSingles}:{})});
 }
 export function readFanSession(storage:FanStorage|null,legacyOnly=false){
  if(!storage)return {...decodeFanSession(null,legacyOnly),unavailable:true};

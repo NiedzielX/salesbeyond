@@ -10,7 +10,8 @@ import {eneaLayout} from '../data/eneaLayout';
 import {aimRotation,rotateFlight} from './cameraRotation';
 import {watchContextLoss} from './contextLoss';
 import { pauseOrbit } from './cameraControls';
-import {seatColor} from './seatFeedback';
+import {installSeatPicking} from '../integrations/seatPicking';
+import {writeSeatTransforms,createSeatColors} from '../integrations/seatInstances';
 import {captureSeatPreview} from './seatPreview';
 import { eyePosition, flightPoint, flightProgress, lookTarget, overviewPosition, overviewScale, type Point } from '../domain/camera';
 import type { View } from '../domain/selection';
@@ -33,13 +34,14 @@ function DemoSeats({sector,onSeat,selected,interactive,row,focusRow,overview,onS
  const hover=interactive?hovered:null;
  const rowStart=seats.find(s=>s.row===row);
  useEffect(()=>{if(!interactive)setHovered(null);return()=>{document.body.style.cursor='auto';};},[interactive]);
- useEffect(()=>{if(!ref.current||!backs.current)return;const o=new THREE.Object3D();seats.forEach((s,i)=>{
- const heading=s.heading??0;
- o.rotation.set(0,heading,0);o.scale.set(eneaLayout.seatWidth,1,1);o.position.set(...s.position);o.updateMatrix();ref.current!.setMatrixAt(i,o.matrix);
- o.position.y+=.32;o.position.x+=Math.sin(heading)*.19;o.position.z+=Math.cos(heading)*.19;
- o.updateMatrix();backs.current!.setMatrixAt(i,o.matrix);
- const color=new THREE.Color(emphasized&&!chosen.has(s.id)&&selected?.id!==s.id?'#f6a63c':seatColor(s,selected?.id??null,hover?.id??null,focusRow?row:null,chosen.has(s.id)));ref.current!.setColorAt(i,color);backs.current!.setColorAt(i,color);
- });for(const mesh of [ref.current,backs.current]){mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;}},[seats,selected,hover,focusRow,row,emphasized,chosen]);
+ const colors=useRef<ReturnType<typeof createSeatColors>|null>(null);
+ useLayoutEffect(()=>{
+ if(!ref.current||!backs.current)return;
+ writeSeatTransforms(seats,ref.current,backs.current);colors.current=createSeatColors(seats,ref.current,backs.current);
+ const picking=[installSeatPicking(ref.current),installSeatPicking(backs.current)];
+ return()=>{picking.forEach(index=>index.dispose());colors.current=null;};
+ },[seats]);
+ useLayoutEffect(()=>{colors.current?.update({selectedId:selected?.id??null,hoveredId:hover?.id??null,row:focusRow?row:null,emphasized,chosen});},[seats,selected?.id,hover?.id,focusRow,row,emphasized,chosen]);
  return <group onClick={e=>{if(!interactive)return;e.stopPropagation();if(e.instanceId!==undefined){const seat=seats[e.instanceId];if(overview)onSector(seat.sectorId);else onSeat(seat);}}} onPointerMove={e=>{if(!interactive)return;e.stopPropagation();const seat=e.instanceId===undefined?null:seats[e.instanceId];setHovered(seat);document.body.style.cursor=seat?'pointer':'auto';}} onPointerOut={()=>{setHovered(null);document.body.style.cursor='auto';}}><instancedMesh ref={ref} args={[undefined,undefined,seats.length]}><boxGeometry args={[1,layout.seatThickness,eneaLayout.seatDepth]}/><meshStandardMaterial roughness={.5}/></instancedMesh><instancedMesh ref={backs} args={[undefined,undefined,seats.length]}><boxGeometry args={[1,.56,.09]}/><meshStandardMaterial roughness={.5}/></instancedMesh>{focusRow&&rowStart&&<Html position={[rowStart.position[0],rowStart.position[1]+1.5,rowStart.position[2]]} center style={{pointerEvents:'none'}} zIndexRange={[6,0]}><span className="row-marker">RZĄD {row}</span></Html>}{hover&&<Html position={[hover.position[0],hover.position[1]+2.5,hover.position[2]]} center style={{pointerEvents:'none'}} zIndexRange={[7,0]}><div className="seat-tooltip"><strong>Sektor {hover.sectorId} · Rząd {hover.row}</strong><span>Miejsce {hover.number}<b>{hover.available?`${hover.price} zł`:'Zajęte'}</b></span><small>{hover.available?'Kliknij, aby zobaczyć perspektywę':'Zajęte · perspektywę możesz obejrzeć'}</small></div></Html>}</group>
 }
 function Camera({view,seat,sector,reset,onReady,onPreview}:{view:View;seat:Seat|null;sector:SectorId|null;reset:number;onReady:()=>void;onPreview:(image:string|null)=>void}){
