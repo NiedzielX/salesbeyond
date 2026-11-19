@@ -125,3 +125,7 @@ P1 zapis samych ID/preferencji i oddzielne klucze pełnego/legacy: kod/testy. P2
 
 ## Większy etap Q — polityka + interakcje
 Q-S1: wspólny evaluator dodatków/grup, fizyczne single, stany wydarzenia i liczniki — kod/testy. Q-S2: BVH trafień, stabilne transformacje i delty kolorów — kod/testy/diagnostyka CPU, bez browser proof. Q-S3: backend hold/handoff — konkretny przejrzany kontrakt docs/SEAT_HOLD_CONTRACT.md, brak połączonego Supabase; nowy zasób/sekrety wymagają operacji infrastrukturalnej. Q-S4: końcowe bramki i większy deploy w toku; Q-S5: browser QA nadal dotychczasowa blokada, bez prób obejścia. Log .ai/runs/2026-11-19-sustained-fan-mvp.md. Nie kończono po samych patchach/testach; oba przyrosty integrowane razem.
+
+
+## Przyrost H — wspólne blokady
+H1 migracja transakcyjna i service-role-only: lokalny PostgreSQL 17.6 passed. H2 seed 38 078 i odmowa destrukcyjnego powtórzenia: passed. H3 własność/idempotencja/konkurencja/expiry/single/limiter: passed na prawdziwych połączeniach. H4 API i transport klienta: 112 JS tests + lint/typecheck/build, prywatne zmienne i explicit enable, jeszcze bez widocznych holdów. H5 gated API deploy/HTTP: doing. H6 właściwy Supabase Free/sekrety/migracja/live proof: blokada quota + osobna sesja Supabase; zgoda właściciela już udzielona. H7 widoczne holdy/inventory/odtworzenie: po H6, bez udawania live. Browser QA nadal blokada wcześniejszej automatycznej kontroli.

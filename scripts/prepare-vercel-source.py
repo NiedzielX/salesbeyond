@@ -10,7 +10,7 @@ sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip
 base={'package.json','package-lock.json','vite.config.ts','vercel.json','index.html','tsconfig.json'}
 files=[];manifest=[]
 for name in subprocess.check_output(['git','ls-files','-z'],cwd=root).decode().split('\0'):
-    if not name or not (name in base or name.startswith('src/') and '.test.' not in name or name.startswith('public/')):
+    if not name or not (name in base or name.startswith('src/') and '.test.' not in name or name.startswith('public/') or name.startswith('api/')):
         continue
     path=root/name
     if path.is_symlink():

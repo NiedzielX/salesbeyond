@@ -1,5 +1,7 @@
 # Lekcje projektu
 
+- [2026-11-19] [Instancje foteli: geometria, kolor i indeks trafień](lessons/2026-11-19-instanced-seat-picking.md) — stabilne macierze, delty kolorów, dokładny raycast tylko kandydatów; osobno koszt budowy i CPU/GPU.
+
 - [2026-11-19] [Odtwarzanie przed zapisem i bieżący deep link](lessons/2026-11-19-fan-session-bootstrap.md) — nie nadpisuj wyboru po błędzie odczytu; synchronizuj URL z dalszą nawigacją.
 
 - [2026-11-19] [Koszyk i podgląd w natywnym zaznaczeniu](lessons/2026-11-19-native-cart-preview-selection.md) — odtwarzaj sumę ID, zachowaj osobne limity i blokuj echa poleceń.

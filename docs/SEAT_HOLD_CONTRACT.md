@@ -1,31 +1,36 @@
 # Kontrakt dostępności i czasowej blokady miejsc
 
-Status: propozycja do następnego etapu, **bez połączonej bazy i bez działającej rezerwacji**. Obecny produkt pozostaje demonstracyjny. Read-only API Vercel pokazało integrację Supabase Free, ale `projects=[]`; nie potwierdzono istniejącego połączonego zasobu dla SalesBeyond. Nie odczytywano sekretów ani nie tworzono usług.
+Status: **implementacja SQL/API i transport klienta sprawdzone lokalnie; baza chmurowa niepołączona, publiczne holdy wyłączone**. Obecny produkt pozostaje demonstracyjny. Właściciel zatwierdził Supabase Free, Frankfurt i połączenie z salesbeyond; integracja zgłasza limit dwóch projektów Free. Istniejący zasób supabase-cerise-bucket należy do innej aplikacji i nie został wykorzystany. Dostęp do organizacji Supabase „n” wymaga osobnego uwierzytelnienia, niezależnego od działającego logowania Vercel.
 
-## Proponowane wdrożenie
+## Docelowe wdrożenie
 
-Vercel Functions przy istniejącym `salesbeyond`, transakcyjny Postgres w Supabase, projekt roboczy `salesbeyond-mvp`, region EU Frankfurt. Jeżeli istnieje już właściwy projekt, należy go połączyć zamiast tworzyć drugi. Wersje bibliotek i schema migracji wymagają przeglądu przed implementacją; obecny React/Vite/R3F pozostaje bez migracji frameworka. Nowy zasób, połączenie projektu i konfiguracja sekretów są następną odrębną operacją infrastrukturalną.
+Vercel Functions przy istniejącym `salesbeyond`, transakcyjny Postgres w Supabase, projekt roboczy `salesbeyond-mvp`, region EU Frankfurt. Jeżeli istnieje już właściwy projekt, należy go połączyć zamiast tworzyć drugi. Migracja database/001-seat-holds.sql i adapter bez nowej zależności zostały przejrzane; obecny React/Vite/R3F pozostaje bez migracji frameworka. Właściciel autoryzował nowy zasób Free, połączenie projektu i prywatne zmienne. Ograniczenie planu ani brak sesji nie pozwalają automatycznie wybrać płatnej bazy lub modyfikować innych aplikacji.
 
 Pierwsze wdrożenie dotyczyłoby wyłącznie wspólnej dostępności i holdów na syntetycznym wydarzeniu demo. Nie wymaga udawania oficjalnych cen/siatki biletowej klubu ani podłączania płatności. Dane klubowe i rzeczywisty checkout pozostają odrębnymi integracjami.
 
 ## Minimalne dane
 
-- `events`: ID wydarzenia, `open|paused|closed|cancelled`, waluta, wersja katalogu, limit miejsc i konfigurowany czas blokady. `sold-out` można wyznaczać z dostępności; jawne zamknięcie zawsze wygrywa.
-- `event_seats`: klucz `(event_id, seat_id)`, blok/rząd/numer/kategoria, cena w groszach, `available|blocked|sold|closed`, wersja oraz para `active_hold_id` / `hold_expires_at`. Klient nie ustala ceny/statusu.
-- `fan_sessions`: losowy sekret sesji wydawany w cookie HttpOnly/Secure/SameSite, w bazie wyłącznie hash. Brak danych osobowych w pierwszym demo. ID sesji podane przez klienta nie dowodzi własności.
-- `seat_holds` i `seat_hold_items`: właściciel sesji, event, stan, data wygaśnięcia, niezmienne migawki cen/miejsc, klucz idempotencji i hash żądania. Wariant minimalny używa dostępu powiązanego z sesją, zamiast osobnego tokenu w localStorage/URL.
+- `sb_hold.events`: ID wydarzenia, `open|paused|closed|cancelled`, waluta, wersja katalogu, limit miejsc i konfigurowany czas blokady. `sold-out` można wyznaczać z dostępności; jawne zamknięcie zawsze wygrywa.
+- `sb_hold.seats`: klucz `(event_id, seat_id)`, blok/rząd/numer/kategoria, cena w groszach, `available|blocked|sold|closed`, wersja oraz para `active_hold_id` / `hold_expires_at`. Klient nie ustala ceny/statusu.
+- Sesja: losowy sekret 32-bajtowy w cookie __Host-salesbeyond_fan (HttpOnly/Secure/SameSite=Lax, 24 h); w bazie wyłącznie SHA-256. Nie ma osobnej tabeli sesji ani tokenu w localStorage/URL. Oddzielny GET ustanawia cookie przed pierwszą mutacją.
+- `sb_hold.holds` z niezmienną listą items JSONB: właściciel sesji, event, stan, data wygaśnięcia, niezmienne migawki cen/miejsc, klucz idempotencji i hash żądania. Wariant minimalny używa dostępu powiązanego z sesją, zamiast osobnego tokenu w localStorage/URL.
 
 Kwoty są liczbami całkowitymi, czas UTC z zegara bazy. Limit koszyka klienta nie zastępuje limitu serwera.
 
 ## Operacje API
 
-`GET /api/events/:eventId/inventory` zwraca kanoniczne ID, statusy, ceny, wersję i stan wydarzenia. Nigdy cudze sesje/identyfikatory właściciela/tokenu. Odczyt nie gwarantuje, że miejsce pozostanie wolne.
+Na Vercel jeden endpoint `/api/seat-api` mapuje parametr `op` na poniższe operacje: `status`, `session`, `inventory`, `create`, `hold`. `eventId`, `sectionId` lub `holdId` są parametrami query; create używa POST, odczyt holda GET, zwolnienie DELETE. `GET ?op=status` pokazuje wyłącznie configured/mode, nie potwierdza zdrowia bazy. Wyłączona konfiguracja zwraca dla operacji hold/inventory HTTP 503 backend_not_configured.
 
-`POST /api/events/:eventId/holds` otrzymuje wyłącznie `seatIds`, `expectedCatalogVersion` i `idempotencyKey`; sesja pochodzi z cookie. Cała grupa zostaje zablokowana albo nic. Odpowiedź zawiera ID holda, `active`, termin wygaśnięcia, wersję, migawki pozycji i sumę. Błąd 409 ma jawne kody `held`, `unavailable`, `catalog_changed`, `event_closed` lub `idempotency_key_reused`; klient nie zamienia sam foteli ani nie akceptuje nowej ceny.
+`GET ?op=session` ustanawia sesję bez zwracania sekretu. Same-origin credentials są obowiązkowe. Mutacje wymagają dokładnego Origin aplikacji. Ciało JSON ma limit 8 KB. Współdzielony bucket ogranicza tworzenie do 20 żądań/min na HMAC adresu klienta zaufanego przez Vercel; brak konfiguracji lub awaria nie pozwalają pominąć limitera.
+
+
+`GET /api/events/:eventId/inventory` bez sectionId zwraca krótkie podsumowanie sekcji, wersję i stan wydarzenia; z sectionId zwraca kanoniczne ID, statusy i ceny tego bloku. Nigdy cudze sesje/identyfikatory właściciela/tokenu. Odczyt nie gwarantuje, że miejsce pozostanie wolne.
+
+`POST /api/events/:eventId/holds` otrzymuje wyłącznie `seatIds`, `expectedCatalogVersion` i `idempotencyKey` i opcjonalne `avoidSingle`; sesja pochodzi z cookie. Cała grupa zostaje zablokowana albo nic. Odpowiedź zawiera ID holda, `active`, termin wygaśnięcia, wersję, migawki pozycji i sumę. Błąd 409 ma jawne kody `held`, `unavailable`, `catalog_changed`, `event_closed` lub `idempotency_key_reused`; klient nie zamienia sam foteli ani nie akceptuje nowej ceny.
 
 `GET /api/holds/:id` odczytuje wyłącznie własny hold i rzeczywisty stan/pozostały czas. `DELETE` zwalnia go idempotentnie. Własność jest sprawdzana przy każdym żądaniu, a obca sesja nie otrzymuje danych właściciela.
 
-`POST /api/holds/:id/handoff` działa dopiero po osobnym skonfigurowaniu checkout. Do tego czasu nie ma aktywnego przycisku płatności ani fikcyjnego adresu. Hold nie jest zakupem.
+`POST /api/holds/:id/handoff` pozostaje poza obecną implementacją i wymaga osobnego skonfigurowania checkout. Do tego czasu nie ma aktywnego przycisku płatności ani fikcyjnego adresu. Hold nie jest zakupem.
 
 ## Atomowość i wyścigi
 
@@ -44,4 +49,12 @@ Lokalny koszyk zostaje wyborem ID. Dopiero odpowiedź serwera przełącza UI na 
 
 Przed nazwaniem tego działającą rezerwacją wymagane są testy na rzeczywistej izolowanej bazie: dwa równoległe żądania jednego fotela (dokładnie jeden sukces), konflikt jednego elementu grupy (zero częściowych zapisów), idempotencja, obca sesja, zmiana wersji/ceny, wygaśnięcie i nowy hold, spóźniony cleanup, release, event zamknięty, limit oraz próby bezpośredniego zapisu przez anon. Do tego odbiór desktop/mobile i test uprawnień. Sam klient/testy w pamięci nie spełniają tych kryteriów.
 
-Do ustalenia przed uruchomieniem: właściwy zasób Supabase, potwierdzenie planu/limitów, konfiguracja funkcji/regionu i sekretów, czas holda i wygaszania sesji. Płatności i dane rzeczywistego klubu nie należą do tego kroku provisioningowego.
+## Uruchomienie i dowód
+
+1. Wybrać zatwierdzony zasób Free we Frankfurcie i potwierdzić jego tożsamość/plan. Wykonać migrację jednokrotnie w pustym docelowym schemacie. Nie używać migracji jako bezpiecznego resetu istniejącej bazy.
+2. `node scripts/export-demo-inventory.mjs` generuje transakcyjny seed wszystkich 38 078 kanonicznych foteli z fizycznymi ciągami rzędów. Zapis odmawia, jeśli event enea-demo już istnieje; nie nadpisuje aktywnych holdów. Początkowo niedostępne fotele są blocked, bez deklarowania rzeczywistej sprzedaży. Domyślny hold 600 s, maksymalnie 10 miejsc.
+3. Skonfigurować wyłącznie po stronie serwera SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, HOLD_RATE_LIMIT_SECRET (losowy, co najmniej 32 znaki) oraz APP_ORIGIN. Nie stosować prefiksu VITE_. Dopiero po testach bazy ustawić SEAT_HOLDS_ENABLED=1 i wdrożyć funkcję ponownie. `.env.example` zawiera tylko puste pola i flagę 0.
+4. Zweryfikować publiczny endpoint, własność pomiędzy dwiema sesjami, współbieżność, release i expiry w docelowej usłudze. Transport seatHoldClient jest gotowy; widoczny frontend nadal używa katalogu demo i nie jest jeszcze podłączony do holdów.
+5. Zaplanować retencję historycznych holdów i bucketów. Ważność wynika z zegara DB; retencja nie może usuwać bieżących wskaźników. Obecny przyrost nie instaluje crona ani harmonogramu czyszczenia.
+
+`python3 scripts/test-holds-postgres.py` używa przypiętego PostgreSQL 17.6 w jednorazowym kontenerze Docker bez portów, sieci i trwałych wolumenów. Potwierdzono SQL, uprawnienia anon/RLS, pełny seed i odmowę jego powtórzenia z zachowaniem holda, prawdziwe równoległe połączenia dla jednego fotela/polityki singletonów/jednej sesji/idempotencji oraz współdzielonego limitera. Zastąpienie wygasłego holda działa również przy zablokowanym starym rekordzie; spóźniony release zachowuje nowy wskaźnik. Dowód: docs/qa-evidence/hold-engine/postgres-17.6.txt. To nie jest weryfikacja chmury ani browser QA. Płatności i oficjalne dane klubu pozostają poza tym etapem.

@@ -61,3 +61,11 @@ Filtry ceny/dostępności i liczniki działają nad pełnym katalogiem; nie usuw
 
 ## Wznowienie i bezpośredni podgląd 2026-11-19
 fanSession.ts waliduje wersjonowany zapis samych ID i preferencji, oddzielnie full/legacy; useFanSession bootstrapuje stan przed efektem zapisu. Zapis lokalny nie jest rezerwacją. Wyczyszczenie usuwa wybór także po refresh; nieznane/zajęte/wykraczające poza limit ID odpadają, a ceny wracają z katalogu. Podsumowanie kanonizuje koszyk ponownie. Link seat wskazuje podgląd, nie koszyk, a adres aktualizuje się po zmianie fotela/powrocie. SeatShare ma kopiowanie z alternatywą ręczną. 72 testy + lint/typecheck/build; właściwy lifecycle/clipboard/WebGL wymagają browser QA. Stan wdrożenia w .ai/runs/2026-11-19-fan-session.md.
+
+
+## Polityka demo i koszt interakcji 2026-11-19
+Kod 4d285ec łączy opcjonalną preferencję nowych izolowanych foteli, wspólną walidację grup/dodatków, stany open/closed/sold-out oraz spójne liczniki. To statyczny event demo; nie odczyt wspólnej dostępności. Katalog reguł/topologia jest budowany raz, a kolejne koszyki korzystają z tego samego indeksu. W R3F macierze instancji są stałe, kolory zmieniają tylko dotknięte ID, a lokalny BVH wybiera kandydatów do normalnego Mesh.raycast Three. 87 testów, lint/typecheck/build i CPU evidence; odbiór browser nadal otwarty. Supabase Free figuruje jako integracja bez połączonych projektów; kontrakt następnej warstwy w docs/SEAT_HOLD_CONTRACT.md, bez utworzonego zasobu/holdów. Log .ai/runs/2026-11-19-sustained-fan-mvp.md.
+
+
+## Wykonywalny backend holdów 2026-11-19
+SQL/API/transport klienta przygotowane i sprawdzone na izolowanym PostgreSQL 17.6 (również równoległe połączenia), 112 testów JS oraz lint/typecheck/build. Migracja prywatnych tabel i service-role-only RPC w database/001-seat-holds.sql. Serwer Web API przez api/seat-api.ts, jawnie wyłączony bez SEAT_HOLDS_ENABLED=1 i prywatnych zmiennych. Frontend nadal korzysta z danych demo; Supabase niepołączony, publiczne holdy nieaktywne. Plan Free blokuje quota, osobny dostęp do organizacji „n” w toku. Szczegóły wdrożenia i ograniczeń: docs/SEAT_HOLD_CONTRACT.md.

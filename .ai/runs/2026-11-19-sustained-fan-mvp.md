@@ -29,3 +29,20 @@ Większy spójny etap łączy indeksowane interakcje R3F, stabilne instancje/kol
 
 ## Lekcje
 Uzupełniono istniejącą lekcję continuous-execution bez odkładania korekty właściciela.
+
+
+## Publikacja i dalsza zależność
+- Kod 4d285ecb155e9432d6b382c7c42499d64dd7dbe7, branch feat/local-stadium-renderer. Deploy istniejącego salesbeyond w n-b334: dpl_StLvWGDQioNU93VB78NZyoPhQZR8, salesbeyond-lrxjtxze9-n-b334.vercel.app, production build w toku.
+- Snapshot 50 plików / 330 853 bajty. prepare-vercel-source.py sprawdził każdy plik względem git show SHA:path, bez env/attachments/dokumentów właściciela/historii/testów. API nie zwraca sourceCommit w meta, źródła potwierdza lokalny manifest. Bez push/merge i zmian ustawień usług/domen/sekretów.
+- Po przygotowaniu konkretnego kontraktu następnej warstwy wysłano async pytanie: nowy Supabase Free salesbeyond-mvp EU Frankfurt + połączenie salesbeyond/n-b334 czy istniejąca baza. Wskazano AGENTS §6 zastrzegający nowe operacje infrastrukturalne dla właściciela; opublikowanie obecnego kodu jest już autoryzowane i trwa niezależnie. Odpowiedź nie jest zastępowana upływem czasu. Nie prowizjonowano bazy ani nie implementowano zależnego od tej decyzji wdrożenia.
+
+## Ciąg dalszy — rzeczywisty silnik SQL i granica API
+- 4d285ec opublikowany production READY; root HTML/main/CSS HTTP 200. Kontynuowano po deploy zamiast zamykać etap.
+- Właściciel zatwierdził nowy Supabase Free, Frankfurt i połączenie salesbeyond/n-b334. Plan Free nadal disabled przez limit dwóch aktywnych projektów użytkownika. Nie wybrano płatnego planu ani nie zmodyfikowano innej aplikacji. Zasób supabase-cerise-bucket jest połączony z wine-nhlf.
+- Dodano migrację service-role-only z RLS, transakcyjnymi all-or-nothing holdami, idempotencją, sesją cookie, zegarem DB, polityką singli, release i limiterem. Nie potrzebuje rozszerzeń ani nowego SDK. Adapter serwerowy waliduje host Supabase, używa 8 s timeout i nie ponawia mutacji.
+- API Web Request/Response ogranicza body/Origin, bootstrapuje HttpOnly cookie przed tworzeniem, sanitizuje odpowiedzi/błędy i wymaga wspólnego limitera. Gateway Vercel jest wyłączony bez jawnej flagi SEAT_HOLDS_ENABLED=1 i wszystkich prywatnych zmiennych. Status configured nie jest health-checkiem DB. Transport klienta przygotowany, jeszcze bez widocznego flow holda.
+- Niezależne review Luna SQL/API/client/runtime: bez konkretnego must-fix. Root sprawdził źródła i poprawił limity SQL, replay lifecycle, walidację enumów/odpowiedzi, snapshot argumentów klienta przed await i test fixture.
+- Finalne npm run lint / typecheck / test / build: exit 0, 112/112 testów, build 10,88 s; dowody robocze hold-api-tests.log i hold-api-build.log. git diff --check exit 0.
+- Rzeczywisty lokalny PostgreSQL 17.6: migracja, SQL/RLS fixture, pełny seed 38 078, odmowa podwójnego seedowania z zachowaniem aktywnego holda, konkurencyjne połączenia/rate quota i spóźniony release przeszły. Dwa błędy runnera naprawiono przed finalnym dowodem: czekanie na docelowy proces Postgres zamiast tymczasowego init oraz psql -qAt dla porównania liczby. Nie były to usterki silnika. Dowód w docs/qa-evidence/hold-engine.
+- Vercel CLI 65.11.0 zainstalowany poza repo, wersja z 2026-11-03. Nowy device login zakończył się sukcesem. whoami i jawne project inspect potwierdziły niedzielx, N/n-b334, właściwe salesbeyond. Nie czytano magazynu poświadczeń. Brak linku cwd rozpoznany jawnie, bez automatycznego wyboru projektu.
+- Właściciel zgłosił dostęp do organizacji Supabase „n”. Brak narzędzia Supabase w aktywnym katalogu; przygotowano oficjalny CLI 2.122.1 (2026-11-02) poza repo, własny SUPABASE_HOME, bez zmian HOME. Uruchomiono wyłącznie ręczne logowanie --no-browser; oczekuje jednorazowego kodu użytkownika. Nie użyto zablokowanej automatyzacji browser.
