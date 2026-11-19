@@ -112,4 +112,8 @@ Paczka `salesbeyond-mvp-review-85e6977.zip` zawiera poprzedni kod i pozostaje hi
 | A4: kadr bloku od strony boiska i wspólne punkty oczu | Testy projekcji dla wszystkich bloków i proporcji .6/.95/1.6/2.4 |
 | A5: bieżący deploy Vercel | 06cd758, production READY, salesbeyond.vercel.app; zasoby HTTP 200, szczegóły w logu |
 | A6: pełny browser QA desktop/telefon | Blocked: automatyczna kontrola odrzuciła ponowne otwarcie, brak dowodu zdjęcia wcześniejszej blokady. Bez obejść |
-| A7: kolejne funkcje fan experience | Ready po przyroście: filtry cen/trybun i reguły wyboru; serwer hold/handoff pozostaje osobnym otwartym etapem |
+| A7: kolejne funkcje fan experience | Filtry cen/dostępności, liczniki i propozycja grupy przed dodaniem: kod/testy; wielokrotny wybór odtwarzany w 2D/3D. Dalej reguły wydarzenia i kontrakt hold/handoff |
+
+
+## Przyrost S — wyszukiwanie kibica i oznaczanie koszyka
+S1 cena/dostępność + liczniki bez wyłączania podglądu: kod/testy. S2 zakres blok/trybuna/cały stadion: kod/testy. S3 jawna propozycja 2–6 miejsc przed dodaniem: kod/testy alejek, łuków, budżetu i limitu. S4 wiele ID koszyka + aktywny podgląd w natywnym 2D/R3F/SVG: kod/testy progressive restore bez echa. S5 deploy: w toku. S6 browser QA: dotychczasowa blokada dostępu nadal nierozwiązana; nie ponawiano kanału. Log: .ai/runs/2026-11-18-fan-seat-search.md.

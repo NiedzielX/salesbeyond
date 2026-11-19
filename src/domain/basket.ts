@@ -13,7 +13,7 @@ export function basketTotal(seats:Seat[]){return seats.reduce((sum,s)=>sum+Math.
 
 /** Local demo suggestion only. A server must validate/hold inventory before a real checkout. */
 export function adjacentSeats(sectors:SectorId[],quantity:number,excluded:string[]=[],maxPrice=Infinity):Seat[]{
- if(!Number.isInteger(quantity)||quantity<1||quantity>basketLimit)return [];
+ if(!Number.isInteger(quantity)||quantity<1||quantity>basketLimit||maxPrice<0||!Number.isFinite(maxPrice)&&maxPrice!==Infinity)return [];
  const excludedIds=new Set(excluded);let best:Seat[]=[];let score=Infinity;
  for(const id of sectors)for(const row of sectorRows(id)){
  const seats=seatsInRow(id,row).sort((a,b)=>a.number-b.number);

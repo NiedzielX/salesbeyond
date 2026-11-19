@@ -16,3 +16,10 @@ test('wybrany i wskazany fotel odróżniają się od wyróżnionego rzędu, zaj�
  assert.equal(seatColor(unavailable,unavailable.id,unavailable.id,6),color(selected));
  assert.equal(seatColor(other,null,null,null),color(other));
 });
+test('koszyk ma wspólne oznaczenie, podgląd ma priorytet i nie zmienia statusu zajętego miejsca',()=>{
+ const free=sectorSeats('101').find(s=>s.available)!,taken=sectorSeats('101').find(s=>!s.available)!;
+ assert.equal(seatColor(free,null,null,null,true),'#199b7a');
+ assert.notEqual(seatColor(free,free.id,null,null,true),'#199b7a');
+ assert.equal(seatColor(taken,null,null,null,true),seatColor(taken,null,null,null));
+ assert.equal(seatColor(free,null,free.id,free.row,true),'#199b7a');
+});

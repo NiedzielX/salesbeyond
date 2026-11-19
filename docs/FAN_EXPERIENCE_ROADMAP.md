@@ -11,7 +11,7 @@ Cel właściciela: pełne doświadczenie kibica na poziomie produktu referencyjn
 | 3 | Koszyk i grupy w budżecie | Kod: limit 10, atomowe dodanie, ceny katalogowe i grupy nieprzechodzące przez zajęte miejsca/alejki; dane demo |
 | 4 | Autorska rekonstrukcja Enei w kodzie | Kod i obejrzane rendery CPU: ciągła misa, różne poziomy, biała łukowa membrana, kratownice i gęste niebieskie fotele. Wymaga odbioru w aplikacji i dalszego porównania z referencjami |
 | 5 | Spójność geometrii, foteli i kamery | Wspólne parametry; testy podparcia foteli, kadru panoramy i wszystkich bloków. Dokładne oficjalne rzędy/numery nie są zweryfikowane |
-| 6 | Docelowe kategorie/ceny, filtry i reguły wydarzenia | Otwarte: filtry, liczba miejsc/pozostawianie pojedynczego fotela, sold-out/closed i zmiany dostępności. Kategorie/ulgi klubowe wymagają danych |
+| 6 | Docelowe kategorie/ceny, filtry i reguły wydarzenia | Kod: cena/dostępność i liczniki całego stadionu/trybuny/bloku/rzędu; jawna propozycja grupy przed dodaniem, podgląd poza filtrami. Otwarte: pozostawianie pojedynczego fotela, sold-out/closed i zmiany dostępności; kategorie/ulgi klubowe wymagają danych |
 | 7 | Dostępność, hold/wygaśnięcie/wznowienie/konflikt i checkout handoff | Otwarte: serwer i trwały magazyn; koszyk przeglądarkowy nie blokuje foteli |
 | 8 | Odbiór całego flow na telefonie i desktopie | Zablokowane otwarcie Cloud Desktop przez automatyczną kontrolę; pozostałe prace nie są od tego zależne |
 | 9 | Docelowe MVP pod stałym linkiem | Obecne przyrosty wdrażane na salesbeyond.vercel.app. Sam deploy nie zamyka etapów 4–8 |
@@ -28,8 +28,12 @@ Domyślny plan 2D montuje rzeczywisty `createRenderer` z przypiętego pakietu pr
 
 ## Odbiór i następne gotowe prace
 
-Najpierw rzeczywisty odbiór nowych interakcji, czytelności, czasu ładowania i lotu kamery, gdy dostęp przeglądarkowy zostanie przywrócony. Bez czekania na model można rozwijać filtry i reguły wyboru z etapu 6, potem kontrakt hold/handoff z etapu 7. Odróżniać scenariusz demonstracyjny od integracji sprzedażowej. Kryteria wizualne pozostają otwarte mimo zielonych kontroli kodu i obejrzanych renderów CPU.
+Najpierw rzeczywisty odbiór nowych interakcji, czytelności, czasu ładowania i lotu kamery, gdy dostęp przeglądarkowy zostanie przywrócony. Filtry i propozycje grup z etapu 6 są w kodzie, wraz z oznaczeniem wielu miejsc na mapie i w 3D. Dalej: reguły wydarzenia i kontrakt hold/handoff z etapu 7. Odróżniać scenariusz demonstracyjny od integracji sprzedażowej. Kryteria wizualne pozostają otwarte mimo zielonych kontroli kodu i obejrzanych renderów CPU.
 
 ## Wdrożenie przyrostu
 
 Kod 06cd758 wdrożony na [salesbeyond.vercel.app](https://salesbeyond.vercel.app), production READY, dpl_CqvJJhPkrjxEG5DN1KqGtLKa41A1. HTML, JS, CSS i krytyczne moduły mapy/3D zweryfikowane HTTP 200. Szczegóły i granice w [logu](../.ai/runs/2026-11-18-authored-enea-stadium.md). Brak push/scalenia na GitHub w tym przebiegu; Vercel otrzymał lokalny snapshot źródeł. To wdrożony przyrost, nie odebrane pełne MVP.
+
+
+## Przyrost wyszukiwania i wielu miejsc 2026-11-19
+Filtry i propozycje nie mutują koszyka. Wyszukiwanie zawęża się do wybranego bloku, a bez bloku obejmuje wskazaną trybunę lub cały stadion. Po obejrzeniu propozycja nadal jawnie pokazuje swój blok i rząd. ID koszyka odtwarzane wspólnie z aktywnym podglądem, także po progressive reveal. Kontrole: 65 testów, lint/typecheck/build; stan deploy i niewykonany odbiór przeglądarkowy w [logu](../.ai/runs/2026-11-18-fan-seat-search.md).

@@ -7,10 +7,11 @@ Aktualny kod źródeł: 06cd758. Domyślną scenę z modelem 38 078 miejsc otwie
 1. Otworzyć domyślną stronę na desktopie i telefonie: panorama ciągłej misy, łukowy dach, etykiety wszystkich bloków, odsłonięcie dachu i wybór narożników. Brak poziomego przewijania i błędów konsoli.
 2. Wybrać bloki każdej trybuny i narożników, pierwszy/środkowy/ostatni rząd i fotel. Kadr od strony boiska, podświetlenie bloku/rzędu, lot oraz widok z oczu. Podgląd zajętego fotela nie dodaje go do koszyka.
 3. Przełączyć 2D/3D z wybranym fotelem: te same ID i cena. Zoom/pan, wybór bloku i fotela w natywnym 2D, reset, przejście między rzędami.
-4. Sprawdzić koszyk wielu miejsc, grupę w budżecie, limit 10, usuwanie i zmianę miejsca. Brak udawanej rezerwacji.
+4. Zmienić cenę i dostępność: liczniki dla całego stadionu/trybuny/bloku/rzędu, podgląd każdego fotela nadal działa; filtry zachowują koszyk. Wyszukać grupę w bloku: propozycja nie może pochodzić z innego bloku. Numery i suma przed dodaniem, podgląd zachowuje propozycję, dopiero „Dodaj całą grupę” zmienia koszyk. Sprawdzić limit 10, zajętość, alejki, usuwanie i zmianę miejsca.
+5. Dodać kilka miejsc w różnych blokach. Sprawdzić oznaczenia całego wyboru w 2D/3D i po usunięciu; podgląd zajętego jedenastego fotela nie kasuje 10 pozycji koszyka. Brak udawanej rezerwacji.
 5. Przerwać i wznowić lot; sprawdzić miniaturę po dotarciu, klawiaturę, reduced-motion, resize i cold start. Zarejestrować rzeczywiste czasy/klatki na urządzeniu.
 
-Status: 59/59 testów, lint/typecheck/build; odbiór tej checklisty niewykonany z powodu odrzucenia dostępu do przeglądarki przez automatyczną kontrolę. Nie ponawiać z innego kanału bez rzeczywistego przywrócenia dostępu.
+Status obecnego przyrostu: 65/65 testów, lint/typecheck/build; odbiór tej checklisty niewykonany z powodu odrzucenia dostępu do przeglądarki przez automatyczną kontrolę. Nie ponawiać z innego kanału bez rzeczywistego przywrócenia dostępu.
 
 ---
 

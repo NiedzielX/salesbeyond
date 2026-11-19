@@ -1,18 +1,22 @@
 import type {ISeatmapRenderer,RendererOptions} from '@seatlayer/core';
+import {basketLimit} from '../domain/basket.ts';
 import type {FullChart} from '../data/fullChart.ts';
 import {seatsInRow,type Seat,type SectorId} from '../data/stadium.ts';
 type Host={onSeat:(seat:Seat)=>void;onSector:(id:SectorId)=>void;onOverview:()=>void};
-type Selection={sector:SectorId|null;seat:Seat|null;row:number};
+type Selection={sector:SectorId|null;seat:Seat|null;row:number;chosenIds?:readonly string[]};
 export function mountNativeMap(container:HTMLDivElement,chart:FullChart,host:Host,create:(container:HTMLDivElement,opts:RendererOptions)=>ISeatmapRenderer){
  let live=true,commands=1;let renderer:ISeatmapRenderer|null=null;let previous:Selection|null=null;
  const command=<T>(fn:()=>T)=>{commands++;try{return fn();}finally{commands--;}};
  const restore=(selection:Selection)=>{
  renderer?.clearSelection();const id=selection.seat?chart.nativeByDomain.get(selection.seat.id):null;
- if(id){renderer?.select?.([id]);renderer?.setSelectionFocus?.(id);}else renderer?.setSelectionFocus?.(null);
+ const ids=(selection.chosenIds??[]).map(domainId=>chart.nativeByDomain.get(domainId)).filter((nativeId):nativeId is string=>!!nativeId&&!!chart.domainByNative.get(nativeId)?.available);
+ if(id)ids.push(id);
+ if(ids.length)renderer?.select?.([...new Set(ids)]);
+ renderer?.setSelectionFocus?.(id??null);
  };
  const pick=(id:string)=>{if(!live||commands)return;const seat=chart.domainByNative.get(id);if(!seat)return;command(()=>renderer?.clearSelection());host.onSeat(seat);};
  try{
- renderer=create(container,{maxSelection:2,selectableStatuses:['free','booked'],loadingReveal:'progressive',portraitFitCrop:false,
+ renderer=create(container,{maxSelection:basketLimit+2,selectableStatuses:['free','booked'],loadingReveal:'progressive',portraitFitCrop:false,
  onSeatsRevealed:()=>{if(live&&!commands&&previous)command(()=>restore(previous!));},
  onSelect:seat=>pick(seat.id),onDeselect:seat=>pick(seat.id),
  onSectionTap:id=>{if(live&&!commands&&chart.doc.objects.some(o=>o.type==='section'&&o.id===id))host.onSector(id);},
@@ -29,7 +33,7 @@ export function mountNativeMap(container:HTMLDivElement,chart:FullChart,host:Hos
  if(previous?.sector!==selection.sector){if(selection.sector)current.focusSection?.(selection.sector);else current.overview?.();}
  else if(selection.sector&&previous?.row!==selection.row)current.focusSeats?.(seatsInRow(selection.sector,selection.row).map(s=>chart.nativeByDomain.get(s.id)!).filter(Boolean));
  restore(selection);
- previous={...selection};
+ previous={...selection,chosenIds:[...(selection.chosenIds??[])]};
  });},
  zoomIn(){if(live)current.zoomIn();},zoomOut(){if(live)current.zoomOut();},fit(){if(live)current.zoomToFit();},
  dispose(){if(!live)return;live=false;try{current.destroy();}catch{/* Host DOM cleanup/fallback must remain reachable. */}},

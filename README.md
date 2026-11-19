@@ -21,7 +21,7 @@ npm run build
 npm exec vite preview
 ```
 
-`dist` jest aplikacją statyczną. Podgląd: https://salesbeyond.vercel.app. Stan konkretnego wdrożenia: [log bieżącego przyrostu](.ai/runs/2026-11-18-authored-enea-stadium.md).
+`dist` jest aplikacją statyczną. Podgląd: https://salesbeyond.vercel.app. Stan aktualnego przyrostu i wdrożenia: [log wyszukiwania kibica](.ai/runs/2026-11-18-fan-seat-search.md).
 
 ## Obecna implementacja
 
@@ -29,7 +29,9 @@ npm exec vite preview
 - Wspólny katalog **38 078 foteli w 19 blokach**. Każdy widoczny fotel ma ID i jest dostępny do podglądu także wtedy, gdy demonstracyjny status wyklucza dodanie do koszyka. Zachowano 648 wcześniejszych ID.
 - Domyślny plan 2D używa rzeczywistego `createRenderer` biblioteki: zoom/pan, bloki, rzędy, podgląd i mapowanie na domenowe ID. W razie awarii jego inicjalizacji zostaje prostszy plan SVG. Po awarii WebGL można używać planu 2D.
 - Domyślne 3D używa R3F i własnej geometrii. Instancjonowane siedziska/oparcia, podświetlenie całego bloku, wybór fotela, kadr bloku od strony boiska, lot 2,4 s i perspektywa oczu z tego samego modelu.
-- Koszyk demo do 10 miejsc, grupy 2–6 obok siebie z budżetem, ceny z katalogu, ochrona przed wyborem przez alejkę lub zajęty fotel. Podsumowanie wyraźnie demonstracyjne.
+- Filtry ceny za osobę i dostępności, liczniki pasujących foteli dla całego stadionu, trybuny, bloku i rzędu. Fotele poza filtrem pozostają dostępne do podglądu, a filtr nie kasuje koszyka.
+- Koszyk demo do 10 miejsc i propozycja grupy 2–6 obok siebie w budżecie. Propozycja pokazuje blok/rząd/numery/cenę/sumę przed osobnym obejrzeniem i dodaniem. W wybranym bloku wyszukuje tylko ten blok, bez alejek i foteli już w koszyku.
+- Wszystkie ID koszyka są odtwarzane na domyślnej mapie 2D i oznaczane w 3D/SVG/panelu; aktywny podgląd zachowuje odrębne wyróżnienie. To wybór demonstracyjny, nie rezerwacja.
 - Polski interfejs, wybór w panelu, reset, przełącznik dachu, wycieczka i miniatura z kamery po dotarciu. Nowe zachowanie wymaga jeszcze odbioru w działającej przeglądarce.
 
 ## Co pochodzi z biblioteki
@@ -50,7 +52,7 @@ Repo używa przypiętego skompilowanego pakietu przez jego publiczny kontrakt. *
 
 ## Weryfikacja i ograniczenia
 
-Lint/typecheck/testy/build przechodzą. Testy obejmują rzeczywisty kompilator chartu i wszystkie 38 078 ID/pozycji, ciągłość dachu, podparcie foteli przez geometrię, kadry w różnych proporcjach i kontrakty zdarzeń mapy. [Obejrzane kontrolne rendery CPU](docs/qa-evidence/authored-enea/README.md) pokazują geometrię; nie są zrzutami aplikacji ani dowodem działania WebGL.
+Lint/typecheck/build i 65 testów przechodzą. Testy obejmują rzeczywisty kompilator chartu i wszystkie 38 078 ID/pozycji, ciągłość dachu, podparcie foteli przez geometrię, kadry w różnych proporcjach i kontrakty zdarzeń mapy. [Obejrzane kontrolne rendery CPU](docs/qa-evidence/authored-enea/README.md) pokazują geometrię; nie są zrzutami aplikacji ani dowodem działania WebGL.
 
 Odbiór obecnego 2D/3D i koszyka na desktopie/telefonie pozostaje otwarty: automatyczna kontrola odrzuciła otwarcie przeglądarki z powodu nierozwiązanej wcześniejszej blokady dostępu. Nie używano innego kanału jako obejścia. Historyczne testy starego panelu w `docs/QA.md` nie są odbiorem tego przyrostu.
 
