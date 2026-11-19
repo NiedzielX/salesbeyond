@@ -1,5 +1,7 @@
 # Lekcje projektu
 
+- [2026-11-19] [Odtwarzanie przed zapisem i bieżący deep link](lessons/2026-11-19-fan-session-bootstrap.md) — nie nadpisuj wyboru po błędzie odczytu; synchronizuj URL z dalszą nawigacją.
+
 - [2026-11-19] [Koszyk i podgląd w natywnym zaznaczeniu](lessons/2026-11-19-native-cart-preview-selection.md) — odtwarzaj sumę ID, zachowaj osobne limity i blokuj echa poleceń.
 
 - [2026-11-18] [Ciągłe wykonanie zatwierdzonego MVP](lessons/2026-11-18-continuous-execution.md) — po przyroście wybierz następne gotowe zadanie; blokada GPU nie blokuje całego backlogu.

@@ -1,8 +1,9 @@
 import {resolveSeat,sectorRows,seatsInRow,type Seat,type SectorId,layout} from '../data/stadium.ts';
 export const basketLimit=10;
-export type BasketAction={type:'add';ids:string[]}|{type:'remove';id:string}|{type:'clear'};
+export type BasketAction={type:'add';ids:string[]}|{type:'remove';id:string}|{type:'clear'}|{type:'replace';ids:string[]};
 export function basketReducer(state:Seat[],action:BasketAction):Seat[]{
  if(action.type==='clear')return [];
+ if(action.type==='replace')return canonicalBasket(action.ids).seats;
  if(action.type==='remove')return state.filter(s=>s.id!==action.id);
  const ids=[...new Set(action.ids)].filter(id=>!state.some(s=>s.id===id));
  const candidates=ids.map(resolveSeat);
@@ -27,4 +28,22 @@ export function adjacentSeats(sectors:SectorId[],quantity:number,excluded:string
  }
  }
  return best;
+}
+
+
+export function canonicalBasket(ids:readonly unknown[],resolve:(id:string)=>Seat|null=resolveSeat){
+ const seen=new Set<string>(),seats:Seat[]=[];let discarded=0;
+ for(const id of ids){
+ if(typeof id!=='string'||seen.has(id)){discarded++;continue;}
+ seen.add(id);const seat=resolve(id);
+ if(!seat?.available||seats.length>=basketLimit){discarded++;continue;}
+ seats.push(seat);
+ }
+ return {seats,discarded};
+}
+/** This validates the local catalogue; only a real server can create a reservation. */
+export function reconcileBasket(previous:readonly Seat[],resolve:(id:string)=>Seat|null=resolveSeat){
+ const result=canonicalBasket(previous.map(s=>s.id),resolve);
+ const repriced=result.seats.filter(s=>previous.find(old=>old.id===s.id)?.price!==s.price).length;
+ return {...result,repriced,changed:result.discarded>0||repriced>0};
 }

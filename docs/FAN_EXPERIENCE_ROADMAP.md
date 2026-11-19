@@ -39,3 +39,7 @@ Kod 06cd758 wdrożony na [salesbeyond.vercel.app](https://salesbeyond.vercel.app
 Filtry i propozycje nie mutują koszyka. Wyszukiwanie zawęża się do wybranego bloku, a bez bloku obejmuje wskazaną trybunę lub cały stadion. Po obejrzeniu propozycja nadal jawnie pokazuje swój blok i rząd. ID koszyka odtwarzane wspólnie z aktywnym podglądem, także po progressive reveal. Kontrole: 65 testów, lint/typecheck/build; stan deploy i niewykonany odbiór przeglądarkowy w [logu](../.ai/runs/2026-11-18-fan-seat-search.md).
 
 Aktualny kod wyszukiwania 2600d4f jest wdrożony production READY na salesbeyond.vercel.app (dpl_H1UvmwKNzTenP6r1R8c4RvKFLgZw). Potwierdzono nowy HTML/JS/CSS i moduły 2D/3D. Bez push/merge GitHub, bez deklaracji odbioru przeglądarkowego.
+
+
+## Powrót do wyboru i link do fotela 2026-11-19
+Koszyk i kontekst można wznowić po odświeżeniu; dane lokalne są walidowane i kanonizowane, z osobnymi kluczami wariantu pełnego/legacy. Zapis nie zawiera cen, obrazów ani danych osobowych. Niedostępny/uszkodzony storage pozostawia działający wybór. Podsumowanie kontroluje aktualny katalog demo i informuje o zmianie ceny/statusu przed kolejnym podsumowaniem. Link do fotela nie kopiuje koszyka; adres śledzi ostatni podgląd i usuwa parametr fotela po powrocie do panoramy. Kontrole: 72 testy, lint/typecheck/build. To lokalne wznowienie, nie serwerowy hold. Kolejny backend musi zapewnić wspólną atomową dostępność, token/wygaśnięcie, konflikty i checkout handoff. Stan publikacji i ograniczenia: [log](../.ai/runs/2026-11-19-fan-session.md).

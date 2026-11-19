@@ -11,7 +11,7 @@ Aktualny kod źródeł: 06cd758. Domyślną scenę z modelem 38 078 miejsc otwie
 5. Dodać kilka miejsc w różnych blokach. Sprawdzić oznaczenia całego wyboru w 2D/3D i po usunięciu; podgląd zajętego jedenastego fotela nie kasuje 10 pozycji koszyka. Brak udawanej rezerwacji.
 5. Przerwać i wznowić lot; sprawdzić miniaturę po dotarciu, klawiaturę, reduced-motion, resize i cold start. Zarejestrować rzeczywiste czasy/klatki na urządzeniu.
 
-Status obecnego przyrostu: 65/65 testów, lint/typecheck/build; odbiór tej checklisty niewykonany z powodu odrzucenia dostępu do przeglądarki przez automatyczną kontrolę. Nie ponawiać z innego kanału bez rzeczywistego przywrócenia dostępu.
+Status obecnego przyrostu: 72/72 testy, lint/typecheck/build; odbiór tej checklisty niewykonany z powodu odrzucenia dostępu do przeglądarki przez automatyczną kontrolę. Nie ponawiać z innego kanału bez rzeczywistego przywrócenia dostępu.
 
 ---
 
@@ -36,6 +36,13 @@ Alternatywnie z repo: `npm ci && npm run dev`, następnie ten sam parametr w adr
 3. Przerwać lot przeciągnięciem i użyć ponowienia; zresetować w trakcie; zmienić10 miejsc bez reload. Nie akceptować mylącej miniatury ani deklaracji dotarcia po anulowaniu.
 4. Przejść próbki sektorów101–103/rzędów1,6,12/pierwsze i ostatnie wolne miejsce oraz testy mobilne i klawiaturę z docs/LOCAL_RENDERER_QA.md.
 5. Zweryfikować true WebGL lifecycle, reduced-motion, highlight i wszystkie requesty cold start. Brak obcego API, kont, kluczy i zewnętrznych zasobów wymaganych do działania jest kryterium do sprawdzenia, nie deklaracją już odebraną naGPU.
+
+## Odbiór wznowienia i linku
+1. Wybrać 2–3 miejsca, zmienić cenę/trybunę i widok 2D, odświeżyć. Sprawdzić ID, sumę, filtry i oznaczenia koszyka. Usunąć jedno miejsce/wyczyścić, ponownie odświeżyć: usunięte nie wracają.
+2. Skopiować link do fotela i otworzyć w drugiej karcie. Odbiorca ogląda wskazany fotel z własnym zapisanym koszykiem. Wybrać inny fotel i odświeżyć: adres wskazuje nowy. Po panoramie brak parametru seat.
+3. Sprawdzić zajęty fotel jako podgląd, nie dodanie; niedozwolony link w legacy i nieznane ID. Przy niedostępnym clipboard widoczny jest link do ręcznego kopiowania.
+4. Sprawdzić zablokowany storage i uszkodzony zapis: czytelna informacja, działający bieżący wybór, brak awarii/ukrytej utraty odczytanego koszyka. Zapisy zawierają ID i preferencje, bez cen/obrazów.
+Te kroki pozostają niewykonane w przeglądarce z powodu wcześniej odrzuconego dostępu. Testy domeny nie zastępują lifecycle React, clipboard ani WebGL.
 
 ## Stan dowodów
 Kod danych, geometrii, nawigacji, mostka i resource-owner ma43 przechodzące testy Node. Lint/typecheck/build i focused review zapisane w logu. Testy lifecycle stosują kontrolowane factories; nie są uruchomieniem prawdziwego React StrictMode ani GPU.
