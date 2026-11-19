@@ -57,3 +57,7 @@ Wcześniejsze sekcje opisują historię węższego wariantu integracyjnego. Aktu
 
 ## Wyszukiwanie kibica i wiele ID wyboru 2026-11-19
 Filtry ceny/dostępności i liczniki działają nad pełnym katalogiem; nie usuwają dostępu do podglądu ani koszyka. Dobór grupy ograniczony do aktywnego bloku, a poza blokiem do trybuny/całego stadionu. GroupFinder pokazuje propozycję z ceną przed dodaniem, a chosenIds łączy koszyk z wizualnym zaznaczeniem domyślnego 2D/R3F/SVG. Podgląd nie jest zakupem; domenowy limit koszyka nadal 10. 65 testów, lint/typecheck/build. Kod 2600d4f opublikowany na Vercel, production READY; odbiór UI pozostaje otwarty. Log: .ai/runs/2026-11-18-fan-seat-search.md.
+
+
+## Wznowienie i bezpośredni podgląd 2026-11-19
+fanSession.ts waliduje wersjonowany zapis samych ID i preferencji, oddzielnie full/legacy; useFanSession bootstrapuje stan przed efektem zapisu. Zapis lokalny nie jest rezerwacją. Wyczyszczenie usuwa wybór także po refresh; nieznane/zajęte/wykraczające poza limit ID odpadają, a ceny wracają z katalogu. Podsumowanie kanonizuje koszyk ponownie. Link seat wskazuje podgląd, nie koszyk, a adres aktualizuje się po zmianie fotela/powrocie. SeatShare ma kopiowanie z alternatywą ręczną. 72 testy + lint/typecheck/build; właściwy lifecycle/clipboard/WebGL wymagają browser QA. Stan wdrożenia w .ai/runs/2026-11-19-fan-session.md.

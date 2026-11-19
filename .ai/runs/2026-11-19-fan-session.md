@@ -1,6 +1,6 @@
 ---
 started: 2026-11-19
-ended: null
+ended: 2026-11-19
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
 outcome: partial
@@ -23,7 +23,15 @@ Kontynuacja pełnego doświadczenia kibica: powrót do lokalnego wyboru po odśw
 - `git diff --check`: exit 0. Odbiór desktop/mobile nadal niewykonany: brak dowodu zdjęcia poprzedniej blokady automatycznej kontroli. Nie ponawiano ani nie obchodzono jej innym kanałem.
 
 ## Wynik
-Gotowy przyrost lokalnego wznowienia, kanonizacji podsumowania i udostępniania widoku fotela. Gotowy do wdrożenia w istniejącym Vercel, bez zmiany usług/domen/ochrony. Pełny serwerowy hold/checkout i browser QA pozostają otwarte.
+Gotowy przyrost lokalnego wznowienia, kanonizacji podsumowania i udostępniania widoku fotela. Kod a8010c192a2910939693387b15c7282af23bba1b zapisany na gałęzi feat/local-stadium-renderer. Wdrożenie production w istniejącym Vercel salesbeyond / n-b334 uruchomione: dpl_GeHLBkuf7oW4kmodnRSRGtWVqn7M, salesbeyond-fxztkkdfd-n-b334.vercel.app. Snapshot 45 plików / 315 974 bajty, zweryfikowany bajtowo skryptem prepare-vercel-source.py względem git show SHA:path. Bez env, plików właściciela, historii, node_modules i dokumentacji. Bez zmian usług/domen/ochrony. Brak push/merge GitHub. API nie zwraca sourceCommit w meta; lokalny manifest jest dowodem wysłanych źródeł. Build READY. Pełny serwerowy hold/checkout i browser QA pozostają otwarte.
 
 ## Lekcje
 .ai/lessons/2026-11-19-fan-session-bootstrap.md — odtwórz przed pierwszym zapisem, odczyt z błędem nie może nadpisać zapisanych ID, a deep link musi śledzić dalszą nawigację.
+
+
+## Odbiór wdrożenia
+- Production READY: dpl_GeHLBkuf7oW4kmodnRSRGtWVqn7M, źródła a8010c1; salesbeyond.vercel.app i salesbeyond-n-b334.vercel.app; aliasError null. Build 92,29 s (1795084285261 → 1795084377551).
+- HTML stałego adresu HTTP 200 z nowym index-l5nCoEat.js i index-Xt3E2fp2.css. Oba HTTP 200 z właściwymi MIME. Treść zawiera nowy klucz sesji, komunikat odtworzenia, przycisk kopiowania i style notice/share.
+- Stadium-yIeUMByp.js i StadiumMap-CBZH-3dd.js HTTP 200/application/javascript. Kontrola HTTP modułów i linku nie wykonuje JavaScript i nie zastępuje browser QA.
+- Error/fatal runtime logs 15m: brak wpisów. Statyczny hosting nie raportuje tym odczytem konsoli klienta; bez nowego monitoringu/drainów. Nie deklarować sprawdzonego localStorage/clipboard/React lifecycle w prawdziwej przeglądarce.
+- Kolejne zmiany po a8010c1 dotyczą wyłącznie dokumentacji. Worktree źródeł zgodny z wdrożonym snapshotem, bez push/merge GitHub.
