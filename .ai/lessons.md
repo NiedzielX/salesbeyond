@@ -1,5 +1,7 @@
 # Lekcje projektu
 
+- [2026-11-19] [Koszyk i podgląd w natywnym zaznaczeniu](lessons/2026-11-19-native-cart-preview-selection.md) — odtwarzaj sumę ID, zachowaj osobne limity i blokuj echa poleceń.
+
 - [2026-11-18] [Ciągłe wykonanie zatwierdzonego MVP](lessons/2026-11-18-continuous-execution.md) — po przyroście wybierz następne gotowe zadanie; blokada GPU nie blokuje całego backlogu.
 
 - [2026-11-18] [Materiały w przygotowanej geometrii](lessons/2026-11-18-prepared-geometry-colors.md) — weryfikuj faktyczne kolory/bufory; CPU i backface-culling nie zastępują odbioru WebGL.

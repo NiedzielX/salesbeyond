@@ -53,3 +53,7 @@ Właściciel odrzucił czekanie na BLEND/GLB. Model tworzony kodem z `eneaLayout
 Domyślna mapa 2D używa prawdziwego createRenderer z @seatlayer/core, chartu wszystkich foteli i jawnych map ID; SVG służy jako fallback po błędzie inicjalizacji. Domyślne 3D to własna geometria R3F, a `?renderer=local` zachowuje historyczny eksperyment natywnego 3D z 648 miejscami. Nie przeniesiono całego produktu. Moduły danych importują jedynie typy pakietu, właściwy runtime mapy jest ładowany dopiero przy użyciu 2D.
 
 Wcześniejsze sekcje opisują historię węższego wariantu integracyjnego. Aktualny stan weryfikacji: kontrole kodu i rendery CPU przechodzą; odbiór nowych 2D/3D w przeglądarce pozostaje otwarty z powodu odrzucenia dostępu przez automatyczną kontrolę. Log: `.ai/runs/2026-11-18-authored-enea-stadium.md`.
+
+
+## Wyszukiwanie kibica i wiele ID wyboru 2026-11-19
+Filtry ceny/dostępności i liczniki działają nad pełnym katalogiem; nie usuwają dostępu do podglądu ani koszyka. Dobór grupy ograniczony do aktywnego bloku, a poza blokiem do trybuny/całego stadionu. GroupFinder pokazuje propozycję z ceną przed dodaniem, a chosenIds łączy koszyk z wizualnym zaznaczeniem domyślnego 2D/R3F/SVG. Podgląd nie jest zakupem; domenowy limit koszyka nadal 10. 65 testów, lint/typecheck/build. Kod 2600d4f opublikowany na Vercel, production READY; odbiór UI pozostaje otwarty. Log: .ai/runs/2026-11-18-fan-seat-search.md.

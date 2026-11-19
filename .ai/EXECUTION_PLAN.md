@@ -116,4 +116,4 @@ Paczka `salesbeyond-mvp-review-85e6977.zip` zawiera poprzedni kod i pozostaje hi
 
 
 ## Przyrost S — wyszukiwanie kibica i oznaczanie koszyka
-S1 cena/dostępność + liczniki bez wyłączania podglądu: kod/testy. S2 zakres blok/trybuna/cały stadion: kod/testy. S3 jawna propozycja 2–6 miejsc przed dodaniem: kod/testy alejek, łuków, budżetu i limitu. S4 wiele ID koszyka + aktywny podgląd w natywnym 2D/R3F/SVG: kod/testy progressive restore bez echa. S5 deploy: w toku. S6 browser QA: dotychczasowa blokada dostępu nadal nierozwiązana; nie ponawiano kanału. Log: .ai/runs/2026-11-18-fan-seat-search.md.
+S1 cena/dostępność + liczniki bez wyłączania podglądu: kod/testy. S2 zakres blok/trybuna/cały stadion: kod/testy. S3 jawna propozycja 2–6 miejsc przed dodaniem: kod/testy alejek, łuków, budżetu i limitu. S4 wiele ID koszyka + aktywny podgląd w natywnym 2D/R3F/SVG: kod/testy progressive restore bez echa. S5 deploy: 2600d4f production READY, salesbeyond.vercel.app; zasoby HTTP 200. S6 browser QA: dotychczasowa blokada dostępu nadal nierozwiązana; nie ponawiano kanału. Log: .ai/runs/2026-11-18-fan-seat-search.md.

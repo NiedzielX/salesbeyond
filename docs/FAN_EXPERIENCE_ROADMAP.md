@@ -37,3 +37,5 @@ Kod 06cd758 wdrożony na [salesbeyond.vercel.app](https://salesbeyond.vercel.app
 
 ## Przyrost wyszukiwania i wielu miejsc 2026-11-19
 Filtry i propozycje nie mutują koszyka. Wyszukiwanie zawęża się do wybranego bloku, a bez bloku obejmuje wskazaną trybunę lub cały stadion. Po obejrzeniu propozycja nadal jawnie pokazuje swój blok i rząd. ID koszyka odtwarzane wspólnie z aktywnym podglądem, także po progressive reveal. Kontrole: 65 testów, lint/typecheck/build; stan deploy i niewykonany odbiór przeglądarkowy w [logu](../.ai/runs/2026-11-18-fan-seat-search.md).
+
+Aktualny kod wyszukiwania 2600d4f jest wdrożony production READY na salesbeyond.vercel.app (dpl_H1UvmwKNzTenP6r1R8c4RvKFLgZw). Potwierdzono nowy HTML/JS/CSS i moduły 2D/3D. Bez push/merge GitHub, bez deklaracji odbioru przeglądarkowego.
