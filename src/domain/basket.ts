@@ -1,23 +1,23 @@
 import {resolveSeat,sectorRows,seatsInRow,type Seat,type SectorId,layout} from '../data/stadium.ts';
 export const basketLimit=10;
 export type BasketAction={type:'add';ids:string[]}|{type:'remove';id:string}|{type:'clear'}|{type:'replace';ids:string[]};
-export function basketReducer(state:Seat[],action:BasketAction):Seat[]{
+export function basketReducer(state:Seat[],action:BasketAction,resolve:(id:string)=>Seat|null=resolveSeat):Seat[]{
  if(action.type==='clear')return [];
- if(action.type==='replace')return canonicalBasket(action.ids).seats;
+ if(action.type==='replace')return canonicalBasket(action.ids,resolve).seats;
  if(action.type==='remove')return state.filter(s=>s.id!==action.id);
  const ids=[...new Set(action.ids)].filter(id=>!state.some(s=>s.id===id));
- const candidates=ids.map(resolveSeat);
+ const candidates=ids.map(resolve);
  if(state.length+ids.length>basketLimit||candidates.some(s=>!s?.available))return state;
  return [...state,...candidates as Seat[]];
 }
 export function basketTotal(seats:Seat[]){return seats.reduce((sum,s)=>sum+Math.round(s.price*100),0)/100;}
 
 /** Local demo suggestion only. A server must validate/hold inventory before a real checkout. */
-export function adjacentSeats(sectors:SectorId[],quantity:number,excluded:string[]=[],maxPrice=Infinity,accept?:(candidate:Seat[])=>boolean):Seat[]{
+export function adjacentSeats(sectors:SectorId[],quantity:number,excluded:string[]=[],maxPrice=Infinity,accept?:(candidate:Seat[])=>boolean,resolve:(id:string)=>Seat|null=resolveSeat):Seat[]{
  if(!Number.isInteger(quantity)||quantity<1||quantity>basketLimit||maxPrice<0||!Number.isFinite(maxPrice)&&maxPrice!==Infinity)return [];
  const excludedIds=new Set(excluded);let best:Seat[]=[];let score=Infinity;
  for(const id of sectors)for(const row of sectorRows(id)){
- const seats=seatsInRow(id,row).sort((a,b)=>a.number-b.number);
+ const seats=seatsInRow(id,row).map(s=>resolve(s.id)??s).sort((a,b)=>a.number-b.number);
  for(let i=0;i<=seats.length-quantity;i++){
  const group=seats.slice(i,i+quantity);
  if(group.some(s=>!s.available||s.price>maxPrice||excludedIds.has(s.id)))continue;

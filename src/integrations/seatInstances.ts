@@ -2,7 +2,7 @@ import {Color,InstancedMesh,Object3D} from 'three';
 import {eneaLayout} from '../data/eneaLayout.ts';
 import type {Seat} from '../data/stadium.ts';
 import {seatColor} from '../components/seatFeedback.ts';
-type Feedback={selectedId:string|null;hoveredId:string|null;row:number|null;emphasized:boolean;chosen:ReadonlySet<string>};
+type Feedback={selectedId:string|null;hoveredId:string|null;row:number|null;emphasized:boolean;chosen:ReadonlySet<string>;inventory?:ReadonlyMap<string,Seat&{ownedHold?:boolean}>};
 export function writeSeatTransforms(seats:readonly Seat[],base:InstancedMesh,backs:InstancedMesh){
  const object=new Object3D();
  seats.forEach((seat,index)=>{
@@ -16,10 +16,21 @@ export function writeSeatTransforms(seats:readonly Seat[],base:InstancedMesh,bac
 export function createSeatColors(seats:readonly Seat[],base:InstancedMesh,backs:InstancedMesh){
  const previous:string[]=[],color=new Color(),byId=new Map(seats.map((seat,index)=>[seat.id,index])),byRow=new Map<number,number[]>();
  seats.forEach((seat,index)=>{const row=byRow.get(seat.row)??[];row.push(index);byRow.set(seat.row,row);});
+ const previousAvailability=seats.map(seat=>seat.available),previousOwned=seats.map(()=>false);
  let last:Feedback|null=null;
  return {update(feedback:Feedback){
  let changed=0;const candidates=new Set<number>();
  const add=(id:string|null)=>{const index=id===null?undefined:byId.get(id);if(index!==undefined)candidates.add(index);};
+ if(last&&last.inventory!==feedback.inventory){
+  seats.forEach((seat,index)=>{
+   const available=feedback.inventory?.get(seat.id)?.available??seat.available;
+   const owned=feedback.inventory?.get(seat.id)?.ownedHold===true;
+   if(previousAvailability[index]!==available||previousOwned[index]!==owned)candidates.add(index);
+   previousAvailability[index]=available;previousOwned[index]=owned;
+  });
+ }else if(!last&&feedback.inventory){
+  seats.forEach((seat,index)=>{previousAvailability[index]=feedback.inventory?.get(seat.id)?.available??seat.available;previousOwned[index]=feedback.inventory?.get(seat.id)?.ownedHold===true;});
+ }
  if(!last||last.emphasized!==feedback.emphasized)seats.forEach((_,index)=>candidates.add(index));
  else{
  if(last.selectedId!==feedback.selectedId){add(last.selectedId);add(feedback.selectedId);}
@@ -29,7 +40,8 @@ export function createSeatColors(seats:readonly Seat[],base:InstancedMesh,backs:
  for(const id of feedback.chosen)if(!last.chosen.has(id))add(id);
  }
  for(const index of candidates){const seat=seats[index];
- const value=feedback.emphasized&&!feedback.chosen.has(seat.id)&&feedback.selectedId!==seat.id?'#f6a63c':seatColor(seat,feedback.selectedId,feedback.hoveredId,feedback.row,feedback.chosen.has(seat.id));
+ const live=feedback.inventory?.get(seat.id),colorSeat=live?{...seat,price:live.price,available:live.available,ownedHold:live.ownedHold}:seat;
+ const value=feedback.emphasized&&!feedback.chosen.has(seat.id)&&feedback.selectedId!==seat.id?'#f6a63c':seatColor(colorSeat,feedback.selectedId,feedback.hoveredId,feedback.row,feedback.chosen.has(seat.id));
  if(previous[index]===value)continue;previous[index]=value;color.set(value);base.setColorAt(index,color);backs.setColorAt(index,color);changed++;
  }
  last={...feedback,chosen:new Set(feedback.chosen)};

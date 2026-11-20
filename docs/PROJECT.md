@@ -77,3 +77,7 @@ Właściciel wybrał prywatny sb_hold w istniejącym Supabase Frankfurt. Migracj
 
 ## Przygotowany readmodel dostępności
 inventoryOverlay.ts przyjmuje kompletne migawki pojedynczego bloku, zachowuje wszystkie kanoniczne ID i pozycje, nakłada ceny/statusy/ownedHold. Kolejność odpowiedzi kontroluje sekwencja żądania wyznaczona przed fetch; zmiana globalnej wersji usuwa poprzednie migawki sekcji. 8testów w tym pełny katalog, 143+1 testów całego repo. To przygotowany moduł: runtime aktualizacji planu/R3F pozostaje następnym krokiem i nadal nie jest deklarowany jako działający.
+
+
+## Aktualizacja aktywnego bloku
+useSectionInventory odświeża aktywny blok co15s /focus /ręcznie /zmiana holda. App nakłada ten sam odczyt na grid, ceny, liczniki, reguły i grupy, native2D/SVG i kolorR3F; macierze/geometria pozostająstałe. Własnyholdodróżnionyodcudzego. Nieodczytane bloki nadal są katalogiemdemo, stan źródła komunikowany przy aktywnym bloku. Cena/dostępność jest ponownie sprawdzana przed holdem. Kod i147+1 testy; rzeczywisty WebGL/React odbiór otwarty.

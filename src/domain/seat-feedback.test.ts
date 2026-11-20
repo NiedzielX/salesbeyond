@@ -21,5 +21,7 @@ test('koszyk ma wspólne oznaczenie, podgląd ma priorytet i nie zmienia statusu
  assert.equal(seatColor(free,null,null,null,true),'#199b7a');
  assert.notEqual(seatColor(free,free.id,null,null,true),'#199b7a');
  assert.equal(seatColor(taken,null,null,null,true),seatColor(taken,null,null,null));
+ assert.equal(seatColor({...taken,ownedHold:true},null,null,null,true),'#199b7a');
+ assert.equal(seatColor(taken,taken.id,null,null,true),'#ffd268');
  assert.equal(seatColor(free,null,free.id,free.row,true),'#199b7a');
 });

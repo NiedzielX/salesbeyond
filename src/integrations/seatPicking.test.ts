@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {BackSide,BoxGeometry,DoubleSide,FrontSide,Group,InstancedMesh,Matrix4,MeshBasicMaterial,Raycaster,Vector3,type Intersection} from 'three';
+import {BackSide,BoxGeometry,Color,DoubleSide,FrontSide,Group,InstancedMesh,Matrix4,MeshBasicMaterial,Raycaster,Vector3,type Intersection} from 'three';
 import {sectorSeats} from '../data/stadium.ts';
 import {createSeatColors,writeSeatTransforms} from './seatInstances.ts';
 import {installSeatPicking} from './seatPicking.ts';
@@ -90,6 +90,30 @@ test('hover, selection, and basket color changes leave transform buffers untouch
  writes.length=0;backWrites.length=0;feedback.selectedId=null;feedback.chosen.add(seats.find(seat=>seat.available&&seat.id!==seats[hoveredIndex].id)!.id);
  const chosenIndex=seats.findIndex(seat=>feedback.chosen.has(seat.id));
  assert.equal(updates.update(feedback),2);assert.deepEqual(writes,[hoveredIndex,chosenIndex]);assert.deepEqual(backWrites,[hoveredIndex,chosenIndex]);
+ assert.deepEqual(Array.from(base.instanceMatrix.array),baseMatrices);assert.deepEqual(Array.from(backs.instanceMatrix.array),backMatrices);
+ geometry.dispose();material.dispose();
+});
+
+test('inventory availability updates only changed seat colors and keeps hover deltas bounded',()=>{
+ const seats=sectorSeats('101'),geometry=new BoxGeometry(1,.16,.44),material=new MeshBasicMaterial();
+ const base=new InstancedMesh(geometry,material,seats.length),backs=new InstancedMesh(geometry,material,seats.length);
+ writeSeatTransforms(seats,base,backs);
+ const baseMatrices=Array.from(base.instanceMatrix.array),backMatrices=Array.from(backs.instanceMatrix.array);
+ const updates=createSeatColors(seats,base,backs),writes:number[]=[],original=base.setColorAt.bind(base);
+ base.setColorAt=(index,color)=>{writes.push(index);original(index,color);};
+ const inventory=new Map<string,typeof seats[number]&{ownedHold?:boolean}>(),hovered=seats.find(seat=>seat.available)!,target=seats.find(seat=>seat.available&&seat.id!==hovered.id)!;
+ const feedback={selectedId:null as string|null,hoveredId:hovered.id,row:null as number|null,emphasized:false,chosen:new Set<string>(),inventory};
+ assert.equal(updates.update(feedback),seats.length);writes.length=0;
+ const changed={...target,available:false};const nextInventory=new Map(inventory);nextInventory.set(target.id,changed);feedback.inventory=nextInventory;
+ const targetIndex=seats.findIndex(seat=>seat.id===target.id);
+ assert.equal(updates.update(feedback),1);assert.deepEqual(writes,[targetIndex]);
+ const color=new Color();base.getColorAt(targetIndex,color);assert.equal(`#${color.getHexString()}`,'#88929c');
+ feedback.chosen.add(target.id);assert.equal(updates.update(feedback),0,'another session hold stays gray in an unconfirmed cart');
+ feedback.inventory=new Map([[target.id,{...target,available:false,ownedHold:true}]]);assert.equal(updates.update(feedback),1);base.getColorAt(targetIndex,color);assert.equal(`#${color.getHexString()}`,'#199b7a');
+ feedback.inventory=new Map([[target.id,{...target,available:false,ownedHold:false}]]);assert.equal(updates.update(feedback),1);base.getColorAt(targetIndex,color);assert.equal(`#${color.getHexString()}`,'#88929c');
+ writes.length=0;feedback.hoveredId=seats.find(seat=>seat.available&&seat.id!==hovered.id&&seat.id!==target.id)!.id;
+ const hoveredIndex=seats.findIndex(seat=>seat.id===feedback.hoveredId);
+ assert.equal(updates.update(feedback),2);assert.deepEqual(writes,[seats.findIndex(seat=>seat.id===hovered.id),hoveredIndex]);
  assert.deepEqual(Array.from(base.instanceMatrix.array),baseMatrices);assert.deepEqual(Array.from(backs.instanceMatrix.array),backMatrices);
  geometry.dispose();material.dispose();
 });

@@ -60,7 +60,7 @@ export function createSeatHoldClient(options:{fetcher?:Fetcher;endpoint?:string}
  }
  async function request(op:string,params:Record<string,string|undefined>={},body?:unknown,method?:'GET'|'POST'|'DELETE'){
   let response:Response;
-  try{response=await fetcher(url(op,params),{method:method??(body===undefined?'GET':'POST'),credentials:'same-origin',cache:'no-store',...(body===undefined?{}:{headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})});}
+  try{response=await fetcher(url(op,params),{method:method??(body===undefined?'GET':'POST'),credentials:'same-origin',cache:'no-store',signal:AbortSignal.timeout(12000),...(body===undefined?{}:{headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})});}
   catch{throw new SeatHoldClientError('network_error',null);}
   let payload:unknown;try{payload=await response.json();}catch{if(response.ok)invalidResponse();throw new SeatHoldClientError('backend_unavailable',response.status);}
   if(!response.ok){

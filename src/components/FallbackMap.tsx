@@ -3,8 +3,8 @@ import {Plus,Minus,LocateFixed} from 'lucide-react';
 import {allSectors,sectors,sectorSeats,type Seat,type SectorId} from '../data/stadium';
 import {mapBounds,seatBounds} from '../domain/map';
 
-type Props={sector:SectorId|null;seat:Seat|null;row:number;chosenIds:readonly string[];legacyOnly?:boolean;onSector:(id:SectorId)=>void;onSeat:(seat:Seat)=>void};
-export default function FallbackMap({sector,seat,row,chosenIds,legacyOnly=false,onSector,onSeat}:Props){
+type Props={sector:SectorId|null;seat:Seat|null;row:number;chosenIds:readonly string[];inventory?:ReadonlyMap<string,Seat>;legacyOnly?:boolean;onSector:(id:SectorId)=>void;onSeat:(seat:Seat)=>void};
+export default function FallbackMap({sector,seat,row,chosenIds,inventory,legacyOnly=false,onSector,onSeat}:Props){
  const chosen=useMemo(()=>new Set(chosenIds),[chosenIds]);
  const svg=useRef<SVGSVGElement>(null);const drag=useRef<{id:number;x:number;y:number}|null>(null);const moved=useRef(false);
  const [zoom,setZoom]=useState(1),[pan,setPan]=useState({x:0,y:0});
@@ -26,7 +26,7 @@ export default function FallbackMap({sector,seat,row,chosenIds,legacyOnly=false,
  <rect x={-52.5} y={-34} width={105} height={68} fill="#629e70" stroke="#eef6ec" strokeWidth={.35}/>
  <path d="M0 -34V34M-52.5 -20.16H-36V20.16H-52.5M52.5 -20.16H36V20.16H52.5" fill="none" stroke="#eef6ec" strokeWidth={.35}/><circle r={9.15} fill="none" stroke="#eef6ec" strokeWidth={.35}/>
  {blocks.map(block=><g key={block.id} opacity={sector&&sector!==block.id? .2:1}><rect x={block.bounds.x} y={block.bounds.y} width={block.bounds.width} height={block.bounds.height} rx={.6} fill={sector===block.id?'#d1e5ff':'#8db1e0'} stroke="#f3f7fb" strokeWidth={.5} role="button" tabIndex={sector?-1:0} aria-label={`${block.name}, blok ${block.id}`} onClick={e=>{e.stopPropagation();pick(()=>onSector(block.id))}} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSector(block.id)}}}/>{!sector&&<text x={block.bounds.x+block.bounds.width/2} y={block.bounds.y+block.bounds.height/2} textAnchor="middle" dominantBaseline="middle" fontSize={2.6} fill="#173d70" fontWeight={650} pointerEvents="none">{block.id}</text>}</g>)}
- {seats.map(s=><rect key={s.id} x={s.position[0]-.24} y={s.position[2]-.22} width={.48} height={.44} rx={.18} fill={seat?.id===s.id?'#ffd268':!s.available?'#9aa7b7':chosen.has(s.id)?'#199b7a':s.row===row?'#397bd4':'#82b2ec'} stroke={seat?.id===s.id?'#926615':'#fff'} strokeWidth={.12} role="button" tabIndex={s.row===row?0:-1} aria-label={`Rząd ${s.row}, miejsce ${s.number}, ${s.available?s.price+' zł':'zajęte, podgląd dostępny'}`} onClick={e=>{e.stopPropagation();pick(()=>onSeat(s))}} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSeat(s)}}}><title>{`Rząd ${s.row} · Miejsce ${s.number} · ${s.available?s.price+' zł':'Zajęte · możesz obejrzeć widok'}`}</title></rect>)}
+ {seats.map(s=>{const displayed=inventory?.get(s.id)??s;return <rect key={s.id} x={s.position[0]-.24} y={s.position[2]-.22} width={.48} height={.44} rx={.18} fill={seat?.id===s.id?'#ffd268':chosen.has(s.id)&&(displayed.available||'ownedHold'in displayed&&displayed.ownedHold===true)?'#199b7a':!displayed.available?'#9aa7b7':s.row===row?'#397bd4':'#82b2ec'} stroke={seat?.id===s.id?'#926615':'#fff'} strokeWidth={.12} role="button" tabIndex={s.row===row?0:-1} aria-label={`Rząd ${s.row}, miejsce ${s.number}, ${displayed.available?displayed.price+' zł':'zajęte, podgląd dostępny'}`} onClick={e=>{e.stopPropagation();pick(()=>onSeat(displayed))}} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSeat(displayed)}}}><title>{`Rząd ${s.row} · Miejsce ${s.number} · ${displayed.available?displayed.price+' zł':'Zajęte · możesz obejrzeć widok'}`}</title></rect>})}
  </svg>
  <div className="map-caption">{sector?`Sektor ${sector} · rząd ${row} · kliknij fotel`:'Wybierz blok na planie lub trybunę w panelu'}</div>
  </div>;

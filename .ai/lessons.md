@@ -1,5 +1,7 @@
 # Lekcje projektu
 
+- [2026-11-20] [Weryfikacja worktree agentów przed zapisem](lessons/2026-11-20-agent-worktree-verification.md) — twórz konkretną izolowaną ścieżkę, porównuj faktyczny git status przed aplikacją patcha.
+
 - [2026-11-20] [Start panoramy, rzeczywisty rząd i przekrój dachu](lessons/2026-11-20-stadium-launch-and-cutaway.md) — odtwarzaj koszyk bez niespodziewanego zbliżenia i zachowaj bryłę dachu.
 
 - [2026-11-20] [Importy wyemitowanego serwera](lessons/2026-11-20-emitted-server-imports.md) — testuj rzeczywisty JS i endpoint po READY; log startu może mieć poziom info.

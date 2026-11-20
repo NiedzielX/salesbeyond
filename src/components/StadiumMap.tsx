@@ -3,7 +3,7 @@ import {Plus,Minus,LocateFixed} from 'lucide-react';
 import type {Seat,SectorId} from '../data/stadium';
 import type {mountNativeMap} from '../integrations/nativeMap';
 import FallbackMap from './FallbackMap';
-type Props={sector:SectorId|null;seat:Seat|null;row:number;chosenIds:readonly string[];legacyOnly?:boolean;onSector:(id:SectorId)=>void;onSeat:(seat:Seat)=>void;onOverview:()=>void};
+type Props={sector:SectorId|null;seat:Seat|null;row:number;chosenIds:readonly string[];inventory?:ReadonlyMap<string,Seat>;legacyOnly?:boolean;onSector:(id:SectorId)=>void;onSeat:(seat:Seat)=>void;onOverview:()=>void};
 export default function StadiumMap(props:Props){
  const container=useRef<HTMLDivElement>(null),latest=useRef(props);latest.current=props;
  const map=useRef<ReturnType<typeof mountNativeMap>|null>(null);
@@ -21,7 +21,7 @@ export default function StadiumMap(props:Props){
  }).catch(reason=>{if(cancelled)return;cancelled=true;current?.dispose();map.current=null;element.replaceChildren();console.warn('Map could not initialize; using the simplified plan.',reason);setLoading(false);setFailed(true);});
  return()=>{cancelled=true;if(map.current===current)map.current=null;current?.dispose();element.replaceChildren();};
  },[props.legacyOnly]);
- useEffect(()=>{map.current?.update(props);},[props.sector,props.seat,props.row,props.chosenIds]);
+ useEffect(()=>{map.current?.update(props);},[props.sector,props.seat,props.row,props.chosenIds,props.inventory]);
  if(failed)return <FallbackMap key={props.sector??'overview'} {...props}/>;
  return <div className="stadium-map">
   <div className="native-map" ref={container} aria-label="Plan stadionu z wyborem bloków i foteli"/>

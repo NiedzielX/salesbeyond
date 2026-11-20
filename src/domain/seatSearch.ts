@@ -7,9 +7,9 @@ export function matchesSeat(seat:Seat,filters:SeatFilters,canSelect=true){
 export function searchSectors(stand:number,legacyOnly=false):SectorDefinition[]{
  return allSectors.filter(s=>(stand===-1||s.side===stand)&&(!legacyOnly||sectors.some(legacy=>legacy.id===s.id)));
 }
-export function summarizeSeats(ids:SectorId[],filters:SeatFilters,canSelect=true){
+export function summarizeSeats(ids:SectorId[],filters:SeatFilters,canSelect=true,resolveSection:(id:SectorId)=>Seat[]=sectorSeats){
  return [...new Set(ids)].map(id=>{
- const seats=sectorSeats(id),matching=seats.filter(s=>matchesSeat(s,filters,canSelect));
+ const seats=resolveSection(id),matching=seats.filter(s=>matchesSeat(s,filters,canSelect));
  return {id,total:seats.length,matching:matching.length,available:matching.filter(s=>s.available&&canSelect).length,minPrice:matching.length?Math.min(...matching.map(s=>s.price)):null};
  });
 }

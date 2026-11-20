@@ -3,9 +3,9 @@ import {Users,Search,Eye,Plus} from 'lucide-react';
 import {adjacentSeats,basketLimit,basketTotal} from '../domain/basket';
 import type {Seat,SectorId} from '../data/stadium';
 type Proposal={seats:Seat[];budget:number;quantity:number;ruleKey:string};
-type Props={scope:SectorId[];scopeLabel:string;maxPrice:number;basket:Seat[];onPreview:(seat:Seat)=>void;onAdd:(seats:Seat[])=>boolean;accept:(seats:Seat[])=>boolean;ruleKey:string;eventMessage:string};
+type Props={resolve?:(id:string)=>Seat|null;scope:SectorId[];scopeLabel:string;maxPrice:number;basket:Seat[];onPreview:(seat:Seat)=>void;onAdd:(seats:Seat[])=>boolean;accept:(seats:Seat[])=>boolean;ruleKey:string;eventMessage:string};
 const money=new Intl.NumberFormat('pl-PL',{style:'currency',currency:'PLN'});
-export default function GroupFinder({scope,scopeLabel,maxPrice,basket,onPreview,onAdd,accept,ruleKey,eventMessage}:Props){
+export default function GroupFinder({scope,scopeLabel,maxPrice,basket,onPreview,onAdd,accept,ruleKey,eventMessage,resolve}:Props){
  const [quantity,setQuantity]=useState(2),[proposal,setProposal]=useState<Proposal|null>(null),[message,setMessage]=useState('');
  const reserved=useMemo(()=>new Set(basket.map(s=>s.id)),[basket]);
  // A preview can change the active block. Keep the explicitly labelled proposal so the user can add it afterwards.
@@ -14,7 +14,7 @@ export default function GroupFinder({scope,scopeLabel,maxPrice,basket,onPreview,
  const overlaps=!!candidate?.some(s=>reserved.has(s.id));
  const overLimit=!!candidate&&basket.length+candidate.filter(s=>!reserved.has(s.id)).length>basketLimit;
  function find(){
- const seats=adjacentSeats(scope,quantity,[...reserved],maxPrice||Infinity,accept);
+ const seats=adjacentSeats(scope,quantity,[...reserved],maxPrice||Infinity,accept,resolve);
  setProposal(seats.length?{seats,budget:maxPrice,quantity,ruleKey}:null);
  setMessage(seats.length?'Propozycja gotowa. Obejrzyj miejsca lub dodaj całą grupę.':'Nie ma tylu wolnych miejsc obok siebie w tym obszarze i budżecie. Zmień cenę, liczbę osób, obszar lub preferencję pojedynczych miejsc.');
  }
