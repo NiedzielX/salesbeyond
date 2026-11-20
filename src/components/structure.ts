@@ -2,6 +2,8 @@ import type {Point} from '../domain/camera.ts';
 import type {View} from '../domain/selection.ts';
 /** Keep the ceiling cut away until the camera has left the bowl, including reset flights. */
 export function showStructure(view:View,flying:boolean){return view==='overview'&&!flying;}
+/** An incoming flight may start outside the retained half of the roof. */
+export function showRoof(enabled:boolean,flying:boolean){return enabled&&!flying;}
 export function columnPositions(side:number,view:View,flying=false):Point[]{
  if(!showStructure(view,flying))return [];
  return Array.from({length:side<2?9:7},(_,i)=>{

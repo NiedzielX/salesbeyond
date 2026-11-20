@@ -16,3 +16,6 @@ Otwieraj zwykły adres panoramą; koszyk i preferencje odtwarzaj niezależnie. W
 
 ## Jak sprawdzić
 Regresje bootstrapu i rowFocused, dla wszystkich czterech stron znak płaszczyzny przekroju oraz zachowane wierzchołki dachu. Odbiór prawdziwego WebGL nadal wymagany: CPU nie potwierdza wyglądu ani pracy OrbitControls. Nie deklaruj oficjalnego bliźniaka.
+
+## Podejście z panoramy
+Przekrój zależny od docelowej trybuny nie gwarantuje wolnej trasy od kamery panoramy: pozostawiona przeciwna połowa może leżeć po drodze. W czasie lotu pomijaj roof/frame, po onReady przywracaj pełny dach panoramy lub lokalny przekrój. Zachowaj preferencję użytkownika, jeżeli dach wyłączył. Test rzeczywistego modelu na trasie panorama→III-3-1-29 odtwarza przecięcie membrany i weryfikuje jego brak przy widoczności lotu.

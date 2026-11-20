@@ -4,7 +4,7 @@ import { useMemo, useRef, useEffect, useLayoutEffect, useState, Component, type 
 import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsType } from 'three-stdlib';
 import { layout, allSectors, sectorSeats, sectorFrame, type SectorId, type Seat } from '../data/stadium';
-import {roofCutawayNormal,showStructure} from './structure';
+import {roofCutawayNormal,showRoof} from './structure';
 import {createEneaModel} from '../integrations/eneaModel';
 import {createBeyondAdvertising} from '../integrations/beyondAdvertising';
 import {eneaLayout} from '../data/eneaLayout';
@@ -85,7 +85,7 @@ const chosen=useMemo(()=>new Set(p.chosenIds),[p.chosenIds]);
 const [hover,setHover]=useState<SectorId|null>(null);const trees=useMemo(()=>Array.from({length:65},(_,i)=>{const a=i*2.399;const r=181+(i%5)*8;return [Math.cos(a)*r,Math.sin(a)*r] as const}),[]);
 return <><color attach="background" args={['#eef1f3']}/><fog attach="fog" args={['#eef1f3',260,640]}/><ambientLight intensity={.65}/><hemisphereLight args={['#e9f3ff','#8e9c8b',1.1]}/><directionalLight position={[-90,140,40]} intensity={2.5} castShadow shadow-mapSize={[2048,2048]} shadow-camera-left={-180} shadow-camera-right={180} shadow-camera-top={180} shadow-camera-bottom={-180} shadow-camera-far={500} shadow-bias={-.001}/><mesh rotation-x={-Math.PI/2} position-y={-1.5} receiveShadow><planeGeometry args={[1800,1800]}/><meshStandardMaterial color="#e0e5df"/></mesh><Box position={[0,-1,0]} size={[270,.8,236]} color="#c8d1ce"/><Box position={[0,-.5,0]} size={[258,.5,224]} color="#dfe3e2"/>
 {trees.map(([x,z],i)=><group key={i} position={[x,0,z]}><mesh position-y={2}><cylinderGeometry args={[.5,.7,4,5]}/><meshStandardMaterial color="#8b8e7a"/></mesh><mesh position-y={5+i%3} castShadow><icosahedronGeometry args={[3+i%3,1]}/><meshStandardMaterial color={i%2?'#8eaa91':'#a4b5a0'}/></mesh></group>)}
-<Pitch/><Architecture view={p.view} side={allSectors.find(s=>s.id===p.sector)?.side??-1} roof={p.roof&&(p.view!=='overview'||showStructure(p.view,p.flying))}/>
+<Pitch/><Architecture view={p.view} side={allSectors.find(s=>s.id===p.sector)?.side??-1} roof={showRoof(p.roof,p.flying)}/>
 {allSectors.map(s=><group key={s.id} onPointerOver={()=>{if(p.view==='overview')setHover(s.id)}} onPointerOut={()=>setHover(null)}>
 {p.view==='overview'&&<Html position={sectorFrame(s.id).target.map((v,i)=>v+(i===1?6:0)) as Point} center distanceFactor={180} zIndexRange={[5,0]}><button className={`sector-label ${hover===s.id?'active':''}`} onMouseEnter={()=>setHover(s.id)} onMouseLeave={()=>setHover(null)} onClick={()=>p.onSector(s.id)}>{s.id}<span> ↗</span></button></Html>}
 <DemoSeats chosen={chosen} inventory={p.inventory} sector={s.id} selected={p.seat} row={p.row} onSeat={p.onSeat} onSector={p.onSector} overview={p.view==='overview'} emphasized={p.view==='overview'&&hover===s.id} interactive={p.view!=='seat'} focusRow={p.view==='sector'&&!!p.rowFocused&&p.sector===s.id}/></group>)}
