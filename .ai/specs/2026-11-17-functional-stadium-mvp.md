@@ -70,6 +70,9 @@ Przeprowadzony 2026-11-17 przez osobną sesję gpt-6-luna (świeży kontekst, re
 ### Szczegóły architektury Enei — 2026-11-20
 Po porównaniu obrazu własnej geometrii z publiczną referencją poprawiono przestrzenne pasy kratownicy, podziały i wypukłe fartuchy membrany oraz kondygnacje elewacji. Bez zmiany katalogu38 078foteli i ich pozycji. Wspólne kadry eksportowane z helperów kamery: panorama, II-3, fotel oraz elewacja. Nowy test171osi widoku i bramki148+1/lint/typecheck/build:pass. CPU obrazy oraz rzeczywiste wyjście cięć weryfikowane przez root, niezależne source review po poprawkach narzędzi. Dowody: `docs/qa-evidence/enea-fidelity-2026-11-20/README.md`; log `.ai/runs/2026-11-20-enea-visual-fidelity.md`. Status nadal in-progress: odbiór aplikacji w WebGL jest otwarty.
 
+### Ciągłość wyboru grupy i nawigacji — 2026-11-20
+W istniejącym zakresie pełnej ścieżki i R7: polling nie usuwa propozycji grupy bez zmiany filtrów/polityki. Propozycja odczytuje aktualne ceny/statusy swoich ID, pokazuje rzeczywisty powód utraty możliwości dodania i nadal podlega końcowej walidacji. Podgląd z grupy/koszyka/holda przenosi użytkownika do sceny przy każdym jawnym żądaniu, także tego samego fotela; zwykły mount nie kradnie fokusu. Dialog pozostaje przewijalny w granicach niskiego viewportu. Weryfikacja domeny i źródeł nie zastępuje otwartego odbioru UI.
+
 ### Rozszerzenie zlecone bezpośrednio przez właściciela 2026-11-18
 Właściciel wskazał jako cel pełne doświadczenie kibica (2D/3D, cały stadion, wielokrotny wybór i koszyk), wyłączając edytor/panel organizatora. Następnie zgłosił dwie konkretne luki obecnego przyrostu: generyczny model zamiast Enei oraz brak wyboru większości widocznych foteli. Podał konkretną ofertę fotogrametrycznego modelu Enei na CGTrader. To aktualizacja wymagań właściciela; wcześniejszy limit 648 miejsc opisuje tylko poprzedni etap.
 

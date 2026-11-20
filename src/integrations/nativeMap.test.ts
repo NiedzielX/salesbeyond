@@ -22,6 +22,17 @@ test('błąd ustawienia chartu niszczy utworzony renderer przed przekazaniem bł
  assert.throws(()=>mountNativeMap({} as HTMLDivElement,createFullChart(true),{onSeat(){},onSector(){},onOverview(){}},()=>({setChart(){throw new Error('chart failed')},destroy(){disposed++;}} as unknown as ISeatmapRenderer)),/chart failed/);
  assert.equal(disposed,1);
 });
+test('jawny powtórny podgląd centruje ten sam fotel, a odświeżenie danych nie rusza kadru',()=>{
+ const chart=createFullChart(true),seat=getSeat('101',6,1),focuses:string[][]=[];
+ const mock={setChart(){},setStatus(){},clearSelection(){},select(){return [];},setSelectionFocus(){},focusSeats(ids:string[]){focuses.push(ids);return true;},focusSection(){},overview(){},destroy(){}} as unknown as ISeatmapRenderer;
+ const map=mountNativeMap({} as HTMLDivElement,chart,{onSeat(){},onSector(){},onOverview(){}},()=>mock);
+ const selection={sector:seat.sectorId,row:seat.row,seat,focusRequest:1};
+ map.update(selection);assert.deepEqual(focuses,[[chart.nativeByDomain.get(seat.id)]]);
+ map.update({...selection,inventory:new Map([[seat.id,{...seat,price:seat.price+5}]])});
+ assert.equal(focuses.length,1);
+ map.update({...selection,focusRequest:2});assert.equal(focuses.length,2);
+ map.dispose();
+});
 test('wyjątek destroy nie zastępuje błędu chartu i nie blokuje fallbacku',()=>{
  assert.throws(()=>mountNativeMap({} as HTMLDivElement,createFullChart(true),{onSeat(){},onSector(){},onOverview(){}},()=>({setChart(){throw new Error('original chart failure')},destroy(){throw new Error('destroy failure')}} as unknown as ISeatmapRenderer)),/original chart failure/);
 });

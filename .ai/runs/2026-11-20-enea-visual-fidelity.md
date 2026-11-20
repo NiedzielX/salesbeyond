@@ -1,6 +1,6 @@
 ---
 started: 2026-11-20
-ended: null
+ended: 2026-11-20
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
 outcome: partial
@@ -25,12 +25,14 @@ Kontynuować wizualny etap Enei w zatwierdzonym zakresie: charakterystyczna memb
 - `node --experimental-strip-types --test src/integrations/eneaModel.test.ts`:4/4 pass. Nowy test rzeczywistego raycast Three dla171 foteli: dach/konstrukcja/elewacja nie przecinają osi do środka boiska.
 - `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`:exit0;148 testów źródeł+1 wyemitowanego JS. Bramki powtórzono raz wyłącznie z powodu utraty uchwytów PTY po wiadomości sterującej; końcowe kody utrwalone w `/workspace/work/enea-fidelity-gates.json`.
 - Python AST, eksport38 078 foteli/11części, pełne Cycles CPU rendery:pass. Architektura59 946trójkątów, poniżej istniejącego limitu60k; nie jest to benchmarkGPU.
-- `git diff --check`:pass. Root przejrzał zmiany i kadry. Końcowe niezależne source review i HTTP wdrożenia w toku.
+- `git diff --check`:pass. Root przejrzał zmiany i kadry.
 - Niezależny końcowy review Sol: bez potwierdzonej usterki geometrii produkcyjnej. Znalazł trzy usterki narzędzia CPU: zdegenerowane ściany na granicy cięcia, brak zgodności ze starszym JSON i pozostawiane materiały. Root poprawił wszystkie; ponowny review potwierdził rozwiązanie. Nie jest to odbiór przeglądarkowy.
 - Root sprawdził rzeczywisty wynik wszystkich czterech cięć: sama poprawka ścisłych znaków nie usuwała przecięć Float32 zaokrąglanych do tego samego punktu. Dodano deduplikację1µm i pole liczone względem pierwszego wierzchołka. Faktyczny wynik Blendera:71 576ścian, bez powtórzonych wierzchołków, zerowego pola i punktów w niewłaściwej połowie. Review najnowszego bloku także bez dalszych uwag; nie opierano zaliczenia wyłącznie na raporcie agenta.
 
 ## Wynik
-W toku.
+Kod18e1630 wdrożony production READY: `dpl_AYpoNYtmkuPiwwkniiKnHPktWzTS`, alias salesbeyond.vercel.app, aliasError=null. Manifest60plików405 834bajty ze sprawdzonego commita, bez sekretów/dokumentacji; bez push/merge GitHub. HTTP200: HTML, index-CTo-lTBT.js, CSS, Stadium-Ch9WxtaD.js (zawiera nową geometrię), StadiumMap-BpO4jddU.js. API status configured/service i inventory II-3/1998:200. Error/fatal logs ostatnich15min dla wdrożenia:brak wpisów. Metadane deploymentu nadal iad1, configfunkcji fra1; nie zmieniano ustawień projektu.
+
+Końcowy skrypt ponownie wyrenderował sektor/fotel i poprawnie przyjął starszy JSON bez views. Root obejrzał końcowe obrazy. Odbiór przeglądarkowy nadal pending; stąd outcome partial. Nie zakończono pracy po deploy: podjęto konkretne usterki full fan flow ujawnione równoległym audytem, log `.ai/runs/2026-11-20-fan-flow-continuation.md`.
 
 ## Lekcje
 Stosowane istniejące lekcje dotyczące ciągłego wykonania, przekroju dachu i izolacji agentów.

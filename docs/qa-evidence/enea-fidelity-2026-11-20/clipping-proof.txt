@@ -1,0 +1,4 @@
+PASS: retained half, unique vertices and nonzero area for 71576 faces across all four cutaways
+Blender 4.3.2
+
+Blender quit

@@ -1,5 +1,7 @@
 # Lekcje projektu
 
+- [2026-11-20] [Propozycje grup i odświeżanie live](lessons/2026-11-20-proposals-and-live-refresh.md) — nie usuwaj grupy przy pollingu i nie przywracaj danych demo zamiast znanej obserwacji.
+
 - [2026-11-20] [Weryfikacja worktree agentów przed zapisem](lessons/2026-11-20-agent-worktree-verification.md) — twórz konkretną izolowaną ścieżkę, porównuj faktyczny git status przed aplikacją patcha.
 
 - [2026-11-20] [Start panoramy, rzeczywisty rząd i przekrój dachu](lessons/2026-11-20-stadium-launch-and-cutaway.md) — odtwarzaj koszyk bez niespodziewanego zbliżenia i zachowaj bryłę dachu.

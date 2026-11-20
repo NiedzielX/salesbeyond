@@ -12,6 +12,15 @@ export function basketReducer(state:Seat[],action:BasketAction,resolve:(id:strin
 }
 export function basketTotal(seats:Seat[]){return seats.reduce((sum,s)=>sum+Math.round(s.price*100),0)/100;}
 
+/** Preserve a proposed group's identity across inventory refreshes; never silently drop a member. */
+export function refreshGroupProposal(previous:readonly Seat[],resolve:(id:string)=>Seat|null=resolveSeat,maxPrice=Infinity){
+ const resolved=previous.map(s=>resolve(s.id));
+ const lostObservation=resolved.map((s,i)=>!!s&&'inventoryStatus' in previous[i]&&!('inventoryStatus' in s));
+ const seats=resolved.map((s,i)=>lostObservation[i]?previous[i]:s??previous[i]);
+ const issue=resolved.some(s=>!s)?'missing':lostObservation.some(Boolean)?'stale':seats.some(s=>!s.available)?'unavailable':seats.some(s=>s.price>maxPrice)?'price':null;
+ return {seats,issue};
+}
+
 /** Local demo suggestion only. A server must validate/hold inventory before a real checkout. */
 export function adjacentSeats(sectors:SectorId[],quantity:number,excluded:string[]=[],maxPrice=Infinity,accept?:(candidate:Seat[])=>boolean,resolve:(id:string)=>Seat|null=resolveSeat):Seat[]{
  if(!Number.isInteger(quantity)||quantity<1||quantity>basketLimit||maxPrice<0||!Number.isFinite(maxPrice)&&maxPrice!==Infinity)return [];

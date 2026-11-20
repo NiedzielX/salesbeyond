@@ -1,16 +1,16 @@
 # Plan wykonawczy całego MVP
 
-## Bieżąca kolejka po wdrożeniu 91272b3 — 2026-11-20
+## Bieżąca kolejka MVP — 2026-11-20
 
 Źródło zatwierdzonego zakresu: `.ai/specs/2026-11-17-functional-stadium-mvp.md`; aktualna ścieżka i kryteria: `docs/FAN_EXPERIENCE_ROADMAP.md` V1–V5.
 
 1. **Odbiór trzech zgłoszeń**: start panoramy, dach, rzeczywisty rząd. Kod/testy opublikowane; wynik na ekranie pending.
 2. **Wygląd Enei i kadry**: przyrost 2026-11-20 poprawia zaobserwowane w porównaniu CPU/referencja podziały membrany, kratownicę i elewację. Wspólne kadry panoramy/sektora/fotela i test osi widoku 171 foteli: `docs/qa-evidence/enea-fidelity-2026-11-20/README.md`. Odbiór w aplikacji i porównanie ruchu z nagraniem nadal pending.
-3. **Pełny scenariusz kibica w UI**: 2D/3D, grupa, quote/hold, reload/current recovery, konflikt drugiej sesji, release/expiry.
-4. **Mały ekran i wygoda**: dotyk, klawiatura, fokus, brak overflow, loading/error i responsywność.
+3. **Pełny scenariusz kibica w UI**: 2D/3D, grupa, quote/hold, reload/current recovery, konflikt drugiej sesji, release/expiry. Przyrost kodu20listopada zachowuje grupę przy pollingu, waliduje jej ostatnie dane i naprawia powtórny podgląd z dolnych list. Rzeczywista ścieżka UI nadal pending.
+4. **Mały ekran i wygoda**: kod nie przenosi fokusu przy montażu i ogranicza wysokość dialogu z własnym przewijaniem. Dotyk, klawiatura, rzeczywisty fokus/overflow i responsywność nadal wymagają odbioru.
 5. **Odebrane demo klubowe**: stały link i powtarzalny scenariusz po przejściu punktów 1–4.
 
-**Dostarczone**: 38 078 ID / 19 bloków; model/2D/3D; koszyk/grupy/filtry; Supabase/Vercel i atomowe holdy; current recovery; aktualizowany wybrany blok 2D/3D/panel; 147+1 testów, prawdziwe PG/HTTP. Nie planować ponownej budowy już połączonego backendu.
+**Dostarczone**: 38 078 ID / 19 bloków; model/2D/3D; koszyk/grupy/filtry; Supabase/Vercel i atomowe holdy; current recovery; aktualizowany wybrany blok 2D/3D/panel; 153+1 testów, prawdziwe PG/HTTP. Nie planować ponownej budowy już połączonego backendu.
 
 **Pozostała blokada odbioru**: automatyczna odmowa przeglądarki, bez potwierdzenia zdjęcia blokady; nie próbować obejść. Pending pytanie do właściciela o wynik trzech poprawek. Nie uznawać tego za odbiór ani tworzyć fikcyjnych screenów.
 

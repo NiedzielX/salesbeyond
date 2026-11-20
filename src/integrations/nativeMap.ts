@@ -3,7 +3,7 @@ import {basketLimit} from '../domain/basket.ts';
 import type {FullChart} from '../data/fullChart.ts';
 import {seatsInRow,type Seat,type SectorId} from '../data/stadium.ts';
 type Host={onSeat:(seat:Seat)=>void;onSector:(id:SectorId)=>void;onOverview:()=>void};
-type Selection={sector:SectorId|null;seat:Seat|null;row:number;chosenIds?:readonly string[];inventory?:ReadonlyMap<string,Seat&{ownedHold?:boolean}>};
+type Selection={sector:SectorId|null;seat:Seat|null;row:number;focusRequest?:number;chosenIds?:readonly string[];inventory?:ReadonlyMap<string,Seat&{ownedHold?:boolean}>};
 export function mountNativeMap(container:HTMLDivElement,chart:FullChart,host:Host,create:(container:HTMLDivElement,opts:RendererOptions)=>ISeatmapRenderer){
  let live=true,commands=1;let renderer:ISeatmapRenderer|null=null;let previous:Selection|null=null;
  let inventory:ReadonlyMap<string,Seat&{ownedHold?:boolean}>=new Map();
@@ -43,7 +43,9 @@ export function mountNativeMap(container:HTMLDivElement,chart:FullChart,host:Hos
  return {
  update(selection:Selection){if(!live)return;command(()=>{
  updateInventory(selection.inventory??new Map());
- if(previous?.sector!==selection.sector){if(selection.sector)current.focusSection?.(selection.sector);else current.overview?.();}
+ const requestedSeat=selection.seat&&(selection.focusRequest??0)>0&&(previous?.focusRequest??0)!==selection.focusRequest?chart.nativeByDomain.get(selection.seat.id):null;
+ if(requestedSeat)current.focusSeats?.([requestedSeat]);
+ else if(previous?.sector!==selection.sector){if(selection.sector)current.focusSection?.(selection.sector);else current.overview?.();}
  else if(selection.sector&&previous?.row!==selection.row)current.focusSeats?.(seatsInRow(selection.sector,selection.row).map(s=>chart.nativeByDomain.get(s.id)!).filter(Boolean));
  restore(selection);
  previous={...selection,chosenIds:[...(selection.chosenIds??[])]};
