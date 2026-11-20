@@ -11,8 +11,8 @@ Cel właściciela: pełne doświadczenie kibica na poziomie produktu referencyjn
 | 3 | Koszyk i grupy w budżecie | Kod: limit 10, atomowe dodanie, ceny katalogowe i grupy nieprzechodzące przez zajęte miejsca/alejki; dane demo |
 | 4 | Autorska rekonstrukcja Enei w kodzie | Kod i obejrzane rendery CPU: ciągła misa, różne poziomy, biała łukowa membrana, kratownice i gęste niebieskie fotele. Wymaga odbioru w aplikacji i dalszego porównania z referencjami |
 | 5 | Spójność geometrii, foteli i kamery | Wspólne parametry; testy podparcia foteli, kadru panoramy i wszystkich bloków. Dokładne oficjalne rzędy/numery nie są zweryfikowane |
-| 6 | Docelowe kategorie/ceny, filtry i reguły wydarzenia | Kod: cena/dostępność i liczniki całego stadionu/trybuny/bloku/rzędu; jawna propozycja grupy przed dodaniem, podgląd poza filtrami. Kod: konfigurowana preferencja nowych pojedynczych foteli oraz bramki open/closed/sold-out dla tego samego snapshotu demo. Otwarte: serwerowe zmiany dostępności; kategorie/ulgi klubowe wymagają danych |
-| 7 | Dostępność, hold/wygaśnięcie/wznowienie/konflikt i checkout handoff | Otwarte: serwer i trwały magazyn; koszyk przeglądarkowy nie blokuje foteli |
+| 6 | Ceny, filtry i reguły wydarzenia | Wdrożone: filtry, grupy, reguły i aktualizacja wybranego bloku z Supabase co 15 s / focus / ręcznie / po zmianie holda. Wspólna migawka dla panelu, mapy i 3D. Pozostałe bloki opisuje katalog demo; brak oficjalnego cennika/ulg klubu |
+| 7 | Quote, hold, wygaśnięcie, wznowienie i konflikt | Supabase/Vercel połączone, transakcje i właściciel sesji potwierdzone realnym HTTP i PostgreSQL. Panel quote/confirm/countdown/release i current recovery wdrożony. Otwarte: odbiór w aplikacji. Płatności/produkcyjny operator sprzedaży nie są podłączone |
 | 8 | Odbiór całego flow na telefonie i desktopie | Zablokowane otwarcie Cloud Desktop przez automatyczną kontrolę; pozostałe prace nie są od tego zależne |
 | 9 | Docelowe MVP pod stałym linkiem | Obecne przyrosty wdrażane na salesbeyond.vercel.app. Sam deploy nie zamyka etapów 4–8 |
 
@@ -26,9 +26,25 @@ Blueprint rozpoczyna od budowy stadionu w Three.js z wieloma poziomami, przejśc
 
 Domyślny plan 2D montuje rzeczywisty `createRenderer` z przypiętego pakietu przez publiczne API. Domyślne 3D jest własnym R3F. Wariant `?renderer=local` pozostaje wcześniejszym testem natywnego 3D dla 648 miejsc. To integracja dostępnego runtime, nie przeniesienie pełnego produktu ani prywatnych źródeł. UI, katalog, kamera, koszyk i model są nasze.
 
-## Odbiór i następne gotowe prace
+## Bieżący etap: jakość stadionu i odbiór całego doświadczenia
 
-Najpierw rzeczywisty odbiór nowych interakcji, czytelności, czasu ładowania i lotu kamery, gdy dostęp przeglądarkowy zostanie przywrócony. Filtry i propozycje grup z etapu 6 są w kodzie, wraz z oznaczeniem wielu miejsc na mapie i w 3D. Dalej: reguły wydarzenia i kontrakt hold/handoff z etapu 7. Odróżniać scenariusz demonstracyjny od integracji sprzedażowej. Kryteria wizualne pozostają otwarte mimo zielonych kontroli kodu i obejrzanych renderów CPU.
+Stan na 2026-11-20: źródła 91272b3 wdrożone production READY na salesbeyond.vercel.app. 147 testów źródeł + 1 test gotowego API, lint/typecheck/build przeszły. Rzeczywisty HTTP potwierdza quote/inventory, wyścig dwóch sesji, własność, idempotencję, odzyskanie i release. To nie jest dowód wyglądu ani pełnej ścieżki w przeglądarce.
+
+| Kolejność | Konkretny rezultat | Kryterium odbioru | Stan |
+|---|---|---|---|
+| V1 | Trzy uwagi właściciela zamknięte na ekranie | Zwykły adres zaczyna od panoramy; pełny dach w panoramie, zamierzony przekrój w sektorze; rzeczywisty kliknięty rząd zamiast narzuconego 6. Obserwacja na desktopie i małym ekranie | Kod/regresje wdrożone; odbiór pending |
+| V2 | Czytelna sylwetka Enei i poprawne kadry | Panorama z dachem, cztery trybuny, narożniki, sektor i perspektywa fotela porównane z blueprintem/nagraniem/referencjami. Lista konkretnych różnic przed poprawianiem geometrii | Odbiór obrazu pending; bez deklaracji oficjalnego bliźniaka |
+| V3 | Pełna ścieżka kibica w działającej aplikacji | 2D → sektor/rząd/fotel → 3D → grupa/koszyk → cena z serwera → blokada → reload → zwolnienie/wygaśnięcie. Osobna sesja wywołuje czytelny konflikt; podgląd i ID pozostają zgodne | API/adaptery passed; prawdziwa UI ścieżka pending |
+| V4 | Wygodne użycie na telefonie | Wybór dotykiem i klawiaturą, panel nie zasłania sceny, brak poziomego przewijania; prawidłowe loading/error/expiry i powrót fokusu. Sprawdzić ładowanie i responsywność przed dalszą optymalizacją | Pending |
+| V5 | Powtarzalne demo dla klubu | Stały link, odebrany scenariusz panoramy/wyboru/grupy/blokady i jawne dane demo; aktualny raport ograniczeń | Po V1–V4 |
+
+Ja integruję model, kamerę i pełny flow. Równoległe, ograniczone zadania Lun dotyczą audytu różnic, adapterów i testów; wyniki przechodzą root review i własne bramki. Nie oznacza to pracy agentów po zakończeniu tury.
+
+Aktualna blokada dotyczy wyłącznie prawdziwego odbioru przeglądarkowego: wcześniejsza automatyczna odmowa dostępu pozostaje nierozwiązana. Sam powrót namespace narzędzia lub restart środowiska nie dowodzi zdjęcia blokady. Nie ponawiać przez inne narzędzie/subagenta. Odpowiedź właściciela na wysłane pytanie o trzy objawy nadal pending; nie traktować braku odpowiedzi jako pass.
+
+Dokładność Enei dopracowywać na podstawie porównanych kadrów, a nie zgadywanych wymiarów. BLEND/GLB i zakup skanu nie są wymaganiami. Następny przyrost ma poprawiać odbiór stadionu i pełny scenariusz kibica; backend jest już podstawą tego scenariusza. Braki RLS innych tabel współdzielonej aplikacji wine wymagają osobnego przeglądu, nie są częścią wizualnego etapu Enei.
+
+Dowód bieżącego wdrożenia: [raport 2026-11-20](qa-evidence/hold-engine/verification-2026-11-20.md). Poniżej historia wcześniejszych przyrostów — dawne sformułowania o braku backendu nie opisują aktualnego stanu.
 
 ## Wdrożenie przyrostu
 
