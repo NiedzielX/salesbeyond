@@ -1,6 +1,6 @@
 ---
 started: 2026-11-19
-ended: null
+ended: 2026-11-20
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
 outcome: partial
@@ -85,3 +85,9 @@ Uzupełniono istniejącą lekcję continuous-execution bez odkładania korekty w
 - Rootwstrzyknął resolver do basket/reconcile/group/summary, bez mutowania globalnego katalogu. WłasneholdIDs do chosenIds, checkAddition nadnałożonąmigawką. Metadane aktywnegobloku jawnie mówią ousłudzedemo/odświeżeniu, globalnepozostająkatalogiem. Zamknięty eventblokuje nowe dodatki. Hookpobiera tylkobieżącyblok, nie całe38tys przykażdymodczycie.
 - Cameraeffect ma zależność seatID zamiast obiektu uwodnionego dostępnością; odświeżenie15s nie resetuje rozglądania. Kolory3D zmieniajądotknięteID bez macierzy; native2Dfree/bookeddelta bez remountchart i callbackecho; fallbackSVGpodobnie. Rootdodał test zmiany ownership przy niezmienionymheld oraz test wspólnegoresolwera dla uwolnionych/zablokowanych/wycenionychmiejsc i grup.
 - Rootlint/typecheck/test/build: exit0, 147 źródłowych +1 emittedJS, build10,84s. Focus15/15 przedfinalnąkorektą. Niezależny reviewintegracji w toku, obraz/aplikacja nadal nieodebrane w przeglądarce; brak prób obejściaautomatycznejodmowy.
+
+## Zamknięcie bieżącego większego etapu
+- Ostatnie źródła91272b34bc238b64c9d8a15949164732f56d8dc8, manifest60plików/403991B/542726JSONchars. Wdrożenie dpl_8aZroMHhuiCFb7wKxU5NLo4FHwh1 productionREADY, alias salesbeyond.vercel.app, bezpush/mergeGitHub.
+- FinalneHTTP: root200, index-H9J_v_um.js i index-C_4H_pUx.css200/właściweMIME, mainzawiera Odświeżdostępność/Potwierdźblokadę; lazyStadium-DAWnXRiu/StadiumMap-Bgl448mN200 i kontraktinventory. Inventory101200/216, wskazaneII-3 200/1998/rzędy1–54, globalnykompaktowyodczyt19/38078. Runtimeerror/fatal15mno logs; nie jest to konsolabrowser.
+- FreshLunareview wspólnegoreadmodelu/hook/adapterów: bezmustfix. Rootsprawdziłfaktycznydiff i dowody, dokończył naprawy pośrednichbłędówtypowania. Skan nazw prywatnych zmiennych wdist/assets bezwyników; nie odczytywano wartości sekretów.
+- Raportgranicyweryfikacji wdocs/qa-evidence/hold-engine/verification-2026-11-20.md. Kod/dane/APIdużegoetapuopublikowane, testy147+1, prawdziwePG/HTTPpassed. CałespecMVPpozostajein-progress: braknowegodowoduzdjęciablokadyprzeglądarki, fullWebGLdesktop/phone i odpowiedźwłaścicielanapytanieo3objawynadalpending. Nie ma obietnicy agentów pracującychpo zamknięciu tury; równoległe zadania tegoetapu zostały wykonane.
