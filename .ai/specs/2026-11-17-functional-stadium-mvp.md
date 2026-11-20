@@ -67,6 +67,9 @@ Przeprowadzony 2026-11-17 przez osobną sesję gpt-6-luna (świeży kontekst, re
 - Integrator sam sprawdził dokument i wskazane miejsca kodu. Status pozostaje draft; akceptacja należy do właściciela.
 
 ## Realizacja
+### Szczegóły architektury Enei — 2026-11-20
+Po porównaniu obrazu własnej geometrii z publiczną referencją poprawiono przestrzenne pasy kratownicy, podziały i wypukłe fartuchy membrany oraz kondygnacje elewacji. Bez zmiany katalogu38 078foteli i ich pozycji. Wspólne kadry eksportowane z helperów kamery: panorama, II-3, fotel oraz elewacja. Nowy test171osi widoku i bramki148+1/lint/typecheck/build:pass. CPU obrazy oraz rzeczywiste wyjście cięć weryfikowane przez root, niezależne source review po poprawkach narzędzi. Dowody: `docs/qa-evidence/enea-fidelity-2026-11-20/README.md`; log `.ai/runs/2026-11-20-enea-visual-fidelity.md`. Status nadal in-progress: odbiór aplikacji w WebGL jest otwarty.
+
 ### Rozszerzenie zlecone bezpośrednio przez właściciela 2026-11-18
 Właściciel wskazał jako cel pełne doświadczenie kibica (2D/3D, cały stadion, wielokrotny wybór i koszyk), wyłączając edytor/panel organizatora. Następnie zgłosił dwie konkretne luki obecnego przyrostu: generyczny model zamiast Enei oraz brak wyboru większości widocznych foteli. Podał konkretną ofertę fotogrametrycznego modelu Enei na CGTrader. To aktualizacja wymagań właściciela; wcześniejszy limit 648 miejsc opisuje tylko poprzedni etap.
 
@@ -77,6 +80,7 @@ Najbliższy przyrost w ramach tego polecenia:
 - Przewidzieć sektory i nawigację wszystkich czterech trybun; panel, kamera, etykieta i karta używają tego samego rekordu. Podgląd perspektywy dostępny także dla fotela poglądowo zajętego; to nie zmienia jego dostępności do zakupu. Obecny etap nie ma zakupu/rezerwacji.
 - Testy zgodności wszystkich instancji z katalogiem, kanonizacji wyboru oraz reprezentatywnych foteli każdej trybuny. Nie nazywać przykładowych numerów oficjalnym rozkładem Enei.
 - Model CGTrader służy wyłącznie jako publiczna referencja wyglądu. Zgodnie z późniejszą korektą właściciela budujemy model kodem, bez plików BLEND/GLB i zakupu. Nie deklarować skanu/bliźniaka ani oficjalnej numeracji miejsc.
+- Przyrost wizualny 2026-11-20 w tym samym zakresie: czytelne żebra membrany, przestrzenna kratownica otworu oraz poziome podziały i podpory elewacji. Zachować ID, pozycje i punkty oczu wszystkich 38 078 foteli oraz obecny przekrój dachu. Weryfikacja: wspólne bufory sceny/eksportu CPU, test skończoności/budżetu geometrii i niezasłaniania osi widoku z reprezentatywnych miejsc; lint/typecheck/test/build. Obrazy CPU porównać z referencją, nie traktować ich jako odbioru WebGL ani pomiaru zgodności z budynkiem.
 
 Oryginalne wymagania odrzucania zajętego fotela dotyczące wyboru zakupowego nie obowiązują dla nowo zleconego podglądu każdego fotela. Rozdzielenie podglądu i koszyka jest wymaganiem aktualnym. Pozostałe etapy pełnego doświadczenia kibica wymagają opisania i realizacji, a nie zamknięcia tej specyfikacji po pierwszym przyroście. Odbiór WebGL nadal jawnie otwarty.
 

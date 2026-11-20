@@ -18,7 +18,7 @@ const withY=(p:Vec3,y:number):Vec3=>[p[0],y,p[2]];
 const place=(side:number,along:number,radial:number,y:number):Vec3=>side<2?[along,y,(side===0?1:-1)*(43+radial)]:[(side===2?1:-1)*(62+radial),y,along];
 /** Code-authored Enea reconstruction. Rendering/export use the identical buffers. */
 export function createEneaModel():ModelPart[]{
- const concrete=new Surface(),riser=new Surface(),fascia=new Surface(),openings=new Surface(),facade=new Surface(),roof=new Surface(),frame=new Surface(),glass=new Surface();
+ const concrete=new Surface(),riser=new Surface(),fascia=new Surface(),openings=new Surface(),facade=new Surface(),roof=new Surface(),frame=new Surface(),glass=new Surface(),seams=new Surface(),concourse=new Surface(),windows=new Surface();
  for(const profile of standProfiles){
  const side=profile.side,half=side<2?54:35;
  for(let r=0;r<profile.rows;r++){
@@ -53,10 +53,18 @@ export function createEneaModel():ModelPart[]{
  for(let i=0;i<segments;i++){
  const u=i/segments*8,next=(i+1)/segments*8;
  for(let j=0;j<rings;j++)roof.quad(roofPoint(u,j/rings),roofPoint(u,(j+1)/rings),roofPoint(next,(j+1)/rings),roofPoint(next,j/rings));
- const a=roofPoint(u,0),b=roofPoint(next,0),al=withY(a,a[1]-3),bl=withY(b,b[1]-3);
- frame.beam(withY(a,a[1]-.6),withY(b,b[1]-.6),.16);frame.beam(al,bl,.13);frame.beam(withY(a,a[1]-.6),bl,.08);
  if(i%4===0){
- const c=roofPoint(u,.12);frame.beam(al,withY(c,c[1]-.8),.1);
+ // A triangular space truss, with broad bays rather than hundreds of tiny diagonals.
+ // Both upper chords follow the membrane; the lower chord gives the opening depth.
+ const v=(i+4)/segments*8,a=roofPoint(u,0),b=roofPoint(v,0),c=roofPoint(u,.055),d=roofPoint(v,.055);
+ const au=withY(a,a[1]-.45),bu=withY(b,b[1]-.45),cu=withY(c,c[1]-.5),du=withY(d,d[1]-.5),al=withY(a,a[1]-4.5),bl=withY(b,b[1]-4.5);
+ frame.beam(au,bu,.3);frame.beam(cu,du,.24);frame.beam(al,bl,.24);
+ frame.beam(au,bl,.14);frame.beam(al,cu,.13);frame.beam(al,du,.12);
+ // Raised pale seams coincide with the valleys of the authored membrane pillows.
+ for(let j=0;j<rings;j++){
+ const a=roofPoint(u,j/rings),b=roofPoint(u,(j+1)/rings);
+ seams.beam(withY(a,a[1]+.07),withY(b,b[1]+.07),.075);
+ }
  }
  if(i%8===0){
  for(let j=0;j<4;j++){const a=roofPoint(u,j/4),b=roofPoint(u,(j+1)/4);frame.beam(withY(a,a[1]-.5),withY(b,b[1]-.5),.1);}
@@ -64,12 +72,27 @@ export function createEneaModel():ModelPart[]{
  const neighbor=roofPoint((i+8)/segments*8,1);frame.beam([outer[0],2,outer[2]],withY(neighbor,neighbor[1]-.8),.14);
  }
  const oa=roofPoint(u,1),ob=roofPoint(next,1);
+ // Three exposed concourse bands and glazed bays break up the flat perimeter wall.
+ // They remain behind the seating bowl and do not introduce any new seat positions.
+ for(const y of [3.5,7.5,11.5]){
+ const outset=(p:Vec3,height:number,scale:number):Vec3=>[p[0]*scale,height,p[2]*scale];
+ concourse.quad(outset(oa,y,1.006),outset(ob,y,1.006),outset(ob,y+.45,1.006),outset(oa,y+.45,1.006));
+ concourse.quad(outset(oa,y+.45,.994),outset(oa,y+.45,1.006),outset(ob,y+.45,1.006),outset(ob,y+.45,.994));
+ windows.quad(withY(oa,y-2.8),withY(ob,y-2.8),withY(ob,y-.15),withY(oa,y-.15));
+ }
+ if(i%8===0)concourse.beam(withY(oa,.3),withY(oa,12),.4);
  // Membrane skirts on the high long stands; the end stands expose their frame.
  // A full opaque perimeter made the stadium read as a white box, unlike the reference.
  const side=Math.floor(u);
  if(side===0||side===4){
- roof.quad([oa[0],12,oa[2]],oa,ob,[ob[0],12,ob[2]]);
- glass.quad([oa[0]*1.001,13,oa[2]*1.001],[oa[0]*1.001,15,oa[2]*1.001],[ob[0]*1.001,15,ob[2]*1.001],[ob[0]*1.001,13,ob[2]*1.001]);
+ const apron=(step:number,t:number):Vec3=>{
+ const outer=roofPoint(step,1),scallop=Math.sin(step*Math.PI*12)**2;
+ const swell=1+.012*Math.sin(t*Math.PI)*scallop;
+ return [outer[0]*swell,12+scallop*.8+(outer[1]-12-scallop*.8)*t,outer[2]*swell];
+ };
+ for(let j=0;j<4;j++)roof.quad(apron(u,j/4),apron(u,(j+1)/4),apron(next,(j+1)/4),apron(next,j/4));
+ if(i%4===0)for(let j=0;j<4;j++)seams.beam(apron(u,j/4),apron(u,(j+1)/4),.075);
+ glass.quad([oa[0]*1.001,12,oa[2]*1.001],[oa[0]*1.001,13,oa[2]*1.001],[ob[0]*1.001,13,ob[2]*1.001],[ob[0]*1.001,12,ob[2]*1.001]);
  }
  }
  return [
@@ -81,6 +104,9 @@ export function createEneaModel():ModelPart[]{
  {name:'White membrane',layer:'roof',color:'#f1f3f6',geometry:roof.geometry()},
  {name:'Roof space truss',layer:'frame',color:'#9daec0',geometry:frame.geometry()},
  {name:'Perimeter glazing',layer:'roof',color:'#47647c',geometry:glass.geometry()},
+ {name:'Membrane seams',layer:'roof',color:'#dce2e7',geometry:seams.geometry()},
+ {name:'Exterior concourses',layer:'bowl',color:'#b5bfca',geometry:concourse.geometry()},
+ {name:'Facade glazing',layer:'bowl',color:'#567184',geometry:windows.geometry()},
  ];
 }
 export function rowDeckHeight(side:number,row:number){return standRow(side,row-1).deckY;}

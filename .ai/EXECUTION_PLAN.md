@@ -5,7 +5,7 @@
 Źródło zatwierdzonego zakresu: `.ai/specs/2026-11-17-functional-stadium-mvp.md`; aktualna ścieżka i kryteria: `docs/FAN_EXPERIENCE_ROADMAP.md` V1–V5.
 
 1. **Odbiór trzech zgłoszeń**: start panoramy, dach, rzeczywisty rząd. Kod/testy opublikowane; wynik na ekranie pending.
-2. **Wygląd Enei i kadry**: porównanie panoramy, trybun/narożników/dachu i perspektyw z blueprintem oraz nagraniem; dopiero potem poprawki zaobserwowanych różnic.
+2. **Wygląd Enei i kadry**: przyrost 2026-11-20 poprawia zaobserwowane w porównaniu CPU/referencja podziały membrany, kratownicę i elewację. Wspólne kadry panoramy/sektora/fotela i test osi widoku 171 foteli: `docs/qa-evidence/enea-fidelity-2026-11-20/README.md`. Odbiór w aplikacji i porównanie ruchu z nagraniem nadal pending.
 3. **Pełny scenariusz kibica w UI**: 2D/3D, grupa, quote/hold, reload/current recovery, konflikt drugiej sesji, release/expiry.
 4. **Mały ekran i wygoda**: dotyk, klawiatura, fokus, brak overflow, loading/error i responsywność.
 5. **Odebrane demo klubowe**: stały link i powtarzalny scenariusz po przejściu punktów 1–4.

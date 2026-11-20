@@ -4,7 +4,7 @@ import {DoubleSide,Mesh,MeshBasicMaterial,PerspectiveCamera,Raycaster,Vector3} f
 import {createEneaModel} from './eneaModel.ts';
 import {roofPoint,standProfiles,standRow} from '../data/eneaLayout.ts';
 import {allSectors,sectorSeats,sectorRows,seatsInRow,sectorFrame,layout} from '../data/stadium.ts';
-import {overviewPosition} from '../domain/camera.ts';
+import {eyePosition,overviewPosition} from '../domain/camera.ts';
 
 test('autorski model ma ciągły łukowy dach i zróżnicowane kondygnacje zamiast czterech płyt',()=>{
  for(const v of [0,.25,.5,1])assert.deepEqual(roofPoint(0,v),roofPoint(8,v));
@@ -41,4 +41,25 @@ test('kadry obejmują membranę oraz cały sektor od strony boiska również na 
  }
  }
  parts.forEach(p=>p.geometry.dispose());assert.equal(standProfiles.length,4);
+});
+test('dach, pogrubiona kratownica i elewacja pozostawiają oś widoku z foteli na boisko',()=>{
+ const parts=createEneaModel(),material=new MeshBasicMaterial({side:DoubleSide});
+ const exterior=parts.filter(p=>p.layer!=='bowl'||p.name==='Exterior concourses'||p.name==='Facade glazing').map(p=>new Mesh(p.geometry,material));
+ exterior.forEach(mesh=>mesh.updateMatrixWorld());
+ const ray=new Raycaster();let checked=0;
+ try{
+ for(const sector of allSectors){
+ const rows=sectorRows(sector.id);
+ for(const row of [rows[0],rows[Math.floor(rows.length/2)],rows.at(-1)!]){
+ const seats=seatsInRow(sector.id,row);
+ for(const seat of [seats[0],seats[Math.floor(seats.length/2)],seats.at(-1)!]){
+ const origin=new Vector3(...eyePosition(seat)),direction=new Vector3(0,1,0).sub(origin);
+ ray.set(origin,direction.clone().normalize());ray.far=direction.length();
+ const hit=ray.intersectObjects(exterior)[0];
+ assert.equal(hit,undefined,`${seat.id}: ${hit?.object.type} zasłania środek boiska`);checked++;
+ }
+ }
+ }
+ assert.ok(checked>=171);
+ }finally{material.dispose();parts.forEach(p=>p.geometry.dispose());}
 });
