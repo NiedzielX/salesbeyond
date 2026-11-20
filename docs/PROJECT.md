@@ -73,3 +73,7 @@ SQL/API/transport klienta przygotowane i sprawdzone na izolowanym PostgreSQL 17.
 
 ## Połączona usługa i poprawki zgłoszone 2026-11-20
 Właściciel wybrał prywatny sb_hold w istniejącym Supabase Frankfurt. Migracje i seed 38 078 zastosowane, credentials wstawiła integracja Vercel bez ujawniania wartości. HTTP Vercel → DB potwierdza dwie sesje, idempotencję, własność i zwolnienie. Dodano odczyt current własnej sesji dla odzyskania holda po utracie odpowiedzi. React panel quote → confirm → hold → release/expiry i wznowienie; plan pozostaje poglądowy. Funkcja region fra1. Poprawiono start zwykłego adresu w panoramie, pierwszy layout bez lotu, rzeczywisty kliknięty rząd / brak automatycznego row6 i zachowanie części dachu przy wyborze sektora. Pełny dach w panoramie. Odbiór WebGL nadal niezrealizowany z powodu wcześniejszej blokady przeglądarki; CPU/testy/HTTP nie zastępują go.
+
+
+## Przygotowany readmodel dostępności
+inventoryOverlay.ts przyjmuje kompletne migawki pojedynczego bloku, zachowuje wszystkie kanoniczne ID i pozycje, nakłada ceny/statusy/ownedHold. Kolejność odpowiedzi kontroluje sekwencja żądania wyznaczona przed fetch; zmiana globalnej wersji usuwa poprzednie migawki sekcji. 8testów w tym pełny katalog, 143+1 testów całego repo. To przygotowany moduł: runtime aktualizacji planu/R3F pozostaje następnym krokiem i nadal nie jest deklarowany jako działający.
