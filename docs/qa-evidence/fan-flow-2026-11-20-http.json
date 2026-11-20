@@ -1,0 +1,46 @@
+{
+  "deployment": "dpl_9V66kgvZx49qzjK8pnuKwChm8swb",
+  "sourceCommit": "768e02958e559ec64b4e7d5c8f857c7501afa252",
+  "origin": "https://salesbeyond.vercel.app",
+  "rootStatus": 200,
+  "main": "/assets/index-Gh8_yWPO.js",
+  "mainMime": "application/javascript; charset=utf-8",
+  "markers": {
+    "staleProposal": true,
+    "explicitMapFocus": true
+  },
+  "assetsAndAPI": [
+    {
+      "path": "/assets/index-B2ZT3Lsr.css",
+      "status": 200,
+      "mime": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/Stadium-B54KTkw_.js",
+      "status": 200,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/StadiumMap-C3JKkMh1.js",
+      "status": 200,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/api/seat-api?op=status",
+      "status": 200,
+      "mime": "application/json",
+      "ok": true,
+      "configured": true,
+      "mode": "service"
+    },
+    {
+      "path": "/api/seat-api?op=inventory&eventId=enea-demo&sectionId=II-3",
+      "status": 200,
+      "mime": "application/json",
+      "eventId": "enea-demo",
+      "seats": 1998
+    }
+  ],
+  "browserVerified": false,
+  "verifiedAtUTC": "2026-11-20 18:49:45 UTC"
+}

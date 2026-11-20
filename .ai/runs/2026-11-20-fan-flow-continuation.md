@@ -1,6 +1,6 @@
 ---
 started: 2026-11-20
-ended: null
+ended: 2026-11-20
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
 outcome: partial
@@ -23,10 +23,15 @@ Po wdrożeniu architektury18e1630 kontynuować gotowe zadania pełnej ścieżki 
 - Focused basket/nativeMap:12/12 pass. Regresje obejmują utrzymanie ID, zmianę cen, zajęcie/brak jednego fotela, budżet, utratę/odzyskanie obserwacji live i powtórne jawne kadrowanie bez zmiany kadru przy pollingu.
 - Końcowe `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`:exit0.153 testy źródeł+1 wyemitowanego serwera. Build10.63s. Brak nowych pakietów.
 - Ponowny niezależny read-only review Sol po poprawkach:bez nowych regresji blokujących. Root przeczytał diff i wyniki; raport nie stanowi odbioru przeglądarkowego.
-- `git diff --check`:pass. HTTP nowego wdrożenia w toku. Rzeczywisty fokus, scrolling i dotyk w przeglądarce nadal pending z powodu wcześniejszej automatycznej odmowy, bez próby obejścia.
+- `git diff --check`:pass. HTTP nowego wdrożenia:pass. Rzeczywisty fokus, scrolling i dotyk w przeglądarce nadal pending z powodu wcześniejszej automatycznej odmowy, bez próby obejścia.
+- W pierwszym probe niepotrzebnie założono identyczny fingerprint lokalnego/remote buildu. Produkcja miała nowy, odmienny hash; poprawiono kontrolę na assety wskazywane przez faktyczny HTML i znaczniki nowego zachowania. To nie była potwierdzona awaria aliasu.
 
 ## Wynik
-W toku.
+Kod768e029 wdrożony production READY, aliasError=null: `dpl_9V66kgvZx49qzjK8pnuKwChm8swb`, https://salesbeyond.vercel.app. Lokalny manifest60plików409 158bajtów wiąże wysłane źródła z commitem; metadane zdalnego Git nie są dowodem SHA, bo wdrożono snapshot plików. Bez push/merge GitHub i bez zmian infrastruktury/migracji/sekretów.
+
+HTTP200 i poprawne MIME: HTML, index-Gh8_yWPO.js, index-B2ZT3Lsr.css, Stadium-B54KTkw_.js, StadiumMap-C3JKkMh1.js. Główny bundle zawiera obsługę nieaktualnej propozycji i jawnego focusRequest; CSS granicę100dvh, moduł3D nową architekturę. API status configured/service oraz inventory II-3/1998:200. Dowód: `docs/qa-evidence/fan-flow-2026-11-20-http.json`. Brak wpisów error/fatal w15minutowym skanie tego wdrożenia; to nie kontrola konsoli przeglądarki.
+
+Oba spójne przyrosty zakończone kodem i deployem, nie samym planem. Odbiór UI/WebGL pozostaje otwarty, dlatego outcome partial i spec in-progress. Osobny tymczasowy worktree agenta usunięto po integracji, z zachowanym patchem poza repo. Kolejne kryteria wymagają realnej przeglądarki; nie utworzono fikcyjnego odbioru ani zastępczego kanału omijającego odmowę.
 
 ## Lekcje
 `.ai/lessons/2026-11-20-proposals-and-live-refresh.md`: znacznik odczytu nie jest tożsamością grupy; utrata obserwacji nie przywraca demo; jawny podgląd ma własny licznik.

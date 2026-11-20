@@ -72,6 +72,7 @@ Po porównaniu obrazu własnej geometrii z publiczną referencją poprawiono prz
 
 ### Ciągłość wyboru grupy i nawigacji — 2026-11-20
 W istniejącym zakresie pełnej ścieżki i R7: polling nie usuwa propozycji grupy bez zmiany filtrów/polityki. Propozycja odczytuje aktualne ceny/statusy swoich ID, pokazuje rzeczywisty powód utraty możliwości dodania i nadal podlega końcowej walidacji. Podgląd z grupy/koszyka/holda przenosi użytkownika do sceny przy każdym jawnym żądaniu, także tego samego fotela; zwykły mount nie kradnie fokusu. Dialog pozostaje przewijalny w granicach niskiego viewportu. Weryfikacja domeny i źródeł nie zastępuje otwartego odbioru UI.
+Implementacja768e029:153+1testów/lint/typecheck/build pass, niezależny review po poprawkach i production READY z potwierdzeniem assetów/API przez HTTP. Log `.ai/runs/2026-11-20-fan-flow-continuation.md`; lekcja `.ai/lessons/2026-11-20-proposals-and-live-refresh.md`. Status pozostaje in-progress z powodu niewykonanego odbioru przeglądarkowego.
 
 ### Rozszerzenie zlecone bezpośrednio przez właściciela 2026-11-18
 Właściciel wskazał jako cel pełne doświadczenie kibica (2D/3D, cały stadion, wielokrotny wybór i koszyk), wyłączając edytor/panel organizatora. Następnie zgłosił dwie konkretne luki obecnego przyrostu: generyczny model zamiast Enei oraz brak wyboru większości widocznych foteli. Podał konkretną ofertę fotogrametrycznego modelu Enei na CGTrader. To aktualizacja wymagań właściciela; wcześniejszy limit 648 miejsc opisuje tylko poprzedni etap.

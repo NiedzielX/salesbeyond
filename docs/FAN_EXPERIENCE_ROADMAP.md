@@ -8,7 +8,7 @@ Cel właściciela: pełne doświadczenie kibica na poziomie produktu referencyjn
 |---|---|---|
 | 1 | Wszystkie widoczne fotele we wspólnym katalogu | Kod: 38 078 foteli, 19 bloków, cztery trybuny i połączone narożniki; każdy ma ID |
 | 2 | Spójna mapa 2D i model 3D | Natywny renderer 2D biblioteki, dokładny chart i jawne mapy ID; uproszczony SVG jako fallback. Rzeczywisty kompilator potwierdza zgodność wszystkich pozycji i ID |
-| 3 | Koszyk i grupy w budżecie | Kod: limit 10, atomowe dodanie, ceny katalogowe i grupy nieprzechodzące przez zajęte miejsca/alejki; dane demo |
+| 3 | Koszyk i grupy w budżecie | Kod: limit10, atomowe dodanie, grupy bez alejek; propozycje zachowane przy podglądzie/pollingu, aktualizowane ceny/statusy i ponowne sprawdzenie po utracie źródła live. Dane wydarzenia demo |
 | 4 | Autorska rekonstrukcja Enei w kodzie | Kod i obejrzane rendery CPU: ciągła misa, różne poziomy, biała łukowa membrana, kratownice i gęste niebieskie fotele. Wymaga odbioru w aplikacji i dalszego porównania z referencjami |
 | 5 | Spójność geometrii, foteli i kamery | Wspólne parametry; testy podparcia foteli, kadru panoramy i wszystkich bloków. Dokładne oficjalne rzędy/numery nie są zweryfikowane |
 | 6 | Ceny, filtry i reguły wydarzenia | Wdrożone: filtry, grupy, reguły i aktualizacja wybranego bloku z Supabase co 15 s / focus / ręcznie / po zmianie holda. Wspólna migawka dla panelu, mapy i 3D. Pozostałe bloki opisuje katalog demo; brak oficjalnego cennika/ulg klubu |
@@ -17,6 +17,8 @@ Cel właściciela: pełne doświadczenie kibica na poziomie produktu referencyjn
 | 9 | Docelowe MVP pod stałym linkiem | Obecne przyrosty wdrażane na salesbeyond.vercel.app. Sam deploy nie zamyka etapów 4–8 |
 
 ## Model według blueprintu i nagrania
+
+Aktualny przyrost20listopada:18e1630 (kratownice/żebra/elewacja),768e029 (ciągłość grup i jawna nawigacja do fotela). Production READY i HTTP assetów/usługi potwierdzone w `.ai/runs/2026-11-20-fan-flow-continuation.md`;153+1 testów. To nadal nie jest odbiór wizualny/telefonu. Kontrolne obrazy geometrii: `docs/qa-evidence/enea-fidelity-2026-11-20/README.md`.
 
 Blueprint rozpoczyna od budowy stadionu w Three.js z wieloma poziomami, przejściami, membranowym dachem i instancjami krzeseł z metadanymi. Nagranie pokazuje ciągłą gęstą misę, wyróżnienie całego bloku i płynne zbliżenie do trybuny. To referencje wyglądu i zachowania, nie gotowe źródła ani instrukcja kupna skanu.
 
