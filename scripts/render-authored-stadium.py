@@ -27,6 +27,7 @@ chairs=mesh('All canonical chair instances',vertices,faces,palette[0])
 for color in palette[1:]:chairs.data.materials.append(material(color))
 for polygon,index in zip(chairs.data.polygons,face_colors):polygon.material_index=index
 mesh('Site',[(-145,-126,-1.3),(145,-126,-1.3),(145,126,-1.3),(-145,126,-1.3)],[(0,1,2,3)],'#c4d0ca')
+mesh('Concourse pad',[(-129,-112,-.25),(129,-112,-.25),(129,112,-.25),(-129,112,-.25)],[(0,1,2,3)],'#dfe3e2')
 mesh('Turf',[(-59,-41,-.15),(59,-41,-.15),(59,41,-.15),(-59,41,-.15)],[(0,1,2,3)],'#467e54')
 for i in range(14):
  x=-52.5+i*7.5;mesh('Pitch stripe',[(x,-34,0),(x+7.5,-34,0),(x+7.5,34,0),(x,34,0)],[(0,1,2,3)],'#659965' if i%2 else '#72a96d')

@@ -1,11 +1,12 @@
 import {writeFile} from 'node:fs/promises';
 import {createEneaModel} from '../src/integrations/eneaModel.ts';
+import {createBeyondAdvertising} from '../src/integrations/beyondAdvertising.ts';
 import {stadiumSeats,layout,sectorFrame,seatsInRow,allSectors} from '../src/data/stadium.ts';
 import {eneaLayout} from '../src/data/eneaLayout.ts';
 import {seatColor} from '../src/components/seatFeedback.ts';
 import {eyePosition,overviewPosition} from '../src/domain/camera.ts';
 import {roofCutawayNormal} from '../src/components/structure.ts';
-const parts=createEneaModel();
+const parts=[...createEneaModel(),...createBeyondAdvertising()];
 // Match Stadium.tsx: vertical FOV 43°, responsive overview/sector framing,
 // and the seat view's [0,1,0] target from Stadium.tsx. Seat position is aspect-independent.
 const fov=43,reviewAspect=1100/760;

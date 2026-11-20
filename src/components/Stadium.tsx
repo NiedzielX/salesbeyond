@@ -6,6 +6,7 @@ import type { OrbitControls as OrbitControlsType } from 'three-stdlib';
 import { layout, allSectors, sectorSeats, sectorFrame, type SectorId, type Seat } from '../data/stadium';
 import {roofCutawayNormal,showStructure} from './structure';
 import {createEneaModel} from '../integrations/eneaModel';
+import {createBeyondAdvertising} from '../integrations/beyondAdvertising';
 import {eneaLayout} from '../data/eneaLayout';
 import {aimRotation,rotateFlight} from './cameraRotation';
 import {watchContextLoss} from './contextLoss';
@@ -19,7 +20,7 @@ export type { View } from '../domain/selection';
 type Props = {sector: SectorId | null; seat:Seat|null; row:number;rowFocused?:boolean; chosenIds:readonly string[]; inventory?:ReadonlyMap<string,Seat>; view:View; roof:boolean; flying:boolean; onSector:(id:SectorId,row?:number)=>void; onSeat:(seat:Seat)=>void; reset:number; onReady:()=>void; onUnavailable:()=>void;onPreview:(image:string|null)=>void};
 function Box({position,size,color,rotation=0,tiltX=0,tiltZ=0}: {position:[number,number,number];size:[number,number,number];color:string;rotation?:number;tiltX?:number;tiltZ?:number}){return <mesh position={position} rotation={[tiltX,rotation,tiltZ]} receiveShadow castShadow><boxGeometry args={size}/><meshStandardMaterial color={color} roughness={.8}/></mesh>}
 function Architecture({roof,view,side}:{roof:boolean;view:View;side:number}){
- const parts=useMemo(()=>createEneaModel(),[]);
+ const parts=useMemo(()=>[...createEneaModel(),...createBeyondAdvertising()],[]);
  const planes=useMemo(()=>{const normal=roofCutawayNormal(view,side);return normal?[new THREE.Plane(new THREE.Vector3(...normal),0)]:[];},[view,side]);
  return <group>{parts.filter(p=>p.layer==='bowl'||roof).map(p=><mesh key={p.name} geometry={p.geometry} receiveShadow castShadow><meshStandardMaterial color={p.color} roughness={p.layer==='frame'?.55:.85} side={THREE.DoubleSide} clippingPlanes={p.layer==='bowl'?undefined:planes} clipShadows/></mesh>)}</group>;
 }

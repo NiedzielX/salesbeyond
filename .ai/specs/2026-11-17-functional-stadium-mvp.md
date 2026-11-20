@@ -67,6 +67,20 @@ Przeprowadzony 2026-11-17 przez osobną sesję gpt-6-luna (świeży kontekst, re
 - Integrator sam sprawdził dokument i wskazane miejsca kodu. Status pozostaje draft; akceptacja należy do właściciela.
 
 ## Realizacja
+### Rozszerzenie MVP zlecone przez właściciela: widownia — 2026-11-20
+Właściciel polecił dopisać do scope MVP poglądowe zapełnienie trybun, żeby ocenić widok, gdy przed wybranym miejscem siedzi kibic. To element aktualnego MVP, nie edytora/panelu organizatora.
+
+- C1: Własne uproszczone, ciemne sylwetki siedzących kibiców w3D, bez twarzy i zewnętrznych modeli. Pozycje/kierunki wynikają z tego samego katalogu foteli i wysokości stopni.
+- C2: Przełącznik „Puste trybuny / Z kibicami”; podgląd z tego samego fotela pozwala porównać oba warianty. Widoczna także sylwetka w poprzedzającym rzędzie, jeżeli ten istnieje. Nie renderować głowy/sylwetki obserwatora na jego własnej kamerze.
+- C3: Sylwetki są wyraźnie oznaczoną symulacją widowni, niezależną od dostępności/holdów. Przełączenie nie zmienia ID, wyboru, cen, koszyka ani blokady. Brak deklaracji zmierzonego zasłonięcia rzeczywistego miejsca lub prawdziwej frekwencji.
+- C4: Lekka geometria instancjonowana; sylwetki nie przechwytują kliknięć foteli. Zachować 2D i działanie panelu oraz dostępny z klawiatury/dotyku przełącznik.
+- C5: Akceptacja: porównanie pusty/z kibicami dla pierwszego, środkowego i ostatniego rzędu każdej trybuny oraz narożnika, brak własnej sylwetki w kamerze, spójność po zmianie fotela/resetach. Osobno sprawdzić faktyczną płynność i obraz na desktopie/telefonie. CPU/testy nie zastępują tego odbioru.
+
+Stan: zlecone i zapisane do implementacji po bieżącej poprawce kamery/reklamie. Nie oznaczać wykonane na podstawie samego dokumentu.
+
+### Polecenia właściciela: Beyond i dokładny przegląd kamery — 2026-11-20
+Subtelny napis Beyond na szarej strefie za obiema bramkami, lokalna geometria/zasoby, bez zasłaniania pola gry i miejsc. Właściciel zgłosił możliwe zapadanie kamery w murawę przy podglądzie: odtworzyć na rzeczywistych kontrolerach i danych, naprawić potwierdzoną przyczynę oraz utrwalić regresję. Równolegle przejrzeć punkty1–4 poprzedniego planu w istniejącym zakresie. Oddzielać kod/CPU od niewykonanego odbioru przeglądarkowego; nie obchodzić wcześniejszej odmowy dostępu.
+
 ### Szczegóły architektury Enei — 2026-11-20
 Po porównaniu obrazu własnej geometrii z publiczną referencją poprawiono przestrzenne pasy kratownicy, podziały i wypukłe fartuchy membrany oraz kondygnacje elewacji. Bez zmiany katalogu38 078foteli i ich pozycji. Wspólne kadry eksportowane z helperów kamery: panorama, II-3, fotel oraz elewacja. Nowy test171osi widoku i bramki148+1/lint/typecheck/build:pass. CPU obrazy oraz rzeczywiste wyjście cięć weryfikowane przez root, niezależne source review po poprawkach narzędzi. Dowody: `docs/qa-evidence/enea-fidelity-2026-11-20/README.md`; log `.ai/runs/2026-11-20-enea-visual-fidelity.md`. Status nadal in-progress: odbiór aplikacji w WebGL jest otwarty.
 
