@@ -6,7 +6,7 @@ const origin='https://salesbeyond.test',secret='a'.repeat(64),cookie=`__Host-sal
 const hold={id:holdId,eventId:'enea-demo',status:'active',expiresAt:'2030-01-01T12:00:00Z',version:1,currency:'PLN',subtotalMinor:17000,items:[{seatId:'101-6-1',priceMinor:8500},{seatId:'101-6-2',priceMinor:8500}]};
 function fixture(){
  const creates:CreateHold[]=[],lookups:string[]=[],rates:string[]=[];
- const store:HoldStore={inventory:async()=>({ok:true,eventId:'enea-demo',status:'open',version:1,currency:'PLN',maxSeats:10,holdSeconds:600,preventSingle:false,sections:[{sectionId:'101',total:200,available:150,minPriceMinor:6500}]}),create:async input=>{creates.push(input);return {ok:true,hold:{...hold,sessionHash:'must-not-leak'}}},get:async(id,owner)=>{lookups.push(id,owner);return {ok:true,hold}},release:async()=>({ok:true,hold:{...hold,status:'released'}}),consumeRate:async key=>{rates.push(key);return {ok:true,allowed:true}}};
+ const store:HoldStore={inventory:async()=>({ok:true,eventId:'enea-demo',status:'open',version:1,currency:'PLN',maxSeats:10,holdSeconds:600,preventSingle:false,sections:[{sectionId:'101',total:200,available:150,minPriceMinor:6500}]}),create:async input=>{creates.push(input);return {ok:true,hold:{...hold,sessionHash:'must-not-leak'}}},current:async()=>({ok:false,code:'not_found'}),get:async(id,owner)=>{lookups.push(id,owner);return {ok:true,hold}},release:async()=>({ok:true,hold:{...hold,status:'released'}}),consumeRate:async key=>{rates.push(key);return {ok:true,allowed:true}}};
  return {store,creates,lookups,rates};
 }
 function request(path:string,method='GET',body?:unknown,extra:Record<string,string>={}){
@@ -70,6 +70,51 @@ test('inventory zwraca tylko publiczne metadane, a własny hold pozostaje związ
  const released=await api(request('/api/holds/'+holdId,'DELETE'));assert.equal((await released.json()).hold.status,'released');
  assert.equal((await api(request('/api/events/enea-demo/inventory','POST',{}))).status,405);
 });
+test('current hold reads only the cookie owner without bootstrapping a session',async()=>{
+ const {store}=fixture(),calls:{eventId:string;owner:string}[]=[];
+ const ownerHash=await sessionHash(secret);
+ store.current=async(eventId,owner)=>{
+  calls.push({eventId,owner});
+  return owner===ownerHash&&eventId===hold.eventId
+   ?{ok:true,hold:{...hold,sessionHash:'must-not-leak'}}
+   :{ok:false,code:'not_found',holdId};
+ };
+ const api=createHoldApi({store,origin});
+ const path='/api/events/enea-demo/holds/current';
+ for(const badCookie of ['', '__Host-salesbeyond_fan=invalid']){
+  const response=await api(request(path,'GET',undefined,{Cookie:badCookie}));
+  assert.equal(response.status,401);
+  assert.equal((await response.json()).error.code,'session_required');
+  assert.equal(response.headers.get('set-cookie'),null);
+ }
+ const method=await api(request(path,'DELETE'));
+ assert.equal(method.status,405);
+ assert.equal(method.headers.get('allow'),'GET');
+ assert.equal(calls.length,0);
+ const own=await api(request(path));
+ assert.equal(own.status,200);
+ assert.equal(own.headers.get('set-cookie'),null);
+ assert.equal(own.headers.get('cache-control'),'no-store');
+ assert.equal(own.headers.get('vary'),'Cookie, Origin');
+ assert.deepEqual(await own.json(),{ok:true,hold,replayed:false});
+ assert.deepEqual(calls,[{eventId:'enea-demo',owner:ownerHash}]);
+ const foreign=await api(request(path+'?sessionHash='+ownerHash,'GET',undefined,
+  {Cookie:'__Host-salesbeyond_fan='+'b'.repeat(64)}));
+ assert.equal(foreign.status,404);
+ const error=(await foreign.json()).error;
+ assert.equal(error.code,'not_found');
+ assert.equal(error.holdId,undefined);
+ assert.equal((await api(request('/api/events/other-event/holds/current'))).status,404);
+});
+
+test('current hold rejects a released hold or a hold from a different event in the backend result',async()=>{
+ const {store}=fixture(),api=createHoldApi({store,origin});
+ for(const wrong of [{...hold,status:'released'},{...hold,eventId:'other-event'}]){
+  store.current=async()=>({ok:true,hold:wrong});
+  assert.equal((await api(request('/api/events/enea-demo/holds/current'))).status,502);
+ }
+});
+
 test('klucz rate limit jest deterministycznym HMAC i nie ujawnia adresu klienta',async()=>{
  const value=await holdRateKey('192.0.2.1','s'.repeat(32));assert.match(value,/^[0-9a-f]{64}$/);assert.equal(value,await holdRateKey('192.0.2.1','s'.repeat(32)));assert.notEqual(value,await holdRateKey('192.0.2.2','s'.repeat(32)));await assert.rejects(()=>holdRateKey('192.0.2.1','short'));
 });

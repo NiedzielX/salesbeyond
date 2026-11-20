@@ -1,5 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
+import {sessionHash} from './holdApi.ts';
 import {createHoldRuntime} from './holdRuntime.ts';
 const origin='https://salesbeyond.vercel.app';
 const env={SEAT_HOLDS_ENABLED:'1',APP_ORIGIN:origin,SUPABASE_URL:'https://test.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fake-server-only',HOLD_RATE_LIMIT_SECRET:'z'.repeat(32)};
@@ -14,6 +15,30 @@ test('bramka Vercel przekazuje body, sesję i origin bez tworzenia dodatkowej se
  const request=new Request(origin+'/api/seat-api?op=create&eventId=enea-demo',{method:'POST',headers:{Origin:origin,Cookie:'__Host-salesbeyond_fan='+'a'.repeat(64),'Content-Type':'application/json','X-Forwarded-For':'192.0.2.10'},body:JSON.stringify({seatIds:['101-6-1'],expectedCatalogVersion:1,idempotencyKey:'runtime-retry-01'})});
  const response=await runtime(request);assert.equal(response.status,409);assert.equal((await response.json()).error.code,'held');assert.equal(seen.length,2);assert.ok(seen[1].endsWith('/sb_create_hold'));
 });
+test('gateway forwards current as a cookie-bound event lookup to Supabase',async()=>{
+ const seen:{url:string;init?:RequestInit}[]=[];
+ const runtime=createHoldRuntime(env,async(url,init)=>{
+  seen.push({url:String(url),init});
+  return Response.json({ok:false,code:'not_found'});
+ });
+ const path=origin+'/api/seat-api?op=current&eventId=enea-demo';
+ const missingSession=await runtime(new Request(path));
+ assert.equal(missingSession.status,401);
+ assert.equal(missingSession.headers.get('set-cookie'),null);
+ const secret='d'.repeat(64);
+ const headers={Cookie:'__Host-salesbeyond_fan='+secret};
+ const missingEvent=await runtime(new Request(origin+'/api/seat-api?op=current',{headers}));
+ assert.equal(missingEvent.status,404);
+ assert.equal(seen.length,0);
+ const missingHold=await runtime(new Request(path,{headers}));
+ assert.equal(missingHold.status,404);
+ assert.equal((await missingHold.json()).error.code,'not_found');
+ assert.equal(seen.length,1);
+ assert.equal(seen[0].url,'https://test.supabase.co/rest/v1/rpc/sb_current_hold');
+ assert.equal(seen[0].init?.method,'POST');
+ assert.deepEqual(JSON.parse(String(seen[0].init?.body)),{p_event_id:'enea-demo',p_session_hash:await sessionHash(secret)});
+});
+
 test('brak sekretu limitera lub zła konfiguracja pozostają zamknięte, bez wywołania RPC',async()=>{
  const noRate={...env,HOLD_RATE_LIMIT_SECRET:''};const runtime=createHoldRuntime(noRate,async()=>{throw new Error('should not call')});
  assert.equal((await runtime(new Request(origin+'/api/seat-api?op=session'))).status,503);

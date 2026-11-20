@@ -24,5 +24,7 @@ test('compiled API loads in Node and serves disabled status without TypeScript s
   assert.equal(response.status,200);assert.deepEqual(await response.json(),{ok:true,configured:false,mode:'demo'});
   const unavailable=await api.fetch(new Request('https://salesbeyond.vercel.app/api/seat-api?op=inventory&eventId=enea-demo'));
   assert.equal(unavailable.status,503);assert.equal((await unavailable.json()).error.code,'backend_not_configured');
+  const current=await api.fetch(new Request('https://salesbeyond.vercel.app/api/seat-api?op=current&eventId=enea-demo'));
+  assert.equal(current.status,503);assert.equal((await current.json()).error.code,'backend_not_configured');
  }finally{if(priorEnabled===undefined)delete process.env.SEAT_HOLDS_ENABLED;else process.env.SEAT_HOLDS_ENABLED=priorEnabled;await rm(output,{recursive:true,force:true});}
 });

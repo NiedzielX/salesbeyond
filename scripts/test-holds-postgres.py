@@ -25,7 +25,9 @@ try:
     else: raise RuntimeError('Postgres did not become ready')
     sql('CREATE ROLE anon NOLOGIN; CREATE ROLE authenticated NOLOGIN; CREATE ROLE service_role NOLOGIN;')
     sql((root/'database/001-seat-holds.sql').read_text())
-    print('Migration: passed on PostgreSQL 17.6',flush=True)
+    sql('alter default privileges in schema public grant execute on functions to anon, authenticated;')
+    sql((root/'database/20261120112649_own_current_hold.sql').read_text())
+    print('Migrations: passed on PostgreSQL 17.6',flush=True)
     sql((root/'database/tests.sql').read_text())
     print('SQL behavior, expiry, policy and RLS fixture: passed (rolled back)',flush=True)
     seed=command(['node','--experimental-strip-types',str(root/'scripts/export-demo-inventory.mjs')],capture_output=True).stdout

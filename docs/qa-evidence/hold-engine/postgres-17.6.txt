@@ -1,4 +1,4 @@
-Migration: passed on PostgreSQL 17.6
+Migrations: passed on PostgreSQL 17.6
 SQL behavior, expiry, policy and RLS fixture: passed (rolled back)
 Full 38,078-seat canonical seed: passed; duplicate seed refused, live hold preserved
 race-direct Lock/transactionid -> first active, second held; one hold row

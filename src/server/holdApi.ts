@@ -60,17 +60,20 @@ export function createHoldApi(config:{store:HoldStore|null;origin:string;rateKey
  if(!sessionCookie(request)){const secret=hex(crypto.getRandomValues(new Uint8Array(32)).buffer);headers.set('Set-Cookie',`${cookieName}=${secret}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`);}
  return respond({ok:true});
  }
- const eventPath=/^\/api\/events\/([A-Za-z0-9_-]{1,80})\/(inventory|holds)$/.exec(url.pathname);
+ const eventPath=/^\/api\/events\/([A-Za-z0-9_-]{1,80})\/(inventory|holds(?:\/current)?)$/.exec(url.pathname);
  const ownHold=/^\/api\/holds\/([0-9a-f-]{36})$/i.exec(url.pathname);
+ const currentEventId=eventPath?.[2]==='holds/current'?eventPath[1]:undefined;
  let result:unknown;let create=false;
  if(eventPath?.[2]==='inventory'){
  if(method!=='GET'){headers.set('Allow','GET');return fail('method_not_allowed',405);}
  const section=url.searchParams.get('sectionId');if(section!==null&&!safeId(section))return fail('invalid_request',400);
  result=await store.inventory(eventPath[1],section);
- }else if(eventPath?.[2]==='holds'||ownHold){
- const expected=eventPath?'POST':'GET, DELETE';if(eventPath&&method!=='POST'||ownHold&&!['GET','DELETE'].includes(method)){headers.set('Allow',expected);return fail('method_not_allowed',405);}
+ }else if(eventPath||ownHold){
+ const methods=currentEventId?['GET']:eventPath?['POST']:['GET','DELETE'];
+ if(!methods.includes(method)){headers.set('Allow',methods.join(', '));return fail('method_not_allowed',405);}
  const secret=sessionCookie(request);if(!secret)return fail('session_required',401);const owner=await sessionHash(secret);
- if(ownHold){if(!uuid.test(ownHold[1]))return fail('not_found',404);result=method==='DELETE'?await store.release(ownHold[1],owner):await store.get(ownHold[1],owner);}
+ if(currentEventId)result=await store.current(currentEventId,owner);
+ else if(ownHold){if(!uuid.test(ownHold[1]))return fail('not_found',404);result=method==='DELETE'?await store.release(ownHold[1],owner):await store.get(ownHold[1],owner);}
  else{
  let body:unknown;try{body=await jsonBody(request);}catch(error){const code=error instanceof Error?error.message:'invalid_json';return fail(code,code==='too_large'?413:code==='unsupported_media'?415:400);}
  if(!object(body)||!Array.isArray(body.seatIds)||body.seatIds.length<1||body.seatIds.length>10||!body.seatIds.every(safeId)||new Set(body.seatIds).size!==body.seatIds.length||(!integer(body.expectedCatalogVersion)||Number(body.expectedCatalogVersion)<1)||typeof body.idempotencyKey!=='string'||!/^[A-Za-z0-9_-]{8,128}$/.test(body.idempotencyKey)||body.avoidSingle!==undefined&&typeof body.avoidSingle!=='boolean')return fail('invalid_request',400);
@@ -83,12 +86,18 @@ export function createHoldApi(config:{store:HoldStore|null;origin:string;rateKey
  }else return fail('not_found',404);
  if(!object(result)||typeof result.ok!=='boolean'||result.replayed!==undefined&&typeof result.replayed!=='boolean')throw new Error('Invalid backend result');
  if(!result.ok){
+ if(currentEventId){
+ if(result.code!=='not_found')throw new Error('Invalid backend error');
+ return fail('not_found',404);
+ }
  if(typeof result.code!=='string'||!errorCodes.has(result.code))throw new Error('Invalid backend error');
  const details:Obj={};if(Array.isArray(result.seatIds)&&result.seatIds.every(safeId))details.seatIds=result.seatIds;if(typeof result.holdId==='string'&&uuid.test(result.holdId))details.holdId=result.holdId;
  return fail(result.code,result.code==='not_found'?404:result.code==='invalid_request'||result.code==='seat_limit'?400:409,details);
  }
  if(eventPath?.[2]==='inventory')return respond(inventoryRecord(result));
- return respond({ok:true,hold:holdRecord(result.hold),replayed:result.replayed===true},create&&result.replayed!==true?201:200);
+ const hold=holdRecord(result.hold);
+ if(currentEventId&&(hold.eventId!==currentEventId||hold.status!=='active'))throw new Error('Invalid current hold');
+ return respond({ok:true,hold,replayed:result.replayed===true},create&&result.replayed!==true?201:200);
  }catch{try{config.log?.('hold_backend_failure',requestId);}catch{/* Logging cannot change the API failure response. */}return fail('backend_unavailable',502);}
  };
 }

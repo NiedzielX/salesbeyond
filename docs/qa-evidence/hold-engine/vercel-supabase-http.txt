@@ -1,0 +1,1 @@
+{"ok":true,"source":"public Vercel API to real Supabase","checks":["two-session same-group race: exactly one success","canonical server prices","same-key replay","foreign GET and DELETE denied","own lookup and release","released replay stays released","inventory restored"],"seats":2}

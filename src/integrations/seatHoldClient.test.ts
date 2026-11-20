@@ -60,6 +60,45 @@ test('unconfigured service stays explicit and malformed responses fail closed',a
  await assert.rejects(malformed.status(),error=>error instanceof SeatHoldClientError&&error.code==='invalid_response');
 });
 
+test('current reads the active hold without a session bootstrap',async()=>{
+ const calls:{url:URL;init:RequestInit}[]=[];
+ const client=createSeatHoldClient({fetcher:fetcherFor((url,init)=>{
+  calls.push({url,init});
+  return json({ok:true,hold:hold()});
+ })});
+ assert.deepEqual(await client.current(eventId),hold());
+ assert.equal(calls.length,1);
+ assert.equal(calls[0].url.search,'?op=current&eventId=enea-demo');
+ assert.equal(calls[0].init.method,'GET');
+ assert.equal(calls[0].init.credentials,'same-origin');
+ assert.equal(calls[0].init.cache,'no-store');
+ await assert.rejects(client.current('invalid/event'),{code:'invalid_request'});
+ assert.equal(calls.length,1);
+});
+
+test('current distinguishes missing session or hold from backend failures',async()=>{
+ let calls=0;
+ for(const [status,code] of [[401,'session_required'],[404,'not_found']] as const){
+  const client=createSeatHoldClient({fetcher:fetcherFor(()=>{
+   calls++;
+   return json({ok:false,error:{code}},status);
+  })});
+  assert.equal(await client.current(eventId),null);
+ }
+ assert.equal(calls,2);
+ for(const [status,code] of [[502,'backend_unavailable'],[503,'backend_not_configured'],[401,'origin_not_allowed'],[502,'not_found']] as const){
+  const client=createSeatHoldClient({fetcher:fetcherFor(()=>json({ok:false,error:{code}},status))});
+  await assert.rejects(client.current(eventId),{code,status});
+ }
+});
+
+test('current rejects another event, a non-active hold, and invalid amounts',async()=>{
+ for(const patch of [{eventId:'other-event'},{status:'released'},{status:'expired'},{subtotalMinor:0}]){
+  const client=createSeatHoldClient({fetcher:fetcherFor(()=>json({ok:true,hold:hold(patch)}))});
+  await assert.rejects(client.current(eventId),{code:'invalid_response'});
+ }
+});
+
 test('get and release use hold endpoint with session credentials and DELETE release',async()=>{
  const calls:{url:URL;init:RequestInit}[]=[];
  const client=createSeatHoldClient({fetcher:fetcherFor((url,init)=>{

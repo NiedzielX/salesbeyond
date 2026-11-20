@@ -9,3 +9,9 @@ export function columnPositions(side:number,view:View,flying=false):Point[]{
  return side<2?[along,16,(side===0?1:-1)*79]:[(side===2?1:-1)*97,16,along];
  });
 }
+
+/** Keep the opposite roof visible while opening only the near half for seat picking. */
+export function roofCutawayNormal(view:View,side:number):Point|null{
+ if(view==='overview')return null;
+ return side===0?[0,0,-1]:side===1?[0,0,1]:side===2?[-1,0,0]:side===3?[1,0,0]:null;
+}

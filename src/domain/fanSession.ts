@@ -65,3 +65,8 @@ export function selectionUrl(href:string,selection:Selection){
  return url.toString();
  }catch{return null;}
 }
+
+/** Restore choices, then begin the stadium tour only when the URL explicitly names a seat. */
+export function launchFanState(saved:FanState,search:string,legacyOnly=false){
+ return applySeatLink({...saved,selection:{...initialSelection},stand:-1},search,legacyOnly);
+}

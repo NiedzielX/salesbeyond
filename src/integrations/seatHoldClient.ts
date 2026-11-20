@@ -94,6 +94,19 @@ export function createSeatHoldClient(options:{fetcher?:Fetcher;endpoint?:string}
    const value=await request('create',{eventId:snapshot.eventId},{seatIds:snapshot.seatIds,expectedCatalogVersion:snapshot.expectedCatalogVersion,idempotencyKey:snapshot.idempotencyKey,...(snapshot.avoidSingle===undefined?{}:{avoidSingle:snapshot.avoidSingle})});
    const hold=validateHold(value.hold);assertExactSeats(hold,snapshot.seatIds,snapshot.eventId,snapshot.expectedCatalogVersion);return hold;
   },
+  async current(eventId:string):Promise<SeatHold|null>{
+   if(!safeId(eventId)||eventId.length>80)throw new SeatHoldClientError('invalid_request',null);
+   try{
+    const value=await request('current',{eventId}),hold=validateHold(value.hold);
+    if(hold.eventId!==eventId||hold.status!=='active')invalidResponse();
+    return hold;
+   }catch(error){
+    if(error instanceof SeatHoldClientError&&(
+     error.status===401&&error.code==='session_required'||error.status===404&&error.code==='not_found'
+    ))return null;
+    throw error;
+   }
+  },
   async get(holdId:string){
    if(!uuid(holdId))throw new SeatHoldClientError('invalid_request',null);await ensureSession();
    const value=await request('hold',{holdId}),hold=validateHold(value.hold);if(hold.id!==holdId)invalidResponse();return hold;

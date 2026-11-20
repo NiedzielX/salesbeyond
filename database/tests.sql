@@ -1,4 +1,4 @@
--- Run on an isolated PostgreSQL 17 database after 001-seat-holds.sql, as its owner.
+-- Run on an isolated PostgreSQL 17 database after the seat hold migrations, as their owner.
 -- Create NOLOGIN roles anon, authenticated and service_role before the migration.
 begin;
 set timezone = 'UTC';
@@ -53,6 +53,11 @@ begin
       and r #>> '{hold,subtotalMinor}' = '16000' and r #>> '{hold,version}' = '1'
       and r #> '{hold,items}' = '[{"seatId":"b","priceMinor":7500},{"seatId":"c","priceMinor":8500}]',
     'create atomically snapshots canonical sorted prices');
+  perform pg_temp.assert_true(
+    public.sb_current_hold('fixture-core', s1) = r
+      and public.sb_current_hold('fixture-core', s2) = '{"ok":false,"code":"not_found"}'
+      and public.sb_current_hold('fixture-expiry', s1) = '{"ok":false,"code":"not_found"}',
+    'current lookup returns a live hold for its session and event only');
   r := public.sb_inventory('fixture-core');
   perform pg_temp.assert_true(
     r->'sections' = '[{"sectionId":"main","total":4,"available":2,"minPriceMinor":6500},{"sectionId":"side","total":1,"available":0,"minPriceMinor":null}]'
@@ -109,6 +114,9 @@ begin
       and public.sb_release_hold(v_hold, s1) #>> '{hold,status}' = 'released'
       and public.sb_create_hold('fixture-core', s1, array['b','c'], 1, 'initial') #>> '{hold,status}' = 'released',
     'release and create retry remain idempotent');
+  perform pg_temp.assert_true(
+    public.sb_current_hold('fixture-core', s1) = '{"ok":false,"code":"not_found"}',
+    'current lookup omits released holds');
   perform pg_temp.assert_true((
     select count(*) = 0 from sb_hold.seats where event_id = 'fixture-core' and active_hold is not null
   ), 'release clears all matching pointers');
@@ -118,6 +126,9 @@ begin
   perform pg_sleep(1.1);
   perform pg_temp.assert_true(public.sb_get_hold(v_old, s1) #>> '{hold,status}' = 'expired',
     'get derives expiry from live wall clock inside one transaction');
+  perform pg_temp.assert_true(
+    public.sb_current_hold('fixture-expiry', s1) = '{"ok":false,"code":"not_found"}',
+    'current lookup omits expired holds');
   r := public.sb_create_hold('fixture-expiry', s2, array['b','c'], 1, 'blocked');
   perform pg_temp.assert_true(r->>'code' = 'unavailable' and (
     select active_hold = v_old from sb_hold.seats where event_id = 'fixture-expiry' and seat_id = 'b'
@@ -157,7 +168,7 @@ declare
 begin
   foreach rpc in array array[
     'public.sb_create_hold(text,text,text[],bigint,text,boolean)',
-    'public.sb_get_hold(uuid,text)', 'public.sb_release_hold(uuid,text)',
+    'public.sb_current_hold(text,text)', 'public.sb_get_hold(uuid,text)', 'public.sb_release_hold(uuid,text)',
     'public.sb_inventory(text,text)', 'public.sb_consume_hold_request(text,integer)'
   ] loop
     perform pg_temp.assert_true(
@@ -182,7 +193,7 @@ set local role anon;
 do $$
 begin
   begin
-    perform public.sb_consume_hold_request(repeat('c', 64), 20);
+    perform public.sb_current_hold('fixture-core', repeat('a',64));
     raise exception 'Anonymous RPC unexpectedly succeeded';
   exception when insufficient_privilege then null;
   end;
@@ -199,6 +210,7 @@ set local role service_role;
 do $$
 begin
   if public.sb_inventory('fixture-core')->>'version' <> '2'
+    or public.sb_current_hold('fixture-core', repeat('a',64)) is distinct from '{"ok":false,"code":"not_found"}'::jsonb
     or public.sb_consume_hold_request(repeat('d', 64), 100)->>'allowed' <> 'true'
     or public.sb_consume_hold_request('invalid', 100)->>'code' <> 'invalid_request'
     or public.sb_consume_hold_request(repeat('d', 64), 0)->>'code' <> 'invalid_request'

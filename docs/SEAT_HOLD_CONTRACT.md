@@ -1,10 +1,10 @@
 # Kontrakt dostępności i czasowej blokady miejsc
 
-Status: **implementacja SQL/API i transport klienta sprawdzone lokalnie; baza chmurowa niepołączona, publiczne holdy wyłączone**. Obecny produkt pozostaje demonstracyjny. Właściciel zatwierdził Supabase Free, Frankfurt i połączenie z salesbeyond; integracja zgłasza limit dwóch projektów Free. Istniejący zasób supabase-cerise-bucket należy do innej aplikacji i nie został wykorzystany. Dostęp do organizacji Supabase „n” wymaga osobnego uwierzytelnienia, niezależnego od działającego logowania Vercel.
+Status: **Supabase i Vercel połączone; realne blokady demo działają przez API**. Właściciel 2026-11-20 wybrał osobny prywatny schemat sb_hold w istniejącym supabase-cerise-bucket (pnexqoyhazwlobzgdmzt, Frankfurt). Tabele aplikacji wine nie zostały zmienione. Nowy projekt Free nie powstał przez limit konta; wybrany zasób pozostaje Free. Publiczne API potwierdziło wyścig dwóch sesji, ceny, idempotencję, własność i release. Panel React przygotowany do publikacji; wygląd WebGL i interakcje w przeglądarce nieodebrane.
 
 ## Docelowe wdrożenie
 
-Vercel Functions przy istniejącym `salesbeyond`, transakcyjny Postgres w Supabase, projekt roboczy `salesbeyond-mvp`, region EU Frankfurt. Jeżeli istnieje już właściwy projekt, należy go połączyć zamiast tworzyć drugi. Migracja database/001-seat-holds.sql i adapter bez nowej zależności zostały przejrzane; obecny React/Vite/R3F pozostaje bez migracji frameworka. Właściciel autoryzował nowy zasób Free, połączenie projektu i prywatne zmienne. Ograniczenie planu ani brak sesji nie pozwalają automatycznie wybrać płatnej bazy lub modyfikować innych aplikacji.
+Vercel Functions przy istniejącym `salesbeyond`, transakcyjny Postgres w Supabase, osobny schemat sb_hold w zatwierdzonym supabase-cerise-bucket, region EU Frankfurt. Funkcja Vercel również w fra1. Migracja database/001-seat-holds.sql i adapter bez nowej zależności zostały przejrzane; obecny React/Vite/R3F pozostaje bez migracji frameworka. Właściciel autoryzował nowy zasób Free, połączenie projektu i prywatne zmienne. Ograniczenie planu ani brak sesji nie pozwalają automatycznie wybrać płatnej bazy lub modyfikować innych aplikacji.
 
 Pierwsze wdrożenie dotyczyłoby wyłącznie wspólnej dostępności i holdów na syntetycznym wydarzeniu demo. Nie wymaga udawania oficjalnych cen/siatki biletowej klubu ani podłączania płatności. Dane klubowe i rzeczywisty checkout pozostają odrębnymi integracjami.
 
@@ -19,7 +19,9 @@ Kwoty są liczbami całkowitymi, czas UTC z zegara bazy. Limit koszyka klienta n
 
 ## Operacje API
 
-Na Vercel jeden endpoint `/api/seat-api` mapuje parametr `op` na poniższe operacje: `status`, `session`, `inventory`, `create`, `hold`. `eventId`, `sectionId` lub `holdId` są parametrami query; create używa POST, odczyt holda GET, zwolnienie DELETE. `GET ?op=status` pokazuje wyłącznie configured/mode, nie potwierdza zdrowia bazy. Wyłączona konfiguracja zwraca dla operacji hold/inventory HTTP 503 backend_not_configured.
+Na Vercel jeden endpoint `/api/seat-api` mapuje parametr `op` na poniższe operacje: `status`, `session`, `inventory`, `create`, `current`, `hold`. `eventId`, `sectionId` lub `holdId` są parametrami query; create używa POST, odczyt holda GET, zwolnienie DELETE. `GET ?op=status` pokazuje wyłącznie configured/mode, nie potwierdza zdrowia bazy. Wyłączona konfiguracja zwraca dla operacji hold/inventory HTTP 503 backend_not_configured.
+
+`GET ?op=current&eventId=enea-demo` zwraca tylko aktywną blokadę istniejącej sesji cookie, bez tworzenia cookie. Brak sesji to 401, brak własnego holda 404. Pozwala odzyskać commit po utracie odpowiedzi i reload, nawet jeśli nie zapisano ID.
 
 `GET ?op=session` ustanawia sesję bez zwracania sekretu. Same-origin credentials są obowiązkowe. Mutacje wymagają dokładnego Origin aplikacji. Ciało JSON ma limit 8 KB. Współdzielony bucket ogranicza tworzenie do 20 żądań/min na HMAC adresu klienta zaufanego przez Vercel; brak konfiguracji lub awaria nie pozwalają pominąć limitera.
 
@@ -54,7 +56,11 @@ Przed nazwaniem tego działającą rezerwacją wymagane są testy na rzeczywiste
 1. Wybrać zatwierdzony zasób Free we Frankfurcie i potwierdzić jego tożsamość/plan. Wykonać migrację jednokrotnie w pustym docelowym schemacie. Nie używać migracji jako bezpiecznego resetu istniejącej bazy.
 2. `node scripts/export-demo-inventory.mjs` generuje transakcyjny seed wszystkich 38 078 kanonicznych foteli z fizycznymi ciągami rzędów. Zapis odmawia, jeśli event enea-demo już istnieje; nie nadpisuje aktywnych holdów. Początkowo niedostępne fotele są blocked, bez deklarowania rzeczywistej sprzedaży. Domyślny hold 600 s, maksymalnie 10 miejsc.
 3. Skonfigurować wyłącznie po stronie serwera SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, HOLD_RATE_LIMIT_SECRET (losowy, co najmniej 32 znaki) oraz APP_ORIGIN. Nie stosować prefiksu VITE_. Dopiero po testach bazy ustawić SEAT_HOLDS_ENABLED=1 i wdrożyć funkcję ponownie. `.env.example` zawiera tylko puste pola i flagę 0.
-4. Zweryfikować publiczny endpoint, własność pomiędzy dwiema sesjami, współbieżność, release i expiry w docelowej usłudze. Transport seatHoldClient jest gotowy; widoczny frontend nadal używa katalogu demo i nie jest jeszcze podłączony do holdów.
+4. Zweryfikować publiczny endpoint, własność pomiędzy dwiema sesjami, współbieżność, release i expiry w docelowej usłudze. Panel React najpierw sprawdza autorytatywne ceny/dostępność wybranych bloków, następnie wymaga osobnego potwierdzenia holda. localStorage przechowuje wyłącznie holdId. Niepewne create zachowuje ten sam klucz w pamięci i blokuje zmianę koszyka; po reload odczyt current odzyskuje hold własnej sesji. Plan i filtry nadal opisują katalog demo; nie deklarujemy ciągłej aktualizacji kolorów dostępności w 2D/3D.
 5. Zaplanować retencję historycznych holdów i bucketów. Ważność wynika z zegara DB; retencja nie może usuwać bieżących wskaźników. Obecny przyrost nie instaluje crona ani harmonogramu czyszczenia.
 
 `python3 scripts/test-holds-postgres.py` używa przypiętego PostgreSQL 17.6 w jednorazowym kontenerze Docker bez portów, sieci i trwałych wolumenów. Potwierdzono SQL, uprawnienia anon/RLS, pełny seed i odmowę jego powtórzenia z zachowaniem holda, prawdziwe równoległe połączenia dla jednego fotela/polityki singletonów/jednej sesji/idempotencji oraz współdzielonego limitera. Zastąpienie wygasłego holda działa również przy zablokowanym starym rekordzie; spóźniony release zachowuje nowy wskaźnik. Dowód: docs/qa-evidence/hold-engine/postgres-17.6.txt. To nie jest weryfikacja chmury ani browser QA. Płatności i oficjalne dane klubu pozostają poza tym etapem.
+
+
+## Bezpieczeństwo współdzielonego projektu
+Przed migracją potwierdzono brak kolizji nazw, po migracji service_role EXECUTE=true, anon/authenticated=false dla sześciu RPC. Cztery prywatne tabele mają RLS i celowo brak polityk bezpośredniego dostępu. Wspólna baza nadal zawiera istniejące 19 tabel public aplikacji wine z RLS off i grantami anon SELECT/INSERT; właściciel został poinformowany. Nie poprawiano automatycznie cudzych polityk. Wymaga to osobnego przeglądu aplikacji wine: https://supabase.com/docs/guides/database/database-linter?lint=0013_rls_disabled_in_public . Nie jest to ostrzeżenie o tabelach SalesBeyond.

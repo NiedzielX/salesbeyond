@@ -4,7 +4,7 @@ import { useMemo, useRef, useEffect, useLayoutEffect, useState, Component, type 
 import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsType } from 'three-stdlib';
 import { layout, allSectors, sectorSeats, sectorFrame, type SectorId, type Seat } from '../data/stadium';
-import {showStructure} from './structure';
+import {roofCutawayNormal,showStructure} from './structure';
 import {createEneaModel} from '../integrations/eneaModel';
 import {eneaLayout} from '../data/eneaLayout';
 import {aimRotation,rotateFlight} from './cameraRotation';
@@ -16,11 +16,12 @@ import {captureSeatPreview} from './seatPreview';
 import { eyePosition, flightPoint, flightProgress, lookTarget, overviewPosition, overviewScale, type Point } from '../domain/camera';
 import type { View } from '../domain/selection';
 export type { View } from '../domain/selection';
-type Props = {sector: SectorId | null; seat:Seat|null; row:number; chosenIds:readonly string[]; view:View; roof:boolean; flying:boolean; onSector:(id:SectorId)=>void; onSeat:(seat:Seat)=>void; reset:number; onReady:()=>void; onUnavailable:()=>void;onPreview:(image:string|null)=>void};
+type Props = {sector: SectorId | null; seat:Seat|null; row:number;rowFocused?:boolean; chosenIds:readonly string[]; view:View; roof:boolean; flying:boolean; onSector:(id:SectorId,row?:number)=>void; onSeat:(seat:Seat)=>void; reset:number; onReady:()=>void; onUnavailable:()=>void;onPreview:(image:string|null)=>void};
 function Box({position,size,color,rotation=0,tiltX=0,tiltZ=0}: {position:[number,number,number];size:[number,number,number];color:string;rotation?:number;tiltX?:number;tiltZ?:number}){return <mesh position={position} rotation={[tiltX,rotation,tiltZ]} receiveShadow castShadow><boxGeometry args={size}/><meshStandardMaterial color={color} roughness={.8}/></mesh>}
-function Architecture({roof}:{roof:boolean}){
+function Architecture({roof,view,side}:{roof:boolean;view:View;side:number}){
  const parts=useMemo(()=>createEneaModel(),[]);
- return <group>{parts.filter(p=>p.layer==='bowl'||roof).map(p=><mesh key={p.name} geometry={p.geometry} receiveShadow castShadow><meshStandardMaterial color={p.color} roughness={p.layer==='frame'?.55:.85} side={THREE.DoubleSide}/></mesh>)}</group>;
+ const planes=useMemo(()=>{const normal=roofCutawayNormal(view,side);return normal?[new THREE.Plane(new THREE.Vector3(...normal),0)]:[];},[view,side]);
+ return <group>{parts.filter(p=>p.layer==='bowl'||roof).map(p=><mesh key={p.name} geometry={p.geometry} receiveShadow castShadow><meshStandardMaterial color={p.color} roughness={p.layer==='frame'?.55:.85} side={THREE.DoubleSide} clippingPlanes={p.layer==='bowl'?undefined:planes} clipShadows/></mesh>)}</group>;
 }
 function Pitch(){
  const markings=useMemo(()=>{
@@ -28,7 +29,7 @@ function Pitch(){
  return [rect(105,68),[[0,.15,-34],[0,.15,34]] as [number,number,number][],...[-1,1].flatMap(s=>[rect(16.5,40.32,s*44.25),rect(5.5,18.32,s*49.75)]),Array.from({length:65},(_,i)=>[Math.cos(i/64*Math.PI*2)*9.15,.15,Math.sin(i/64*Math.PI*2)*9.15] as [number,number,number])];},[]);
  return <group><Box position={[0,-.4,0]} size={[119,.7,82]} color="#417a55"/>{Array.from({length:14},(_,i)=><Box key={i} position={[-48.75+i*7.5,0,0]} size={[7.5,.12,68]} color={i%2?'#72a16a':'#7caa73'}/>)}{markings.map((p,i)=><Line key={i} points={p} color="#edf4dd" lineWidth={1.2}/>)}{[-1,1].map(s=><group key={s}><Line points={[[s*52.5,.2,-3.66],[s*52.5,2.44,-3.66],[s*52.5,2.44,3.66],[s*52.5,.2,3.66]]} color="white" lineWidth={3}/><Box position={[s*54,1.2,0]} size={[.12,2.4,7.32]} color="#c2d2c5"/></group>)}</group>
 }
-function DemoSeats({sector,onSeat,selected,interactive,row,focusRow,overview,onSector,emphasized,chosen}:{sector:SectorId;onSeat:(seat:Seat)=>void;selected:Seat|null;interactive:boolean;row:number;focusRow:boolean;overview:boolean;onSector:(id:SectorId)=>void;emphasized:boolean;chosen:ReadonlySet<string>}){
+function DemoSeats({sector,onSeat,selected,interactive,row,focusRow,overview,onSector,emphasized,chosen}:{sector:SectorId;onSeat:(seat:Seat)=>void;selected:Seat|null;interactive:boolean;row:number;focusRow:boolean;overview:boolean;onSector:(id:SectorId,row?:number)=>void;emphasized:boolean;chosen:ReadonlySet<string>}){
  const ref=useRef<THREE.InstancedMesh>(null);const backs=useRef<THREE.InstancedMesh>(null);const seats=useMemo(()=>sectorSeats(sector),[sector]);
  const [hovered,setHovered]=useState<Seat|null>(null);
  const hover=interactive?hovered:null;
@@ -42,18 +43,27 @@ function DemoSeats({sector,onSeat,selected,interactive,row,focusRow,overview,onS
  return()=>{picking.forEach(index=>index.dispose());colors.current=null;};
  },[seats]);
  useLayoutEffect(()=>{colors.current?.update({selectedId:selected?.id??null,hoveredId:hover?.id??null,row:focusRow?row:null,emphasized,chosen});},[seats,selected?.id,hover?.id,focusRow,row,emphasized,chosen]);
- return <group onClick={e=>{if(!interactive)return;e.stopPropagation();if(e.instanceId!==undefined){const seat=seats[e.instanceId];if(overview)onSector(seat.sectorId);else onSeat(seat);}}} onPointerMove={e=>{if(!interactive)return;e.stopPropagation();const seat=e.instanceId===undefined?null:seats[e.instanceId];setHovered(seat);document.body.style.cursor=seat?'pointer':'auto';}} onPointerOut={()=>{setHovered(null);document.body.style.cursor='auto';}}><instancedMesh ref={ref} args={[undefined,undefined,seats.length]}><boxGeometry args={[1,layout.seatThickness,eneaLayout.seatDepth]}/><meshStandardMaterial roughness={.5}/></instancedMesh><instancedMesh ref={backs} args={[undefined,undefined,seats.length]}><boxGeometry args={[1,.56,.09]}/><meshStandardMaterial roughness={.5}/></instancedMesh>{focusRow&&rowStart&&<Html position={[rowStart.position[0],rowStart.position[1]+1.5,rowStart.position[2]]} center style={{pointerEvents:'none'}} zIndexRange={[6,0]}><span className="row-marker">RZĄD {row}</span></Html>}{hover&&<Html position={[hover.position[0],hover.position[1]+2.5,hover.position[2]]} center style={{pointerEvents:'none'}} zIndexRange={[7,0]}><div className="seat-tooltip"><strong>Sektor {hover.sectorId} · Rząd {hover.row}</strong><span>Miejsce {hover.number}<b>{hover.available?`${hover.price} zł`:'Zajęte'}</b></span><small>{hover.available?'Kliknij, aby zobaczyć perspektywę':'Zajęte · perspektywę możesz obejrzeć'}</small></div></Html>}</group>
+ return <group onClick={e=>{if(!interactive)return;e.stopPropagation();if(e.instanceId!==undefined){const seat=seats[e.instanceId];if(overview)onSector(seat.sectorId,seat.row);else onSeat(seat);}}} onPointerMove={e=>{if(!interactive)return;e.stopPropagation();const seat=e.instanceId===undefined?null:seats[e.instanceId];setHovered(seat);document.body.style.cursor=seat?'pointer':'auto';}} onPointerOut={()=>{setHovered(null);document.body.style.cursor='auto';}}><instancedMesh ref={ref} args={[undefined,undefined,seats.length]}><boxGeometry args={[1,layout.seatThickness,eneaLayout.seatDepth]}/><meshStandardMaterial roughness={.5}/></instancedMesh><instancedMesh ref={backs} args={[undefined,undefined,seats.length]}><boxGeometry args={[1,.56,.09]}/><meshStandardMaterial roughness={.5}/></instancedMesh>{focusRow&&rowStart&&<Html position={[rowStart.position[0],rowStart.position[1]+1.5,rowStart.position[2]]} center style={{pointerEvents:'none'}} zIndexRange={[6,0]}><span className="row-marker">RZĄD {row}</span></Html>}{hover&&<Html position={[hover.position[0],hover.position[1]+2.5,hover.position[2]]} center style={{pointerEvents:'none'}} zIndexRange={[7,0]}><div className="seat-tooltip"><strong>Sektor {hover.sectorId} · Rząd {hover.row}</strong><span>Miejsce {hover.number}<b>{hover.available?`${hover.price} zł`:'Zajęte'}</b></span><small>{hover.available?'Kliknij, aby zobaczyć perspektywę':'Zajęte · perspektywę możesz obejrzeć'}</small></div></Html>}</group>
 }
 function Camera({view,seat,sector,reset,onReady,onPreview}:{view:View;seat:Seat|null;sector:SectorId|null;reset:number;onReady:()=>void;onPreview:(image:string|null)=>void}){
- const controls=useRef<OrbitControlsType>(null);const {camera,gl,size,scene}=useThree();
+ const controls=useRef<OrbitControlsType>(null);const lastNavigation=useRef<string|null>(null);const manualCamera=useRef(false);const {camera,gl,size,scene}=useThree();
  const aspect=size.width/Math.max(1,size.height);
  const framingAspect=view==='seat'?1.5:aspect;
  const flight=useRef(true);const elapsed=useRef(0);const from=useRef<Point>([0,0,0]);const fromRotation=useRef(new THREE.Quaternion());const toRotation=useRef(new THREE.Quaternion());const to=useRef<Point>([0,0,0]);const target=useRef<Point>([0,0,0]);const angles=useRef({yaw:0,pitch:0});
  // Publish the new target before RAF can combine a new seat with the previous flight's clock.
- useLayoutEffect(()=>{from.current=camera.position.toArray() as Point;fromRotation.current.copy(camera.quaternion);elapsed.current=0;flight.current=true;
+ useLayoutEffect(()=>{const navigation=`${view}:${seat?.id??''}:${sector??''}:${reset}`;if(lastNavigation.current===navigation&&manualCamera.current)return;if(lastNavigation.current!==navigation)manualCamera.current=false;from.current=camera.position.toArray() as Point;fromRotation.current.copy(camera.quaternion);elapsed.current=0;flight.current=true;
  if(view==='seat'&&seat){to.current=eyePosition(seat);target.current=[0,1,0];}else if(view==='sector'){const frame=sectorFrame(sector??'',framingAspect);to.current=frame.position;target.current=frame.target;}else{to.current=overviewPosition(framingAspect);target.current=[0,0,0];}
  toRotation.current.copy(aimRotation(to.current,target.current,camera.up));
  if(controls.current)pauseOrbit(controls.current,camera);
+ // Initial layout and responsive sizing settle directly; only an explicit navigation flies.
+ if(lastNavigation.current===null||lastNavigation.current===navigation){
+ camera.position.set(...to.current);camera.quaternion.copy(toRotation.current);flight.current=false;
+ const direction=new THREE.Vector3(...target.current).sub(camera.position);angles.current={yaw:Math.atan2(direction.x,direction.z),pitch:Math.atan2(direction.y,Math.hypot(direction.x,direction.z))};
+ if(controls.current){controls.current.target.set(...target.current);controls.current.enabled=view!=='seat';}
+ if(view==='seat'&&seat)onPreview(captureSeatPreview(()=>gl.render(scene,camera),gl.domElement));
+ onReady();
+ }
+ lastNavigation.current=navigation;
  },[view,seat,sector,reset,camera,framingAspect]);
  useEffect(()=>{const canvas=gl.domElement;let pointer:number|null=null;let last=[0,0];
  const down=(e:PointerEvent)=>{if(view!=='seat'||flight.current)return;pointer=e.pointerId;last=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId)};
@@ -63,7 +73,7 @@ function Camera({view,seat,sector,reset,onReady,onPreview}:{view:View;seat:Seat|
  },[view,camera,gl]);
  useFrame((_,delta)=>{if(!flight.current||!controls.current)return;elapsed.current+=delta;const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;camera.position.set(...flightPoint(from.current,to.current,elapsed.current,reduced));rotateFlight(fromRotation.current,toRotation.current,flightProgress(elapsed.current,reduced),camera.quaternion);
  if(reduced||elapsed.current>=2.4){flight.current=false;const d=new THREE.Vector3(...target.current).sub(camera.position);angles.current={yaw:Math.atan2(d.x,d.z),pitch:Math.atan2(d.y,Math.hypot(d.x,d.z))};controls.current.target.set(...target.current);controls.current.enabled=view!=='seat';if(view==='seat'&&seat)onPreview(captureSeatPreview(()=>gl.render(scene,camera),gl.domElement));onReady();}});
- return <OrbitControls ref={controls} makeDefault enableDamping enablePan={false} minDistance={45} maxDistance={330*overviewScale(aspect)} minPolarAngle={.15} maxPolarAngle={Math.PI*.47} enableZoom={view!=='seat'} rotateSpeed={.5}/>;
+ return <OrbitControls ref={controls} onStart={()=>{manualCamera.current=true;}} makeDefault enableDamping enablePan={false} minDistance={45} maxDistance={330*overviewScale(aspect)} minPolarAngle={.15} maxPolarAngle={Math.PI*.47} enableZoom={view!=='seat'} rotateSpeed={.5}/>;
 }
 function Scene(p:Props){const {gl}=useThree();
 useEffect(()=>watchContextLoss(gl.domElement,p.onUnavailable),[gl,p.onUnavailable]);
@@ -71,10 +81,10 @@ const chosen=useMemo(()=>new Set(p.chosenIds),[p.chosenIds]);
 const [hover,setHover]=useState<SectorId|null>(null);const trees=useMemo(()=>Array.from({length:65},(_,i)=>{const a=i*2.399;const r=181+(i%5)*8;return [Math.cos(a)*r,Math.sin(a)*r] as const}),[]);
 return <><color attach="background" args={['#eef1f3']}/><fog attach="fog" args={['#eef1f3',260,640]}/><ambientLight intensity={.65}/><hemisphereLight args={['#e9f3ff','#8e9c8b',1.1]}/><directionalLight position={[-90,140,40]} intensity={2.5} castShadow shadow-mapSize={[2048,2048]} shadow-camera-left={-180} shadow-camera-right={180} shadow-camera-top={180} shadow-camera-bottom={-180} shadow-camera-far={500} shadow-bias={-.001}/><mesh rotation-x={-Math.PI/2} position-y={-1.5} receiveShadow><planeGeometry args={[1800,1800]}/><meshStandardMaterial color="#e0e5df"/></mesh><Box position={[0,-1,0]} size={[270,.8,236]} color="#c8d1ce"/><Box position={[0,-.5,0]} size={[258,.5,224]} color="#dfe3e2"/>
 {trees.map(([x,z],i)=><group key={i} position={[x,0,z]}><mesh position-y={2}><cylinderGeometry args={[.5,.7,4,5]}/><meshStandardMaterial color="#8b8e7a"/></mesh><mesh position-y={5+i%3} castShadow><icosahedronGeometry args={[3+i%3,1]}/><meshStandardMaterial color={i%2?'#8eaa91':'#a4b5a0'}/></mesh></group>)}
-<Pitch/><Architecture roof={showStructure(p.view,p.flying)&&p.roof}/>
+<Pitch/><Architecture view={p.view} side={allSectors.find(s=>s.id===p.sector)?.side??-1} roof={p.roof&&(p.view!=='overview'||showStructure(p.view,p.flying))}/>
 {allSectors.map(s=><group key={s.id} onPointerOver={()=>{if(p.view==='overview')setHover(s.id)}} onPointerOut={()=>setHover(null)}>
 {p.view==='overview'&&<Html position={sectorFrame(s.id).target.map((v,i)=>v+(i===1?6:0)) as Point} center distanceFactor={180} zIndexRange={[5,0]}><button className={`sector-label ${hover===s.id?'active':''}`} onMouseEnter={()=>setHover(s.id)} onMouseLeave={()=>setHover(null)} onClick={()=>p.onSector(s.id)}>{s.id}<span> ↗</span></button></Html>}
-<DemoSeats chosen={chosen} sector={s.id} selected={p.seat} row={p.row} onSeat={p.onSeat} onSector={p.onSector} overview={p.view==='overview'} emphasized={p.view==='overview'&&hover===s.id} interactive={p.view!=='seat'} focusRow={p.view==='sector'&&p.sector===s.id}/></group>)}
+<DemoSeats chosen={chosen} sector={s.id} selected={p.seat} row={p.row} onSeat={p.onSeat} onSector={p.onSector} overview={p.view==='overview'} emphasized={p.view==='overview'&&hover===s.id} interactive={p.view!=='seat'} focusRow={p.view==='sector'&&!!p.rowFocused&&p.sector===s.id}/></group>)}
 <Camera {...p}/></>}
 function Unavailable({notify}:{notify:()=>void}){
  useEffect(()=>notify(),[notify]);
@@ -85,4 +95,4 @@ class Boundary extends Component<{children:ReactNode;notify:()=>void},{error:boo
  static getDerivedStateFromError(){return {error:true}}
  render(){return this.state.error?<Unavailable notify={this.props.notify}/>:this.props.children}
 }
-export default function Stadium(props:Props){return <Boundary notify={props.onUnavailable}><Canvas fallback={<p>Sektor, rząd i miejsce możesz wybrać w panelu obok.</p>} shadows dpr={[1,1.7]} camera={{position:[148,138,168],fov:43,near:.1,far:1200}} gl={{antialias:true}}><Scene {...props}/></Canvas></Boundary>}
+export default function Stadium(props:Props){return <Boundary notify={props.onUnavailable}><Canvas fallback={<p>Sektor, rząd i miejsce możesz wybrać w panelu obok.</p>} shadows dpr={[1,1.7]} camera={{position:[148,138,168],fov:43,near:.1,far:1200}} gl={{antialias:true,localClippingEnabled:true}}><Scene {...props}/></Canvas></Boundary>}

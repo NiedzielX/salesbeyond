@@ -21,8 +21,10 @@ export function createHoldRuntime(env:BackendEnv,fetcher?:typeof fetch){
  if(url.pathname==='/api/seat-api'&&op==='status')return Response.json({ok:true,configured,mode:configured?'service':'demo'},{headers:{'Cache-Control':'no-store'}});
  if(url.pathname==='/api/seat-api'){
  const eventId=url.searchParams.get('eventId')??'',holdId=url.searchParams.get('holdId')??'';
+ const validEventId=/^[A-Za-z0-9_-]{1,80}$/.test(eventId);
  if(op==='session')url.pathname='/api/seat-session';
- else if(['inventory','create'].includes(op??'')&&/^[A-Za-z0-9_-]{1,80}$/.test(eventId))url.pathname=`/api/events/${eventId}/${op==='create'?'holds':'inventory'}`;
+ else if(['inventory','create'].includes(op??'')&&validEventId)url.pathname=`/api/events/${eventId}/${op==='create'?'holds':'inventory'}`;
+ else if(op==='current'&&validEventId)url.pathname=`/api/events/${eventId}/holds/current`;
  else if(op==='hold'&&/^[0-9a-f-]{36}$/i.test(holdId))url.pathname=`/api/holds/${holdId}`;
  else return Response.json({ok:false,error:{code:'not_found'}},{status:404,headers:{'Cache-Control':'no-store'}});
  url.searchParams.delete('op');url.searchParams.delete('eventId');url.searchParams.delete('holdId');

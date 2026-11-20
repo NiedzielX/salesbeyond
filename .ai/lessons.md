@@ -1,5 +1,7 @@
 # Lekcje projektu
 
+- [2026-11-20] [Start panoramy, rzeczywisty rząd i przekrój dachu](lessons/2026-11-20-stadium-launch-and-cutaway.md) — odtwarzaj koszyk bez niespodziewanego zbliżenia i zachowaj bryłę dachu.
+
 - [2026-11-20] [Importy wyemitowanego serwera](lessons/2026-11-20-emitted-server-imports.md) — testuj rzeczywisty JS i endpoint po READY; log startu może mieć poziom info.
 
 - [2026-11-19] [Instancje foteli: geometria, kolor i indeks trafień](lessons/2026-11-19-instanced-seat-picking.md) — stabilne macierze, delty kolorów, dokładny raycast tylko kandydatów; osobno koszt budowy i CPU/GPU.

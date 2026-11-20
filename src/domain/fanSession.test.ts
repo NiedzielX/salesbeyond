@@ -29,7 +29,7 @@ test('uszkodzony zapis, nieznana wersja i błędne preferencje mają bezpieczne 
  const doc={version:1,scope:'full',cart:[],sector:'missing',row:999,seatId:'nope',view:'seat',filters:{maxPrice:-1,availableOnly:'true'},stand:99,surface:'other'};
  assert.deepEqual(decodeFanSession(JSON.stringify(doc)).state,freshFanState());
  assert.equal(decodeFanSession(null).restored,false);
- const one={...doc,sector:'101',row:999,view:'sector'};assert.equal(decodeFanSession(JSON.stringify(one)).state.selection.row,6);
+ const one={...doc,sector:'101',row:999,view:'sector'};assert.equal(decodeFanSession(JSON.stringify(one)).state.selection.row,1);
  assert.deepEqual(decodeFanSession(JSON.stringify({...doc,sector:'101',row:12,view:'unknown'})).state.selection,initialSelection);
  const valid={...doc,sector:'101',row:12,view:'sector'};assert.equal(decodeFanSession(JSON.stringify(valid)).state.selection.row,12);
 });
@@ -66,4 +66,17 @@ test('nawigacja aktualizuje link po zmianie fotela i usuwa go po powrocie do sta
  const current=new URL(selectionUrl(original,selected)!);assert.equal(current.searchParams.get('seat'),free[0].id);assert.equal(current.searchParams.get('renderer'),'local');assert.equal(current.hash,'#section');
  const reset=new URL(selectionUrl(current.toString(),initialSelection)!);assert.equal(reset.searchParams.has('seat'),false);assert.equal(reset.searchParams.get('renderer'),'local');
  assert.equal(selectionUrl('invalid',selected),null);
+});
+
+test('otwarcie zwykłego adresu zaczyna panoramą mimo zapisanego sektora i rzędu',async()=>{
+ const {launchFanState}=await import('./fanSession.ts');
+ const saved={...freshFanState(),basket:free.slice(0,2),selection:selectionReducer(initialSelection,{type:'seat',seat:free[0]}),stand:2};
+ const start=launchFanState(saved,'');assert.equal(start.state.selection.view,'overview');assert.equal(start.state.selection.sector,null);assert.equal(start.state.stand,-1);assert.deepEqual(start.state.basket,saved.basket);
+ const explicit=launchFanState(saved,`?seat=${encodeURIComponent(taken.id)}`);assert.equal(explicit.state.selection.seat?.id,taken.id);
+});
+test('wejście do bloku nie narzuca rzędu 6; kliknięty fotel i ręczny rząd zachowują numer',()=>{
+ const prior=selectionReducer(initialSelection,{type:'row',row:6});
+ const block=selectionReducer(prior,{type:'sector',id:'II-3'});assert.equal(block.row,1);assert.equal(block.rowFocused,false);
+ const clicked=selectionReducer(prior,{type:'sector',id:'II-3',row:28});assert.equal(clicked.row,28);assert.equal(clicked.rowFocused,true);
+ const moved=selectionReducer(block,{type:'row',row:39});assert.equal(moved.row,39);assert.equal(moved.rowFocused,true);
 });
