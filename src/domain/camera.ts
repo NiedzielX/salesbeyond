@@ -6,10 +6,24 @@ export function eyePosition(seat:Seat):Point {return [seat.position[0],seat.posi
 export function flightProgress(elapsed:number,reduced=false){
  const p=reduced?1:Math.max(0,Math.min(1,elapsed/flightDuration));return p*p*(3-2*p);
 }
-export function flightPoint(from:Point,to:Point,elapsed:number,reduced=false):Point{
+export function flightPoint(from:Point,to:Point,elapsed:number,reduced=false,control?:Point):Point{
  const t=flightProgress(elapsed,reduced);
+ if(control){
+  const fromWeight=(1-t)**2;
+  const controlWeight=2*t*(1-t);
+  const toWeight=t*t;
+  return from.map((v,i)=>v*fromWeight+control[i]*controlWeight+to[i]*toWeight) as Point;
+ }
  return from.map((v,i)=>v+(to[i]-v)*t) as Point;
 }
+
+/** Bend between seats towards the pitch to clear the rising decks. */
+export function seatTransferControl(from:Point,to:Point):Point{
+ const distance=Math.hypot(to[0]-from[0],to[1]-from[1],to[2]-from[2]);
+ const remaining=1-Math.min(1,distance/55); // Use the full bend after about half a pitch length.
+ return [(from[0]+to[0])/2*remaining,(from[1]+to[1])/2,(from[2]+to[2])/2*remaining];
+}
+
 export function lookTarget(eye:Point,yaw:number,pitch:number):Point{
  return [eye[0]+Math.sin(yaw)*Math.cos(pitch),eye[1]+Math.sin(pitch),eye[2]+Math.cos(yaw)*Math.cos(pitch)];
 }

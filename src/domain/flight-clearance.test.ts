@@ -1,10 +1,11 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {Box3,Quaternion,Ray,Vector3} from 'three';
-import {columnPositions,showStructure} from '../components/structure.ts';
+import {Box3,DoubleSide,Mesh,MeshBasicMaterial,Quaternion,Ray,Raycaster,Vector3} from 'three';
+import {columnPositions,roofCutawayNormal,showStructure} from '../components/structure.ts';
 import {aimRotation,rotateFlight} from '../components/cameraRotation.ts';
-import {eyePosition,flightProgress,overviewPosition} from './camera.ts';
-import {sectors,allSectors,sectorSeats} from '../data/stadium.ts';
+import {eyePosition,flightDuration,flightPoint,flightProgress,overviewPosition,seatTransferControl} from './camera.ts';
+import {sectors,allSectors,resolveSeat,sectorSeats} from '../data/stadium.ts';
+import {createEneaModel} from '../integrations/eneaModel.ts';
 test('reset z dowolnego fotela pozostawia dach i podpory odkryte do zakończenia lotu',()=>{
  const staticColumns=[0,1,2,3].flatMap(side=>columnPositions(side,'overview')).map(p=>new Box3().setFromCenterAndSize(new Vector3(...p),new Vector3(.7,33,.7)));
  const flyingColumns=[0,1,2,3].flatMap(side=>columnPositions(side,'overview',true)).map(p=>new Box3().setFromCenterAndSize(new Vector3(...p),new Vector3(.7,33,.7)));
@@ -38,4 +39,46 @@ test('reset z przeciwległego kierunku obraca kamerę bez zerowego kierunku lub 
  assert.ok(Math.abs(result.length()-1)<.0001);assert.ok(previous.angleTo(result)<.05);previous=result.clone();
  }
  assert.ok(result.angleTo(to)<.0001);
+});
+
+test('zmiana podglądu fotela omija widoczne stopnie, ściany i dach',()=>{
+ const parts=createEneaModel();
+ const material=new MeshBasicMaterial({side:DoubleSide});
+ const meshes=parts.map(part=>new Mesh(part.geometry,material));
+ const raycaster=new Raycaster();
+ try{
+  for(const [fromId,toId] of [
+   ['I-1-46-29','101-1-10'],
+   ['II-3-1-19','II-1-54-18'],
+   ['C3-46-51','I-1-46-29'],
+   ['102-1-9','III-2-1-28'],
+  ]){
+   const destination=resolveSeat(toId)!;
+   const from=eyePosition(resolveSeat(fromId)!);
+   const to=eyePosition(destination);
+   const control=seatTransferControl(from,to);
+   const side=allSectors.find(sector=>sector.id===destination.sectorId)!.side;
+   const roofNormal=new Vector3(...roofCutawayNormal('seat',side)!);
+   assert.deepEqual(flightPoint(from,to,0,false,control),from);
+   assert.deepEqual(flightPoint(from,to,0,true,control),to);
+   let previous=new Vector3(...flightPoint(from,to,0,false,control));
+   for(let step=1;step<=24;step++){
+    const elapsed=flightDuration*step/24;
+    const next=new Vector3(...flightPoint(from,to,elapsed,false,control));
+    const offset=next.clone().sub(previous);
+    raycaster.far=offset.length();
+    raycaster.set(previous,offset.normalize());
+    for(const [index,part] of parts.entries()){
+     const hit=raycaster.intersectObject(meshes[index]).find(intersection=>part.layer==='bowl'||roofNormal.dot(intersection.point)>=0);
+     assert.ok(!hit,`${fromId} → ${toId}, ${part.name}, klatka ${step}`);
+    }
+    assert.ok(Math.abs(next.y-flightPoint(from,to,elapsed)[1])<.0001);
+    previous=next;
+   }
+   assert.ok(previous.distanceTo(new Vector3(...to))<.0001);
+  }
+ }finally{
+  material.dispose();
+  parts.forEach(part=>part.geometry.dispose());
+ }
 });
