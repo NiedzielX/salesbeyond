@@ -1,6 +1,6 @@
 ---
 started: 2026-11-20
-ended: null
+ended: 2026-11-20
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
 outcome: partial
@@ -26,10 +26,14 @@ Właściciel zlecił subtelną reklamę Beyond na szarym pasie za bramkami, nast
 - Baseline153+1/lint/typecheck/build pass z poprzedniego przyrostu; agent potwierdził też własny baseline przed poprawką.
 - Root typecheck/lint Beyond:exit0. Focused camera/roof/orbit9/9pass.
 - Pełna integracja: lint/typecheck/test/build exit0 (`/workspace/work/beyond-camera-gates.json`),155testów źródeł+1wyemitowanego serwera. CPU kontroler i render reklamy:pass. Brak nowych zależności, źródeł fontów przez sieć, zmian API/danych/sekretów.
-- Publikacja i HTTP jeszcze w toku; rzeczywisty wygląd/płynność/dotyk nadal pending.
+- Publikacja i HTTP:pass; rzeczywisty wygląd/płynność/dotyk nadal pending. Nie uruchamiano ponownie bramek po samych końcowych zmianach dokumentacji.
 
 ## Wynik
-W toku; odbiór UI/WebGL pozostaje osobnym kryterium.
+Source9584df7 wdrożony production READY, aliasError=null: `dpl_Hot2j5nGzKHkAGyhwxEtXPwYqwSg`, https://salesbeyond.vercel.app. Manifest61plików411 737bajtów z lokalnego sprawdzonego commita, bez .env/docs; zdalne meta nie podaje GitSHA, bo to wdrożenie snapshotu. Brak push/merge GitHub, migracji i nowych sekretów.
+
+HTTP200: HTML, index-BG6B-GzR.js, index-B2ZT3Lsr.css, Stadium-BM3N9ROs.js (potwierdzona geometria Beyond i lokalny napis), StadiumMap-DSMCLBGd.js. Status API configured/service oraz inventory II-3/1998:200. Error/fatal dla nowego deploymentu w ostatnich15min:brak wpisów. Dowód `docs/qa-evidence/beyond-2026-11-20/http-proof.json`; nie jest to kontrola konsoli/UI.
+
+Reklama i poprawka potwierdzonego toru lotu są wdrożone, widownia C1–C5 dopisana do MVP jako następne zadanie. Cztery przydzielone zadania agentów zakończone; punkty2/3 nie miały dalszej źródłowo potwierdzonej poprawki. Pozostał rzeczywisty odbiór UI/WebGL i nieprecyzyjny objaw końcowego zapadania pod murawę, którego nie odtworzono. Dlatego outcome partial i spec in-progress. Tymczasowe worktrees usunięto po sprawdzeniu, że wszystkie ich commity/raporty są zintegrowane, a jedyny nieśledzony plik to własny symlink node_modules.
 
 ## Lekcje
 Uzupełniono istniejące `flight-rotation-clearance` i `stadium-launch-and-cutaway`, bez dublowania lekcji: dodatniY nie chroni przed stopniami, a docelowy przekrój dachu nie chroni podejścia z panoramy. Nowa widownia ma własne C1–C5 i nadal jest zadaniem do implementacji.

@@ -19,6 +19,8 @@ Cel właściciela: pełne doświadczenie kibica na poziomie produktu referencyjn
 
 ## Model według blueprintu i nagrania
 
+Przyrost9584df7: dwa napisy Beyond na szarym pasie, tor kolejnych podglądów od strony boiska i dach pomijany tylko podczas lotu.155+1 testów, rzeczywisty kontroler R3F na CPU oraz HTTP po production READY:pass. Nie odtworzono końcowego oka pod murawą; wykryto i naprawiono przecinanie stopni/membrany. [Log](../.ai/runs/2026-11-20-beyond-and-seat-camera.md). Następna nowa funkcja: symulowana widownia4a; odbiór rzeczywistego obrazu nadal otwarty.
+
 Aktualny przyrost20listopada:18e1630 (kratownice/żebra/elewacja),768e029 (ciągłość grup i jawna nawigacja do fotela). Production READY i HTTP assetów/usługi potwierdzone w `.ai/runs/2026-11-20-fan-flow-continuation.md`;153+1 testów. To nadal nie jest odbiór wizualny/telefonu. Kontrolne obrazy geometrii: `docs/qa-evidence/enea-fidelity-2026-11-20/README.md`.
 
 Blueprint rozpoczyna od budowy stadionu w Three.js z wieloma poziomami, przejściami, membranowym dachem i instancjami krzeseł z metadanymi. Nagranie pokazuje ciągłą gęstą misę, wyróżnienie całego bloku i płynne zbliżenie do trybuny. To referencje wyglądu i zachowania, nie gotowe źródła ani instrukcja kupna skanu.

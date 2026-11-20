@@ -28,7 +28,8 @@ npm exec vite preview
 - Własna misa stadionu tworzona kodem: połączone zaokrąglone narożniki, zróżnicowane wysokości czterech trybun, dwa/trzy poziomy, przejścia, portale i ciągły łukowy dach membranowy z przestrzenną kratownicą, żebrami oraz podzieloną elewacją. Boisko 105 × 68 m.
 - Wspólny katalog **38 078 foteli w 19 blokach**. Każdy widoczny fotel ma ID i jest dostępny do podglądu także wtedy, gdy demonstracyjny status wyklucza dodanie do koszyka. Zachowano 648 wcześniejszych ID.
 - Domyślny plan 2D używa rzeczywistego `createRenderer` biblioteki: zoom/pan, bloki, rzędy, podgląd i mapowanie na domenowe ID. W razie awarii jego inicjalizacji zostaje prostszy plan SVG. Po awarii WebGL można używać planu 2D.
-- Domyślne 3D używa R3F i własnej geometrii. Instancjonowane siedziska/oparcia, podświetlenie całego bloku, wybór fotela, kadr bloku od strony boiska, lot 2,4 s i perspektywa oczu z tego samego modelu.
+- Domyślne 3D używa R3F i własnej geometrii. Instancjonowane siedziska/oparcia, podświetlenie całego bloku, wybór fotela, kadr bloku od strony boiska, lot 2,4 s i perspektywa oczu z tego samego modelu. Kolejne podglądy foteli mają tor odchylony od stopni w stronę boiska, z zachowanym profilem wysokości. Na czas lotu dach jest pomijany; po dotarciu wraca zgodnie z preferencją i przekrojem.
+- Dwa subtelne napisy Beyond na szarym pasie za bramkami; lokalna geometria liter, poza murawą i rzędami. [Zbliżenie kontrolne CPU](docs/qa-evidence/beyond-2026-11-20/README.md).
 - Filtry ceny za osobę i dostępności, liczniki pasujących foteli dla całego stadionu, trybuny, bloku i rzędu. Fotele poza filtrem pozostają dostępne do podglądu, a filtr nie kasuje koszyka.
 - Koszyk demo do 10 miejsc i propozycja grupy 2–6 obok siebie w budżecie. Propozycja pokazuje blok/rząd/numery/cenę/sumę przed osobnym obejrzeniem i dodaniem. W wybranym bloku wyszukuje tylko ten blok, bez alejek i foteli już w koszyku.
 - Propozycja grupy pozostaje po podglądzie i zwykłym odświeżeniu danych. Nowe ceny/statusy dotyczą całej grupy; utrata wcześniej odczytanych danych wymaga ponownego sprawdzenia bloku, bez powrotu do starej ceny/statusu demo. Podgląd z grupy, koszyka i blokady przewija do sceny oraz ponownie kadruje także ten sam fotel.
@@ -58,10 +59,12 @@ Repo używa przypiętego skompilowanego pakietu przez jego publiczny kontrakt. *
 
 ## Weryfikacja i ograniczenia
 
-Lint/typecheck/build i 153 testów źródeł oraz test wyemitowanego serwera przechodzą. Testy obejmują rzeczywisty kompilator chartu i wszystkie 38 078 ID/pozycji, ciągłość dachu, podparcie foteli przez geometrię, kadry w różnych proporcjach, niezasłoniętą oś widoku 171 próbek foteli, kontrakty mapy i blokad. [Aktualne kadry i porównanie geometrii CPU](docs/qa-evidence/enea-fidelity-2026-11-20/README.md) pokazują geometrię; nie są zrzutami aplikacji ani dowodem działania WebGL.
+Lint/typecheck/build i 155 testów źródeł oraz test wyemitowanego serwera przechodzą. Testy obejmują rzeczywisty kompilator chartu i wszystkie 38 078 ID/pozycji, ciągłość dachu, podparcie foteli przez geometrię, kadry w różnych proporcjach, niezasłoniętą oś widoku 171 próbek foteli, kontrakty mapy i blokad. [Aktualne kadry i porównanie geometrii CPU](docs/qa-evidence/enea-fidelity-2026-11-20/README.md) pokazują geometrię; nie są zrzutami aplikacji ani dowodem działania WebGL.
 
 Odbiór obecnego 2D/3D i koszyka na desktopie/telefonie pozostaje otwarty: automatyczna kontrola odrzuciła otwarcie przeglądarki z powodu nierozwiązanej wcześniejszej blokady dostępu. Nie używano innego kanału jako obejścia. Historyczne testy starego panelu w `docs/QA.md` nie są odbiorem tego przyrostu.
 
 To autorska rekonstrukcja inspirowana Eneą, **nie zweryfikowany skan ani oficjalna siatka miejsc**. Nie wymaga pliku BLEND/GLB od użytkownika ani zakupu modelu. Ceny, numeracja i stan wydarzenia są demonstracyjne; blokady w usłudze demo są współdzielone pomiędzy sesjami. Brak kont kibiców, płatności i połączenia z systemem klubowym; koszyk sam nie rezerwuje miejsc.
 
 Dalsze prace: [plan doświadczenia kibica](docs/FAN_EXPERIENCE_ROADMAP.md), [plan wykonawczy](.ai/EXECUTION_PLAN.md), [zatwierdzona specyfikacja](.ai/specs/2026-11-17-functional-stadium-mvp.md).
+
+Do scope MVP właściciel dopisał symulowaną widownię: ciemne sylwetki siedzących kibiców i przełącznik puste/z kibicami, pozwalający ocenić widok za osobą w poprzedzającym rzędzie. Kryteria C1–C5 w specyfikacji; implementacja jeszcze otwarta.

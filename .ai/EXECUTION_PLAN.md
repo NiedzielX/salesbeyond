@@ -6,12 +6,12 @@
 
 1. **Odbiór trzech zgłoszeń**: start panoramy, dach, rzeczywisty rząd. Kod/testy opublikowane; wynik na ekranie pending.
 2. **Wygląd Enei i kadry**: przyrost 2026-11-20 poprawia zaobserwowane w porównaniu CPU/referencja podziały membrany, kratownicę i elewację. Wspólne kadry panoramy/sektora/fotela i test osi widoku 171 foteli: `docs/qa-evidence/enea-fidelity-2026-11-20/README.md`. Odbiór w aplikacji i porównanie ruchu z nagraniem nadal pending.
-   **Nowe zlecenia właściciela**: subtelne Beyond za bramkami i priorytetowa diagnoza zapadania kamery; następnie widownia C1–C5 (ciemne siedzące sylwetki i porównanie puste/z kibicami), wprost dodana do scope MVP.
+   **Bieżący przyrost**: Beyond za bramkami oraz potwierdzone przecinanie stopni/membrany przez kamerę poprawione w kodzie; końcowe oko pod murawą nieodtworzone. Następne gotowe zadanie: widownia C1–C5 (ciemne siedzące sylwetki i porównanie puste/z kibicami), wprost dodana do scope MVP. Odbiór UI pozostaje niezależny.
 3. **Pełny scenariusz kibica w UI**: 2D/3D, grupa, quote/hold, reload/current recovery, konflikt drugiej sesji, release/expiry. Przyrost kodu20listopada zachowuje grupę przy pollingu, waliduje jej ostatnie dane i naprawia powtórny podgląd z dolnych list. Rzeczywista ścieżka UI nadal pending.
 4. **Mały ekran i wygoda**: kod nie przenosi fokusu przy montażu i ogranicza wysokość dialogu z własnym przewijaniem. Dotyk, klawiatura, rzeczywisty fokus/overflow i responsywność nadal wymagają odbioru.
 5. **Odebrane demo klubowe**: stały link i powtarzalny scenariusz po przejściu punktów 1–4.
 
-**Dostarczone**: 38 078 ID / 19 bloków; model/2D/3D; koszyk/grupy/filtry; Supabase/Vercel i atomowe holdy; current recovery; aktualizowany wybrany blok 2D/3D/panel; 153+1 testów, prawdziwe PG/HTTP. Nie planować ponownej budowy już połączonego backendu.
+**Dostarczone**: 38 078 ID / 19 bloków; model/2D/3D; koszyk/grupy/filtry; Supabase/Vercel i atomowe holdy; current recovery; aktualizowany wybrany blok 2D/3D/panel; 155+1 testów, prawdziwe PG/HTTP. Nie planować ponownej budowy już połączonego backendu.
 
 **Pozostała blokada odbioru**: automatyczna odmowa przeglądarki, bez potwierdzenia zdjęcia blokady; nie próbować obejść. Pending pytanie do właściciela o wynik trzech poprawek. Nie uznawać tego za odbiór ani tworzyć fikcyjnych screenów.
 
