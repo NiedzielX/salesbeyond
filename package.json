@@ -7,7 +7,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test src/data/*.test.ts src/domain/*.test.ts src/integrations/*.test.ts src/server/*.test.ts",
+    "test": "node --experimental-strip-types --test src/data/*.test.ts src/domain/*.test.ts src/integrations/*.test.ts src/server/*.test.ts && node scripts/test-server-output.mjs",
     "lint": "eslint src api vite.config.ts"
   },
   "dependencies": {
