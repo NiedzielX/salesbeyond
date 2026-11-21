@@ -1,6 +1,6 @@
 ---
 started: 2026-11-21
-ended: null
+ended: 2026-11-21
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
 outcome: partial
@@ -27,7 +27,11 @@ Zrealizować zleconą widownię C1–C5: ciemne siedzące sylwetki, przełączni
 - Przegląd React skill: prymitywne zależności kamery, brak nowych fetchy/deps, geometria lazy przy włączeniu, dostępne natywne przyciski i fokus. WebGL/UI/telefon C5 nadal pending z powodu wcześniejszej odmowy.
 
 ## Wynik
-W toku.
+Sourcea46fba9 wdrożony production READY: `dpl_F1uwAg93QuwaoDeJWDPzq5utMxL8`, alias salesbeyond.vercel.app, aliasError=null. Lokalny manifest63plików418 497bajtów wiąże przesłany snapshot z commitem; zdalne meta nie zawiera GitSHA. Bez push/merge GitHub, migracji, nowych sekretów lub zmian infrastruktury.
+
+HTTP200: HTML, index-C_kqyGo-.js z etykietami trybów, index-1YLUqx8G.css z crowd-controls, Stadium-DsxvC7kx.js z widownią i zachowaną reklamą Beyond, StadiumMap-CiZZRLpc.js. API status configured/service i inventory II-3/1998:200. Error/fatal ostatnie15min dla deploymentu:brak wpisów. Dowód `docs/qa-evidence/crowd-2026-11-21/http-proof.json`.
+
+Kod C1–C4 i kontroler/C5 na CPU gotowe, pozostaje rzeczywisty odbiór obrazu, klikania, dotyku i płynności na desktopie/telefonie. Dlatego outcome partial, spec in-progress. Tymczasowy worktree usunięto dopiero po integracji i potwierdzeniu, że jedynym nieśledzonym plikiem jest własny symlink node_modules. Po końcowych zmianach samych dokumentów nie ponawiano bramek kodu.
 
 ## Lekcje
 Dodano `.ai/lessons/2026-11-21-crowd-mask-and-preview.md`: zachowanie niewysłanych zakresów GPU i miniatura dopiero po commit maski przybycia.
