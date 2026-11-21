@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import type {Seat} from '../data/stadium';
-import {createSeatInventoryOverlay, type InventoryOverlayState} from '../domain/inventoryOverlay';
-import {createSeatHoldClient,type SeatInventory} from '../integrations/seatHoldClient';
+import type {Seat} from '../data/stadium.ts';
+import {createSeatInventoryOverlay, type InventoryOverlayState} from '../domain/inventoryOverlay.ts';
+import {createSeatHoldClient,type SeatInventory} from '../integrations/seatHoldClient.ts';
 
 const EVENT_ID = 'enea-demo';
 const POLL_INTERVAL_MS = 15_000;
@@ -30,6 +30,7 @@ export function useSectionInventory(
   sectorId: string | null,
   ownedHoldIds: readonly string[],
   refreshKey: string,
+  createClient: typeof createSeatHoldClient = createSeatHoldClient,
 ): SectionInventorySnapshot {
   const seatsRef = useRef(stableSeats);
   const ownedIdsRef = useRef(ownedHoldIds);
@@ -52,20 +53,21 @@ export function useSectionInventory(
       setSnapshot(emptySnapshot());
       setLoading(false);
       setError(false);
-      setUpdatedAt(null);setEventStatus(null);
+      setUpdatedAt(null);
+      if (!enabled) setEventStatus(null);
       return;
     }
 
     let disposed = false;
     let fetching = false;
     let manualRefreshQueued = false;
-    const client = createSeatHoldClient();
+    const client = createClient();
     const overlay = createSeatInventoryOverlay(seatsRef.current, EVENT_ID);
 
     setSnapshot(overlay.snapshot());
     setLoading(true);
     setError(false);
-    setUpdatedAt(null);setEventStatus(null);
+    setUpdatedAt(null);
 
     const fetchSection = async (): Promise<void> => {
       if (disposed) return;
@@ -108,7 +110,7 @@ export function useSectionInventory(
       manualRefreshQueued = false;
       if (requestRef.current) requestRef.current = null;
     };
-  }, [enabled, sectorId]);
+  }, [enabled, sectorId, createClient]);
 
   useEffect(() => {
     if (previousRefreshKey.current === refreshKey) return;
