@@ -21,6 +21,8 @@ const seatView={position:seatEye,target:[0,1,0],seatId:selectedSeat.id,fov,aspec
 const lastRow=seatsInRow(selectedSector.id,54),crowdSeat=lastRow[Math.floor(lastRow.length/2)];
 const crowdSeatView={...seatView,position:eyePosition(crowdSeat),seatId:crowdSeat.id};
 const views={overview,sector:sectorView,seat:seatView,crowdOverview:{...overview,crowd:true},crowdSeatEmpty:crowdSeatView,crowdSeat:{...crowdSeatView,crowd:true},
+ goalAd:{position:[64,5.2,8],target:[54,1.2,0],fov,aspect:reviewAspect,cutawayNormal:[-1,0,0]},
+ sideAd:{position:[5,4,32],target:[0,.78,42.565],fov,aspect:reviewAspect,cutawayNormal:[0,0,-1]},
  // Look towards the lower end stand, where the roof frame is exposed in the reference.
  exterior:{position:[-300,135,0],target:[0,18,0],fov,aspect:reviewAspect,cutawayNormal:null}};
 const crowdGeometry=createCrowdGeometry();
