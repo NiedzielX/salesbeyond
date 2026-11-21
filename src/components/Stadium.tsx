@@ -14,10 +14,11 @@ import { pauseOrbit } from './cameraControls';
 import {installSeatPicking} from '../integrations/seatPicking';
 import {writeSeatTransforms,createSeatColors} from '../integrations/seatInstances';
 import {captureSeatPreview} from './seatPreview';
+import Crowd from './Crowd';
 import { eyePosition, flightDuration, flightPoint, flightProgress, lookTarget, overviewPosition, overviewScale, seatTransferControl, type Point } from '../domain/camera';
 import type { View } from '../domain/selection';
 export type { View } from '../domain/selection';
-type Props = {sector: SectorId | null; seat:Seat|null; row:number;rowFocused?:boolean; chosenIds:readonly string[]; inventory?:ReadonlyMap<string,Seat>; view:View; roof:boolean; flying:boolean; onSector:(id:SectorId,row?:number)=>void; onSeat:(seat:Seat)=>void; reset:number; onReady:()=>void; onUnavailable:()=>void;onPreview:(image:string|null)=>void};
+type Props = {sector: SectorId | null; seat:Seat|null; row:number;rowFocused?:boolean; chosenIds:readonly string[]; inventory?:ReadonlyMap<string,Seat>; view:View; roof:boolean; crowd:boolean; flying:boolean; onSector:(id:SectorId,row?:number)=>void; onSeat:(seat:Seat)=>void; reset:number; onReady:()=>void; onUnavailable:()=>void;onPreview:(image:string|null)=>void};
 function Box({position,size,color,rotation=0,tiltX=0,tiltZ=0}: {position:[number,number,number];size:[number,number,number];color:string;rotation?:number;tiltX?:number;tiltZ?:number}){return <mesh position={position} rotation={[tiltX,rotation,tiltZ]} receiveShadow castShadow><boxGeometry args={size}/><meshStandardMaterial color={color} roughness={.8}/></mesh>}
 function Architecture({roof,view,side}:{roof:boolean;view:View;side:number}){
  const parts=useMemo(()=>[...createEneaModel(),...createBeyondAdvertising()],[]);
@@ -47,7 +48,7 @@ function DemoSeats({sector,onSeat,selected,interactive,row,focusRow,overview,onS
  const liveHover=hover&&inventory?.get(hover.id),hoverInfo=hover&&liveHover?{...hover,price:liveHover.price,available:liveHover.available}:hover;
  return <group onClick={e=>{if(!interactive)return;e.stopPropagation();if(e.instanceId!==undefined){const seat=seats[e.instanceId];if(overview)onSector(seat.sectorId,seat.row);else{const live=inventory?.get(seat.id);onSeat(live?{...seat,price:live.price,available:live.available}:seat);}}}} onPointerMove={e=>{if(!interactive)return;e.stopPropagation();const seat=e.instanceId===undefined?null:seats[e.instanceId];setHovered(seat);document.body.style.cursor=seat?'pointer':'auto';}} onPointerOut={()=>{setHovered(null);document.body.style.cursor='auto';}}><instancedMesh ref={ref} args={[undefined,undefined,seats.length]}><boxGeometry args={[1,layout.seatThickness,eneaLayout.seatDepth]}/><meshStandardMaterial roughness={.5}/></instancedMesh><instancedMesh ref={backs} args={[undefined,undefined,seats.length]}><boxGeometry args={[1,.56,.09]}/><meshStandardMaterial roughness={.5}/></instancedMesh>{focusRow&&rowStart&&<Html position={[rowStart.position[0],rowStart.position[1]+1.5,rowStart.position[2]]} center style={{pointerEvents:'none'}} zIndexRange={[6,0]}><span className="row-marker">RZĄD {row}</span></Html>}{hoverInfo&&<Html position={[hoverInfo.position[0],hoverInfo.position[1]+2.5,hoverInfo.position[2]]} center style={{pointerEvents:'none'}} zIndexRange={[7,0]}><div className="seat-tooltip"><strong>Sektor {hoverInfo.sectorId} · Rząd {hoverInfo.row}</strong><span>Miejsce {hoverInfo.number}<b>{hoverInfo.available?`${hoverInfo.price} zł`:'Zajęte'}</b></span><small>{hoverInfo.available?'Kliknij, aby zobaczyć perspektywę':'Zajęte · perspektywę możesz obejrzeć'}</small></div></Html>}</group>
 }
-function Camera({view,seat,sector,reset,onReady,onPreview}:{view:View;seat:Seat|null;sector:SectorId|null;reset:number;onReady:()=>void;onPreview:(image:string|null)=>void}){
+function Camera({view,seat,sector,reset,crowd,flying,onReady,onPreview}:{view:View;seat:Seat|null;sector:SectorId|null;reset:number;crowd:boolean;flying:boolean;onReady:()=>void;onPreview:(image:string|null)=>void}){
  const controls=useRef<OrbitControlsType>(null);const lastNavigation=useRef<{key:string;view:View}|null>(null);const manualCamera=useRef(false);const {camera,gl,size,scene}=useThree();
  const aspect=size.width/Math.max(1,size.height);
  const framingAspect=view==='seat'?1.5:aspect;
@@ -64,11 +65,15 @@ function Camera({view,seat,sector,reset,onReady,onPreview}:{view:View;seat:Seat|
  camera.position.set(...to.current);camera.quaternion.copy(toRotation.current);flight.current=false;
  const direction=new THREE.Vector3(...target.current).sub(camera.position);angles.current={yaw:Math.atan2(direction.x,direction.z),pitch:Math.atan2(direction.y,Math.hypot(direction.x,direction.z))};
  if(controls.current){controls.current.target.set(...target.current);controls.current.enabled=view!=='seat';}
- if(view==='seat'&&seat)onPreview(captureSeatPreview(()=>gl.render(scene,camera),gl.domElement));
  onReady();
  }
  lastNavigation.current={key:navigation,view};
  },[view,seat?.id,sector,reset,camera,framingAspect]);
+ // Capture only after the parent arrival and crowd mask have committed. A mode
+ // toggle updates the thumbnail without starting another camera navigation.
+ useLayoutEffect(()=>{
+  if(view==='seat'&&seat&&!flying&&!flight.current)onPreview(captureSeatPreview(()=>gl.render(scene,camera),gl.domElement));
+ },[view,seat?.id,flying,crowd,aspect,camera,gl,scene]);
  useEffect(()=>{const canvas=gl.domElement;let pointer:number|null=null;let last=[0,0];
  const down=(e:PointerEvent)=>{if(view!=='seat'||flight.current)return;pointer=e.pointerId;last=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId)};
  const move=(e:PointerEvent)=>{if(pointer!==e.pointerId||view!=='seat'||flight.current)return;angles.current.yaw-=(e.clientX-last[0])*.004;angles.current.pitch=Math.max(-.75,Math.min(.65,angles.current.pitch+(e.clientY-last[1])*.004));last=[e.clientX,e.clientY];camera.lookAt(...lookTarget(camera.position.toArray() as Point,angles.current.yaw,angles.current.pitch))};
@@ -76,7 +81,7 @@ function Camera({view,seat,sector,reset,onReady,onPreview}:{view:View;seat:Seat|
  return()=>{canvas.removeEventListener('pointerdown',down);canvas.removeEventListener('pointermove',move);canvas.removeEventListener('pointerup',up);canvas.removeEventListener('pointercancel',up)};
  },[view,camera,gl]);
  useFrame((_,delta)=>{if(!flight.current||!controls.current)return;elapsed.current+=delta;const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;camera.position.set(...flightPoint(from.current,to.current,elapsed.current,reduced,flightControl.current));rotateFlight(fromRotation.current,toRotation.current,flightProgress(elapsed.current,reduced),camera.quaternion);
- if(reduced||elapsed.current>=flightDuration){flight.current=false;const d=new THREE.Vector3(...target.current).sub(camera.position);angles.current={yaw:Math.atan2(d.x,d.z),pitch:Math.atan2(d.y,Math.hypot(d.x,d.z))};controls.current.target.set(...target.current);controls.current.enabled=view!=='seat';if(view==='seat'&&seat)onPreview(captureSeatPreview(()=>gl.render(scene,camera),gl.domElement));onReady();}});
+ if(reduced||elapsed.current>=flightDuration){flight.current=false;const d=new THREE.Vector3(...target.current).sub(camera.position);angles.current={yaw:Math.atan2(d.x,d.z),pitch:Math.atan2(d.y,Math.hypot(d.x,d.z))};controls.current.target.set(...target.current);controls.current.enabled=view!=='seat';onReady();}});
  return <OrbitControls ref={controls} onStart={()=>{manualCamera.current=true;}} makeDefault enableDamping enablePan={false} minDistance={45} maxDistance={330*overviewScale(aspect)} minPolarAngle={.15} maxPolarAngle={Math.PI*.47} enableZoom={view!=='seat'} rotateSpeed={.5}/>;
 }
 function Scene(p:Props){const {gl}=useThree();
@@ -89,6 +94,7 @@ return <><color attach="background" args={['#eef1f3']}/><fog attach="fog" args={
 {allSectors.map(s=><group key={s.id} onPointerOver={()=>{if(p.view==='overview')setHover(s.id)}} onPointerOut={()=>setHover(null)}>
 {p.view==='overview'&&<Html position={sectorFrame(s.id).target.map((v,i)=>v+(i===1?6:0)) as Point} center distanceFactor={180} zIndexRange={[5,0]}><button className={`sector-label ${hover===s.id?'active':''}`} onMouseEnter={()=>setHover(s.id)} onMouseLeave={()=>setHover(null)} onClick={()=>p.onSector(s.id)}>{s.id}<span> ↗</span></button></Html>}
 <DemoSeats chosen={chosen} inventory={p.inventory} sector={s.id} selected={p.seat} row={p.row} onSeat={p.onSeat} onSector={p.onSector} overview={p.view==='overview'} emphasized={p.view==='overview'&&hover===s.id} interactive={p.view!=='seat'} focusRow={p.view==='sector'&&!!p.rowFocused&&p.sector===s.id}/></group>)}
+<Crowd enabled={p.crowd} view={p.view} seatId={p.seat?.id??null} flying={p.flying}/>
 <Camera {...p}/></>}
 function Unavailable({notify}:{notify:()=>void}){
  useEffect(()=>notify(),[notify]);

@@ -1,4 +1,4 @@
-import {BoxGeometry,BufferGeometry,InstancedMesh,Matrix4,Object3D,SphereGeometry} from 'three';
+import {BoxGeometry,BufferGeometry,DynamicDrawUsage,InstancedMesh,Matrix4,Object3D,SphereGeometry} from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import type {Seat} from '../data/stadium.ts';
 
@@ -8,7 +8,7 @@ export const crowdColor='#18222c';
 export function createCrowdGeometry():BufferGeometry{
  const parts=[
   new SphereGeometry(.13,6,4).translate(0,1.15,0),
-  new BoxGeometry(.30,.70,.24).translate(0,.62,0),
+  new BoxGeometry(.30,.78,.24).translate(0,.65,0),
   new BoxGeometry(.40,.20,.36).translate(0,.18,-.12),
  ];
  const merged=mergeGeometries(parts,false);
@@ -22,6 +22,7 @@ export type CrowdController={setHidden(ids:readonly string[]):number};
 /** Writes one instance per seat; availability is intentionally ignored. */
 export function writeCrowdInstances(seats:readonly Seat[],mesh:InstancedMesh):CrowdController{
  const object=new Object3D(),byId=new Map<string,number>(),canonical:Matrix4[]=new Array(seats.length),hidden=new Set<number>();
+ mesh.instanceMatrix.setUsage(DynamicDrawUsage);
  seats.forEach((seat,index)=>{
   byId.set(seat.id,index);
   object.position.set(...seat.position);object.rotation.set(0,seat.heading??0,0);object.scale.set(1,1,1);object.updateMatrix();
@@ -37,7 +38,8 @@ export function writeCrowdInstances(seats:readonly Seat[],mesh:InstancedMesh):Cr
    mesh.setMatrixAt(index,shouldHide?zero:canonical[index]);changed.push(index);count++;
   }
   hidden.clear();for(const index of next)hidden.add(index);
-  if(count){const attribute=mesh.instanceMatrix;attribute.clearUpdateRanges();
+  if(count){const attribute=mesh.instanceMatrix;
+   // Keep earlier changes until Three uploads and clears the pending ranges.
    for(const index of changed)attribute.addUpdateRange(index*16,16);
    attribute.needsUpdate=true;
   }

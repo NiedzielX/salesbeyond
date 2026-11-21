@@ -26,6 +26,23 @@ for s in data['seats']:
 chairs=mesh('All canonical chair instances',vertices,faces,palette[0])
 for color in palette[1:]:chairs.data.materials.append(material(color))
 for polygon,index in zip(chairs.data.polygons,face_colors):polygon.material_index=index
+crowd_object=None;crowd_visibility=None
+if data.get('crowd'):
+ # Geometry Nodes instances use the same avatar buffer and canonical seat poses.
+ # No per-person mesh duplication, and the observer is excluded per review camera.
+ c=data['crowd'];p=c['positions'];indices=c['indices']
+ prototype=mesh('Crowd prototype',[transform(p[i:i+3]) for i in range(0,len(p),3)],[tuple(indices[i:i+3]) for i in range(0,len(indices),3)],c['color']);prototype.hide_render=True
+ points=bpy.data.meshes.new('Crowd seat positions');points.from_pydata([transform(s['p']) for s in data['seats']],[],[]);points.update()
+ rotations=points.attributes.new('crowd_rotation','FLOAT_VECTOR','POINT');rotations.data.foreach_set('vector',[v for s in data['seats'] for v in (0,0,s['heading'])])
+ crowd_visibility=points.attributes.new('crowd_visible','BOOLEAN','POINT')
+ crowd_object=bpy.data.objects.new('Simulated crowd',points);bpy.context.collection.objects.link(crowd_object)
+ nodes=bpy.data.node_groups.new('Canonical crowd instances','GeometryNodeTree');nodes.interface.new_socket(name='Geometry',in_out='INPUT',socket_type='NodeSocketGeometry');nodes.interface.new_socket(name='Geometry',in_out='OUTPUT',socket_type='NodeSocketGeometry')
+ source=nodes.nodes.new('NodeGroupInput');result=nodes.nodes.new('NodeGroupOutput');instances=nodes.nodes.new('GeometryNodeInstanceOnPoints')
+ info=nodes.nodes.new('GeometryNodeObjectInfo');info.inputs['Object'].default_value=prototype;info.inputs['As Instance'].default_value=True
+ rotation=nodes.nodes.new('GeometryNodeInputNamedAttribute');rotation.data_type='FLOAT_VECTOR';rotation.inputs['Name'].default_value='crowd_rotation'
+ visible=nodes.nodes.new('GeometryNodeInputNamedAttribute');visible.data_type='BOOLEAN';visible.inputs['Name'].default_value='crowd_visible'
+ for a,b in [(source.outputs['Geometry'],instances.inputs['Points']),(info.outputs['Geometry'],instances.inputs['Instance']),(rotation.outputs['Attribute'],instances.inputs['Rotation']),(visible.outputs['Attribute'],instances.inputs['Selection']),(instances.outputs['Instances'],result.inputs['Geometry'])]:nodes.links.new(a,b)
+ modifier=crowd_object.modifiers.new('Instanced seated silhouettes','NODES');modifier.node_group=nodes
 mesh('Site',[(-145,-126,-1.3),(145,-126,-1.3),(145,126,-1.3),(-145,126,-1.3)],[(0,1,2,3)],'#c4d0ca')
 mesh('Concourse pad',[(-129,-112,-.25),(129,-112,-.25),(129,112,-.25),(-129,112,-.25)],[(0,1,2,3)],'#dfe3e2')
 mesh('Turf',[(-59,-41,-.15),(59,-41,-.15),(59,41,-.15),(-59,41,-.15)],[(0,1,2,3)],'#467e54')
@@ -77,6 +94,9 @@ def clipped_triangles(obj,normal):
  return vertices,faces
 def render(name,view):
  configure_camera(view)
+ if crowd_object:
+  crowd_object.hide_render=not view.get('crowd',False)
+  crowd_visibility.data.foreach_set('value',[s['id']!=view.get('seatId') for s in data['seats']]);crowd_object.data.update()
  previous=[(obj,obj.hide_render) for obj,_ in roof];temporary=[];normal=view.get('cutawayNormal')
  for original,color in roof:
   if not view.get('roof',True):original.hide_render=True

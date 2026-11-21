@@ -1,5 +1,7 @@
 # Lekcje projektu
 
+- [2026-11-21] [Maska widowni i miniatura po dotarciu](lessons/2026-11-21-crowd-mask-and-preview.md) — zachowuj oczekujące transfery GPU i odczytuj obraz po commit docelowej maski.
+
 - [2026-11-20] [Propozycje grup i odświeżanie live](lessons/2026-11-20-proposals-and-live-refresh.md) — nie usuwaj grupy przy pollingu i nie przywracaj danych demo zamiast znanej obserwacji.
 
 - [2026-11-20] [Weryfikacja worktree agentów przed zapisem](lessons/2026-11-20-agent-worktree-verification.md) — twórz konkretną izolowaną ścieżkę, porównuj faktyczny git status przed aplikacją patcha.

@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import { build } from 'esbuild';
 
-const {createElement,act}=await import('react');
+const {createElement,useState,act}=await import('react');
 await import('react-dom/client');
 let reduced=false;
 globalThis.window={navigator:globalThis.navigator,document:{createElement(){}},matchMedia(){return {matches:reduced}},devicePixelRatio:1};
@@ -30,6 +30,12 @@ for(const revision of ['9f36318','working tree']){
  let root;
  try{
   const {Camera}=await import('./'+path+'?rev='+encodeURIComponent(revision));
+ function Harness(props){
+  const key=[props.view,props.seat?.id,props.sector,props.reset].join(':');
+  const [ready,setReady]=useState(null);
+  return createElement(Camera,{...props,crowd:false,flying:ready!==key,onReady:()=>{props.onReady();setReady(key);}});
+ }
+
   class FakeCanvas extends EventTarget {
    style={};
    ownerDocument=new EventTarget();
@@ -46,14 +52,16 @@ for(const revision of ['9f36318','working tree']){
   await root.configure({frameloop:'never',dpr:1,gl,camera:{position:[148,138,168],fov:43,near:.1,far:1200},size:{width:900,height:555}});
   let store, elapsed=0, ready=0;
   async function commit(seat,reset){
-   await act(async()=>{store=root.render(createElement(Camera,{view:'seat',seat,sector:seat.sectorId,reset,onReady:()=>ready++,onPreview:()=>captures.push(frames.at(-1))}));});
+   await act(async()=>{store=root.render(createElement(Harness,{view:'seat',seat,sector:seat.sectorId,reset,onReady:()=>ready++,onPreview:()=>captures.push(frames.at(-1))}));});
   }
-  function frame(n){
+  async function frame(n){
+   await act(async()=>{
    for(let i=0;i<n;i++)store.getState().advance(++elapsed/60,false,store.getState());
+   });
   }
   const from=resolveSeat('I-1-46-29'),to=resolveSeat('101-1-10');
-  await commit(from,0);frame(1);
-  await commit(to,1);frame(144);
+  await commit(from,0);await frame(1);
+  await commit(to,1);await frame(144);
   const ray=new Raycaster(),hits=[];
   for(let i=1;i<frames.length;i++){
    const previous=frames[i-1],next=frames[i],offset=next.clone().sub(previous);
@@ -68,7 +76,7 @@ for(const revision of ['9f36318','working tree']){
   const transferMinY=Math.min(...frames.map(point=>point.y));
 
   reduced=true;
-  await commit(from,2);frame(1);
+  await commit(from,2);await frame(1);
   assert.equal(ready,3);
   assert.ok(captures[2].distanceTo(new Vector3(...eyePosition(from)))<.00001);
   reduced=false;

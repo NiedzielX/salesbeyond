@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {Box3,InstancedMesh,Matrix4,MeshBasicMaterial,Object3D,Quaternion} from 'three';
+import {Box3,InstancedMesh,Matrix4,MeshBasicMaterial,Object3D,Quaternion,Raycaster,Vector3} from 'three';
 import {stadiumSeats} from '../data/stadium.ts';
 import {crowdColor,createCrowdGeometry,crowdMaskTransition,writeCrowdInstances} from './crowd.ts';
 
@@ -30,6 +30,10 @@ test('writes canonical matrices for every seat and ignores availability',()=>{
 
 test('changes only hidden matrices and restores them on release',()=>{
  const seats=stadiumSeats().slice(0,3),mesh=new InstancedMesh(createCrowdGeometry(),new MeshBasicMaterial(),3),controller=writeCrowdInstances(seats,mesh);
+ const ray=new Raycaster(new Vector3(...seats[0].position).add(new Vector3(0,3,0)),new Vector3(0,-1,0)),baseline:ReturnType<Raycaster['intersectObject']>=[];
+ mesh.updateMatrixWorld();InstancedMesh.prototype.raycast.call(mesh,ray,baseline);
+ assert.ok(baseline.length>0,'the test ray crosses an actual silhouette');
+ assert.equal(ray.intersectObject(mesh).length,0,'the crowd does not intercept seat picking');
  assert.equal(controller.setHidden([seats[0].id,seats[1].id,'unknown']),2);
  const pos=new Object3D(),q=new Quaternion(),scale=new Object3D().scale,matrix=new Matrix4();
  mesh.getMatrixAt(0,matrix);matrix.decompose(pos.position,q,scale);assert.deepEqual(scale.toArray(),[0,0,0]);
@@ -55,4 +59,14 @@ test('mask keeps source and target hidden through rapid seat and reset flights',
  state=crowdMaskTransition({seatId:seatA,hiddenIds:[seatA]},'seat',seatB,true);
  state=crowdMaskTransition(state,'overview',null,true);assert.deepEqual(state,{seatId:null,hiddenIds:[seatA,seatB]});
  state=crowdMaskTransition(state,'overview',null,false);assert.deepEqual(state,{seatId:null,hiddenIds:[]});
+});
+
+test('batched hide and restore retain every pending GPU matrix range',()=>{
+ const seats=stadiumSeats().slice(0,3),mesh=new InstancedMesh(createCrowdGeometry(),new MeshBasicMaterial(),3);
+ try{
+ const controller=writeCrowdInstances(seats,mesh);
+ mesh.instanceMatrix.clearUpdateRanges(); // Simulate the initial full upload.
+ controller.setHidden([seats[0].id]);controller.setHidden([seats[1].id]);controller.setHidden([seats[2].id]);
+ for(let index=0;index<3;index++)assert.ok(mesh.instanceMatrix.updateRanges.some(range=>range.start<=index*16&&range.start+range.count>=(index+1)*16),`pending matrix ${index} was dropped`);
+ }finally{mesh.geometry.dispose();mesh.material.dispose();}
 });

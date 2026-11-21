@@ -1,7 +1,7 @@
 import { readFile, writeFile, unlink } from 'node:fs/promises';
 import { build } from 'esbuild';
 import assert from 'node:assert/strict';
-const {createElement,act}=await import('react');
+const {createElement,useState,act}=await import('react');
 await import('react-dom/client');
 globalThis.window={navigator:globalThis.navigator,document:{createElement(){}},matchMedia(){return {matches:false}},devicePixelRatio:1,event:undefined};
 const {createRoot}=await import('@react-three/fiber');
@@ -15,6 +15,12 @@ const result=await build({
 await writeFile(bundlePath,result.outputFiles[0].text);
 try{
  const {Camera}=await import('./'+bundlePath);
+ function Harness(props){
+  const key=[props.view,props.seat?.id,props.sector,props.reset].join(':');
+  const [ready,setReady]=useState(null);
+  return createElement(Camera,{...props,crowd:false,flying:ready!==key,onReady:()=>{props.onReady();setReady(key);}});
+ }
+
  const {getSeat}=await import('./src/data/stadium.ts');
  const {eyePosition}=await import('./src/domain/camera.ts');
  class FakeCanvas extends EventTarget {
@@ -42,7 +48,7 @@ try{
  let store;
  async function commit(next={}){
   props={...props,...next};
-  await act(async()=>{store=root.render(createElement(Camera,props));});
+  await act(async()=>{store=root.render(createElement(Harness,props));});
  }
  await commit();
  const initialCamera=store.getState().camera;
@@ -57,20 +63,22 @@ try{
  };
  expectSeat(seatA);
  let times=0;
- function frame(n){
+ async function frame(n){
+   await act(async()=>{
   for(let i=0;i<n;i++)store.getState().advance(++times/60,false,store.getState());
+   });
  }
- frame(10);expectSeat(seatA);
- await act(async()=>configure(350,550));frame(5);expectSeat(seatA);
+ await frame(10);expectSeat(seatA);
+ await act(async()=>configure(350,550));await frame(5);expectSeat(seatA);
  await commit({seat:{...seatA,price:200},onReady:()=>{}});
- frame(5);expectSeat(seatA);
+ await frame(5);expectSeat(seatA);
  await commit({view:'sector',seat:null,sector:seatB.sectorId,reset:1});
- frame(30);
+ await frame(30);
  await commit({view:'seat',seat:seatB,sector:seatB.sectorId,reset:2});
- frame(70);
+ await frame(70);
  await commit({view:'seat',seat:seatA,sector:seatA.sectorId,reset:3});
- frame(150);expectSeat(seatA);
- assert.equal(captures.length,2);
+ await frame(150);expectSeat(seatA);
+ assert.equal(captures.length,3);
  const minY=Math.min(...frames.map(f=>f.eye[1]));
  console.log(JSON.stringify({frames:frames.length,captures,minY,controls:controls.constructor.name},null,2));
  await act(async()=>root.unmount());

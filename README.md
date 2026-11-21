@@ -59,7 +59,7 @@ Repo używa przypiętego skompilowanego pakietu przez jego publiczny kontrakt. *
 
 ## Weryfikacja i ograniczenia
 
-Lint/typecheck/build i 155 testów źródeł oraz test wyemitowanego serwera przechodzą. Testy obejmują rzeczywisty kompilator chartu i wszystkie 38 078 ID/pozycji, ciągłość dachu, podparcie foteli przez geometrię, kadry w różnych proporcjach, niezasłoniętą oś widoku 171 próbek foteli, kontrakty mapy i blokad. [Aktualne kadry i porównanie geometrii CPU](docs/qa-evidence/enea-fidelity-2026-11-20/README.md) pokazują geometrię; nie są zrzutami aplikacji ani dowodem działania WebGL.
+Lint/typecheck/build i 160 testów źródeł oraz test wyemitowanego serwera przechodzą. Testy obejmują rzeczywisty kompilator chartu i wszystkie 38 078 ID/pozycji, ciągłość dachu, podparcie foteli przez geometrię, kadry w różnych proporcjach, niezasłoniętą oś widoku 171 próbek foteli, kontrakty mapy i blokad. [Aktualne kadry i porównanie geometrii CPU](docs/qa-evidence/enea-fidelity-2026-11-20/README.md) pokazują geometrię; nie są zrzutami aplikacji ani dowodem działania WebGL.
 
 Odbiór obecnego 2D/3D i koszyka na desktopie/telefonie pozostaje otwarty: automatyczna kontrola odrzuciła otwarcie przeglądarki z powodu nierozwiązanej wcześniejszej blokady dostępu. Nie używano innego kanału jako obejścia. Historyczne testy starego panelu w `docs/QA.md` nie są odbiorem tego przyrostu.
 
@@ -67,4 +67,4 @@ To autorska rekonstrukcja inspirowana Eneą, **nie zweryfikowany skan ani oficja
 
 Dalsze prace: [plan doświadczenia kibica](docs/FAN_EXPERIENCE_ROADMAP.md), [plan wykonawczy](.ai/EXECUTION_PLAN.md), [zatwierdzona specyfikacja](.ai/specs/2026-11-17-functional-stadium-mvp.md).
 
-Do scope MVP właściciel dopisał symulowaną widownię: ciemne sylwetki siedzących kibiców i przełącznik puste/z kibicami, pozwalający ocenić widok za osobą w poprzedzającym rzędzie. Kryteria C1–C5 w specyfikacji; implementacja jeszcze otwarta.
+Symulowana widownia: przełącznik „Puste trybuny / Z kibicami” w domyślnym3D, ciemne siedzące sylwetki dla tego samego katalogu38 078foteli i ukryty obserwator. Przełączenie nie zmienia kamery/wyboru/koszyka/holda, a miniatura jest odczytywana po zastosowaniu docelowej maski. Domyślnie pusto; wariant nie jest odczytem frekwencji ani dostępności. [Porównanie CPU i test kontrolera](docs/qa-evidence/crowd-2026-11-21/README.md). Rzeczywisty obraz i płynność na telefonie C5 pozostają do odbioru.
