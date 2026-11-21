@@ -1,0 +1,76 @@
+{
+  "verifiedAt": "2026-11-21T10:55:55.067Z",
+  "sourceCommit": "36f9388c284bb08ae440cac70c9a4666f640e1b2",
+  "deployment": {
+    "id": "dpl_2UeCxRZJ8tQKT3WVU5JBd1B2QYXX",
+    "readyState": "READY",
+    "url": "salesbeyond-p8hp6f9uz-n-b334.vercel.app",
+    "alias": [
+      "salesbeyond.vercel.app",
+      "salesbeyond-n-b334.vercel.app"
+    ],
+    "aliasError": null
+  },
+  "url": "https://salesbeyond.vercel.app",
+  "http": [
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/assets/index-DnbnL6tF.js",
+      "status": 200,
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/index-1YLUqx8G.css",
+      "status": 200,
+      "type": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/Stadium-B-9PqN9R.js",
+      "status": 200,
+      "type": "application/javascript; charset=utf-8",
+      "bytes": 1030146
+    },
+    {
+      "path": "/assets/StadiumMap-GQm3PaFk.js",
+      "status": 200,
+      "type": "application/javascript; charset=utf-8",
+      "bytes": 7045
+    }
+  ],
+  "markers": {
+    "rowCameraHint": true,
+    "crowdToggle": true,
+    "uprightAdvertising": true,
+    "oldFloorAdvertising": false,
+    "greyGoalPanel": true
+  },
+  "api": {
+    "statusHttp": 200,
+    "ok": true,
+    "configured": true,
+    "mode": "service",
+    "catalogSections": 19,
+    "catalogSeats": 38078,
+    "section": {
+      "path": "/api/seat-api?op=inventory&eventId=enea-demo&sectionId=II-3",
+      "httpStatus": 200,
+      "count": 1998,
+      "eventId": "enea-demo",
+      "status": "open"
+    }
+  },
+  "runtimeErrors": {
+    "levels": [
+      "error",
+      "fatal"
+    ],
+    "since": "15m",
+    "count": 0
+  },
+  "browserVerified": false,
+  "webglVerified": false,
+  "githubPushed": false
+}

@@ -157,3 +157,13 @@ Inventoryreadmodel przygotowany i rootzweryfikowany (8testów, all143+1). Nastę
 Per-sectionruntimezintegrowany: hook15s/focus/manual/lifecycle, wspólne resolverydomeny/UI i adapterykolorów2D/R3F/SVG, tylkoactiveblock. 147+1testów +lint/typecheck/build passed; niezależnyreview i deploydoing. Odbiór przeglądarki, również odpowiedźwłaściciela na pytanie czy3objawyustąpiły, nadalpending. Nie zamykać całegoMVP beztegodowodu.
 
 Finalnyprzyrost91272b3: productionREADY, wspólnybindingactiveblokudostarczony, HTTPkatalog19/38078 iII-3/1998 potwierdzony. 147+1testów, freshreviewbezmustfix. OdbiórGPU/desktop/phone ibezpośredniaobserwacjaużytkownikapozostająotwarte; specnadalin-progress. Raport docs/qa-evidence/hold-engine/verification-2026-11-20.md.
+
+
+## Korekta kamery i reklamy — 2026-11-21
+
+- Beyond na szarych pionowych panelach przy bramkach i bokach murawy, poprzednie napisy na ziemi usunięte; dwa obejrzane rendery CPU.
+- Dolne rzędy: bounded pan w sektorze, jawne kadrowanie rzędu i instrukcje suwaka/gestów. Test kontrolera R3F/Drei/StrictMode obejmuje 114 kadrów rzędów i prawdziwe zdarzenia kontrolera na CPU.
+- Status wydarzenia nie wraca do demo-open przy nawigacji/odczycie błędu; test montowanego hooka.
+- Kod `36f9388` wdrożony production READY na salesbeyond.vercel.app; 163+1 testów, lint/typecheck/build, niezależny review i HTTP assets/API passed. Dowód: `docs/qa-evidence/lower-rows-2026-11-21/deployment-proof.json`.
+- V1–V5/C5 pozostają otwarte w zakresie rzeczywistego browser/WebGL/phone acceptance. Nie ponawiano zablokowanego kanału.
+- Plan wszystkich publicznie opisanych funkcji referencyjnych: `.ai/specs/2026-11-21-seatlayer-feature-parity.md`, autor Luna, niezależny review Sol i root zakończone bez pozostałych must-fix. Status draft: A1–A3 to istniejący zatwierdzony fan MVP, B1–B5/C0–C9 to propozycje nowych zakresów. Dalej domknięcie A1/A2/A3 według istniejących V1–V5/C5; blokada browser nadal dotyczy rzeczywistego odbioru.

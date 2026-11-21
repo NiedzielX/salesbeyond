@@ -15,3 +15,5 @@ node --experimental-strip-types --input-type=module < docs/qa-evidence/lower-row
 To test kontrolera CPU: bez przeglądarki, WebGL, pikseli ani pomiaru FPS. Nie potwierdza działania fizycznego dotyku i trafień foteli na telefonie. Rzeczywisty odbiór desktop/mobile pozostaje otwarty z powodu wcześniejszej automatycznej odmowy dostępu do przeglądarki; nie użyto alternatywnego kanału.
 
 Pełne bramki i niezależny review: `.ai/runs/2026-11-21-lower-row-camera-and-beyond.md`.
+
+Wdrożono source `36f9388` na [salesbeyond.vercel.app](https://salesbeyond.vercel.app), production READY. [Dowód HTTP/API](deployment-proof.json) potwierdza nowe zasoby, API service, 19 bloków/38 078 miejsc i II-3/1998; brak error/fatal w 15-minutowym oknie. To odczyt dostarczenia wersji, nie odbiór interakcji.

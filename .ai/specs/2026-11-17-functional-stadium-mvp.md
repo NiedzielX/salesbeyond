@@ -70,8 +70,12 @@ Przeprowadzony 2026-11-17 przez osobną sesję gpt-6-luna (świeży kontekst, re
 ### Korekta właściciela: reklama i dostęp do niskich rzędów — 2026-11-21
 Beyond ma być na widocznym szarym prostokącie przy bramce oraz pionowych szarych bokach przy murawie; wcześniejsze malowanie ziemi wycofane. Screenshot II-2 pokazuje brak możliwości skierowania zbliżonej kamery na niższe rzędy. Odtworzyć ograniczenia rzeczywistego kontrolera i zapewnić dostęp manualny/wybór rzędu, zachowując bezpieczną wysokość, stały punkt oczu w POV i zachowanie przy polling/resize. Root integruje, bez ponownego otwierania zamkniętego zakresu MVP lub proszenia o zgodę na rutynowe poprawki.
 
+Kod `13007f8`/`7480ee4`/`36f9388`: napisy pionowe; bounded pan sektora i jawny rowFocused frame, UI wyjaśnia gesty i suwak. Root/controller/review/lint/typecheck/163+1/build passed; 114 kadrów rzędów, 57 POV widowni, dotychczasowa regresja lotu zachowana. Wdrożenie production READY `dpl_2UeCxRZJ8tQKT3WVU5JBd1B2QYXX`, HTTP potwierdzone w `docs/qa-evidence/lower-rows-2026-11-21/deployment-proof.json`. Rzeczywisty ekran desktop/mobile nadal otwarty.
+
 ### Ciągłość statusu wydarzenia w pełnej ścieżce — 2026-11-21
 W istniejącym zakresie wspólnej dostępności: po wiarygodnej obserwacji zamknięcia wydarzenia sama nawigacja, oczekiwanie na nowy blok lub błąd odczytu nie mogą przywracać otwartego statusu demo. Nowa odpowiedź serwera może ponownie otworzyć wydarzenie; wyłączenie trybu usługi wraca do oznaczonego demo. Sprawdzić realny hook, opóźnione odpowiedzi, zmianę sektora i reset, bez mutacji eventu produkcyjnego.
+
+`81695b8` zachowuje znany eventStatus do nowego wiarygodnego wyniku lub disable. Test rzeczywistego hooka, niezależny review i wspólne końcowe bramki passed; wdrożono z `36f9388`.
 
 ### Rozszerzenie MVP zlecone przez właściciela: widownia — 2026-11-20
 Właściciel polecił dopisać do scope MVP poglądowe zapełnienie trybun, żeby ocenić widok, gdy przed wybranym miejscem siedzi kibic. To element aktualnego MVP, nie edytora/panelu organizatora.

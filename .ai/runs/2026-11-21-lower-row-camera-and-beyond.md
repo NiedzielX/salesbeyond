@@ -1,6 +1,6 @@
 ---
 started: 2026-11-21
-ended: null
+ended: 2026-11-21
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
 outcome: partial
@@ -25,7 +25,7 @@ Właściciel doprecyzował reklamę: na widocznym szarym prostokącie przy bramc
 - Wcześniejsza odmowa przeglądarki nie została potwierdzona jako zdjęta. Realny WebGL/mobile/desktop i trafienia foteli pozostają nieodebrane; nie obchodzono kanału.
 
 ## Wynik
-Poprawki zintegrowane i lokalnie zweryfikowane. Wspólny deploy oraz niezależny review planu parytetu w toku.
+Poprawki zintegrowane, zweryfikowane i wdrożone. Source `36f9388`, production `dpl_2UeCxRZJ8tQKT3WVU5JBd1B2QYXX`, READY/aliasError=null na https://salesbeyond.vercel.app. HTML, main JS/CSS i oba lazy chunks HTTP200 z właściwymi MIME; nowy row-hint/upright/goal-panel są dostarczone, stary floor marker nie. APIstatus service200, katalog19/38078, II-3/1998 HTTP200. Runtime error/fatal15m: brak. Snapshot lokalny bez push/merge GitHub. Dowód: `docs/qa-evidence/lower-rows-2026-11-21/deployment-proof.json`. Plan parytetu autorsko Luna: `b031373`/`308b235`, root integracja `3fe2856`/`b18dad7`; 24 rodziny publicznie opisanych funkcji, pakiety A1–A3/B1–B5/C0–C9. Niezależny Sol poprawił błędne deklaracje o naszym selectorze/history i pominięcia; końcowy review poprawek root bez must-fix. Draft `.ai/specs/2026-11-21-seatlayer-feature-parity.md` gotowy do przeglądu właściciela. Nowe B/C nie zostały wdrożone ani zatwierdzone przez agenta. Browser/WebGL pending oznacza partial, nie odebrane MVP.
 
 ## Lekcje
 Nowa korekta lokalizacji reklamy zapisana od razu; przełączamy ją z podłoża na pionowe powierzchnie.

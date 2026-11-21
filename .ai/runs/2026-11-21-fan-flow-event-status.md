@@ -1,6 +1,6 @@
 ---
 started: 2026-11-21
-ended: null
+ended: 2026-11-21
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
 outcome: partial
@@ -22,7 +22,7 @@ Kontynuować domknięcie pełnej ścieżki. Sprawdzić ciągłość statusu wyda
 - Odbiór WebGL/UI nadal otwarty; nie zastępować go tymi dowodami.
 
 ## Wynik
-Kod zintegrowany i zweryfikowany lokalnie. Wspólne wdrożenie z poprawką kamery/reklam w toku.
+Kod zintegrowany, zweryfikowany i wdrożony. Source `36f9388`, production `dpl_2UeCxRZJ8tQKT3WVU5JBd1B2QYXX`, READY/aliasError=null na https://salesbeyond.vercel.app. HTML, main JS/CSS i oba lazy chunks HTTP200 z właściwymi MIME; nowy row-hint/upright/goal-panel są dostarczone, stary floor marker nie. APIstatus service200, katalog19/38078, II-3/1998 HTTP200. Runtime error/fatal15m: brak. Snapshot lokalny bez push/merge GitHub. Dowód: `docs/qa-evidence/lower-rows-2026-11-21/deployment-proof.json`. Wynik partial, bo pełny odbiór przeglądarkowy pozostaje otwarty.
 
 ## Lekcje
 Stosowane istniejące lekcje izolacji agentów i zachowania obserwacji live.

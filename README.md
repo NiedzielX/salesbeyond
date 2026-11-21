@@ -69,3 +69,5 @@ To autorska rekonstrukcja inspirowana Eneą, **nie zweryfikowany skan ani oficja
 Dalsze prace: [plan doświadczenia kibica](docs/FAN_EXPERIENCE_ROADMAP.md), [plan wykonawczy](.ai/EXECUTION_PLAN.md), [zatwierdzona specyfikacja](.ai/specs/2026-11-17-functional-stadium-mvp.md).
 
 Symulowana widownia: przełącznik „Puste trybuny / Z kibicami” w domyślnym3D, ciemne siedzące sylwetki dla tego samego katalogu38 078foteli i ukryty obserwator. Przełączenie nie zmienia kamery/wyboru/koszyka/holda, a miniatura jest odczytywana po zastosowaniu docelowej maski. Domyślnie pusto; wariant nie jest odczytem frekwencji ani dostępności. [Porównanie CPU i test kontrolera](docs/qa-evidence/crowd-2026-11-21/README.md). Rzeczywisty obraz i płynność na telefonie C5 pozostają do odbioru.
+
+[Plan dalszego parytetu funkcji](.ai/specs/2026-11-21-seatlayer-feature-parity.md) — draft po niezależnym review: 24 rodziny funkcji, zależności, kryteria i dobór modeli. Zatwierdzony fan MVP pozostaje oddzielony od proponowanych nowych modułów platformy.
