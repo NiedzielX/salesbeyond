@@ -3,14 +3,14 @@ import { OrbitControls, Line, Html } from '@react-three/drei';
 import { useMemo, useRef, useEffect, useLayoutEffect, useState, Component, type ReactNode } from 'react';
 import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsType } from 'three-stdlib';
-import { layout, allSectors, sectorSeats, sectorFrame, type SectorId, type Seat } from '../data/stadium';
+import { layout, allSectors, sectorSeats, sectorBounds, sectorFrame, sectorMinDistance, type SectorId, type Seat } from '../data/stadium';
 import {roofCutawayNormal,showRoof} from './structure';
 import {createEneaModel} from '../integrations/eneaModel';
 import {createBeyondAdvertising} from '../integrations/beyondAdvertising';
 import {eneaLayout} from '../data/eneaLayout';
 import {aimRotation,rotateFlight} from './cameraRotation';
 import {watchContextLoss} from './contextLoss';
-import { pauseOrbit } from './cameraControls';
+import { constrainOrbitTarget, pauseOrbit } from './cameraControls';
 import {installSeatPicking} from '../integrations/seatPicking';
 import {writeSeatTransforms,createSeatColors} from '../integrations/seatInstances';
 import {captureSeatPreview} from './seatPreview';
@@ -48,15 +48,20 @@ function DemoSeats({sector,onSeat,selected,interactive,row,focusRow,overview,onS
  const liveHover=hover&&inventory?.get(hover.id),hoverInfo=hover&&liveHover?{...hover,price:liveHover.price,available:liveHover.available}:hover;
  return <group onClick={e=>{if(!interactive)return;e.stopPropagation();if(e.instanceId!==undefined){const seat=seats[e.instanceId];if(overview)onSector(seat.sectorId,seat.row);else{const live=inventory?.get(seat.id);onSeat(live?{...seat,price:live.price,available:live.available}:seat);}}}} onPointerMove={e=>{if(!interactive)return;e.stopPropagation();const seat=e.instanceId===undefined?null:seats[e.instanceId];setHovered(seat);document.body.style.cursor=seat?'pointer':'auto';}} onPointerOut={()=>{setHovered(null);document.body.style.cursor='auto';}}><instancedMesh ref={ref} args={[undefined,undefined,seats.length]}><boxGeometry args={[1,layout.seatThickness,eneaLayout.seatDepth]}/><meshStandardMaterial roughness={.5}/></instancedMesh><instancedMesh ref={backs} args={[undefined,undefined,seats.length]}><boxGeometry args={[1,.56,.09]}/><meshStandardMaterial roughness={.5}/></instancedMesh>{focusRow&&rowStart&&<Html position={[rowStart.position[0],rowStart.position[1]+1.5,rowStart.position[2]]} center style={{pointerEvents:'none'}} zIndexRange={[6,0]}><span className="row-marker">RZĄD {row}</span></Html>}{hoverInfo&&<Html position={[hoverInfo.position[0],hoverInfo.position[1]+2.5,hoverInfo.position[2]]} center style={{pointerEvents:'none'}} zIndexRange={[7,0]}><div className="seat-tooltip"><strong>Sektor {hoverInfo.sectorId} · Rząd {hoverInfo.row}</strong><span>Miejsce {hoverInfo.number}<b>{hoverInfo.available?`${hoverInfo.price} zł`:'Zajęte'}</b></span><small>{hoverInfo.available?'Kliknij, aby zobaczyć perspektywę':'Zajęte · perspektywę możesz obejrzeć'}</small></div></Html>}</group>
 }
-function Camera({view,seat,sector,reset,crowd,flying,onReady,onPreview}:{view:View;seat:Seat|null;sector:SectorId|null;reset:number;crowd:boolean;flying:boolean;onReady:()=>void;onPreview:(image:string|null)=>void}){
+function Camera({view,seat,sector,row,rowFocused,reset,crowd,flying,onReady,onPreview}:Pick<Props,'view'|'seat'|'sector'|'row'|'rowFocused'|'reset'|'crowd'|'flying'|'onReady'|'onPreview'>){
  const controls=useRef<OrbitControlsType>(null);const lastNavigation=useRef<{key:string;view:View}|null>(null);const manualCamera=useRef(false);const {camera,gl,size,scene}=useThree();
  const aspect=size.width/Math.max(1,size.height);
  const framingAspect=view==='seat'?1.5:aspect;
+ const focusedRow=view==='sector'&&rowFocused?row:undefined;
+ const panBounds=useMemo(()=>{
+  const bounds=view==='sector'&&sector?sectorBounds(sector):null;
+  return bounds?new THREE.Box3(new THREE.Vector3(...bounds.min),new THREE.Vector3(...bounds.max)):null;
+ },[view,sector]);
  const flight=useRef(true);const elapsed=useRef(0);const from=useRef<Point>([0,0,0]);const fromRotation=useRef(new THREE.Quaternion());const toRotation=useRef(new THREE.Quaternion());const to=useRef<Point>([0,0,0]);const target=useRef<Point>([0,0,0]);const angles=useRef({yaw:0,pitch:0});
  const flightControl=useRef<Point|undefined>(undefined);
  // Publish the new target before RAF can combine a new seat with the previous flight's clock.
- useLayoutEffect(()=>{const navigation=`${view}:${seat?.id??''}:${sector??''}:${reset}`;const previous=lastNavigation.current;if(previous?.key===navigation&&manualCamera.current)return;if(previous?.key!==navigation)manualCamera.current=false;from.current=camera.position.toArray() as Point;fromRotation.current.copy(camera.quaternion);elapsed.current=0;flight.current=true;
- if(view==='seat'&&seat){to.current=eyePosition(seat);target.current=[0,1,0];}else if(view==='sector'){const frame=sectorFrame(sector??'',framingAspect);to.current=frame.position;target.current=frame.target;}else{to.current=overviewPosition(framingAspect);target.current=[0,0,0];}
+ useLayoutEffect(()=>{const navigation=`${view}:${seat?.id??''}:${sector??''}:${reset}:${focusedRow??''}`;const previous=lastNavigation.current;if(previous?.key===navigation&&manualCamera.current)return;if(previous?.key!==navigation)manualCamera.current=false;from.current=camera.position.toArray() as Point;fromRotation.current.copy(camera.quaternion);elapsed.current=0;flight.current=true;
+ if(view==='seat'&&seat){to.current=eyePosition(seat);target.current=[0,1,0];}else if(view==='sector'){const frame=sectorFrame(sector??'',framingAspect,focusedRow);to.current=frame.position;target.current=frame.target;}else{to.current=overviewPosition(framingAspect);target.current=[0,0,0];}
  flightControl.current=previous?.view==='seat'&&view==='seat'&&seat?seatTransferControl(from.current,to.current):undefined;
  toRotation.current.copy(aimRotation(to.current,target.current,camera.up));
  if(controls.current)pauseOrbit(controls.current,camera);
@@ -68,7 +73,7 @@ function Camera({view,seat,sector,reset,crowd,flying,onReady,onPreview}:{view:Vi
  onReady();
  }
  lastNavigation.current={key:navigation,view};
- },[view,seat?.id,sector,reset,camera,framingAspect]);
+ },[view,seat?.id,sector,reset,camera,framingAspect,focusedRow]);
  // Capture only after the parent arrival and crowd mask have committed. A mode
  // toggle updates the thumbnail without starting another camera navigation.
  useLayoutEffect(()=>{
@@ -80,9 +85,17 @@ function Camera({view,seat,sector,reset,crowd,flying,onReady,onPreview}:{view:Vi
  const up=()=>{pointer=null};canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
  return()=>{canvas.removeEventListener('pointerdown',down);canvas.removeEventListener('pointermove',move);canvas.removeEventListener('pointerup',up);canvas.removeEventListener('pointercancel',up)};
  },[view,camera,gl]);
- useFrame((_,delta)=>{if(!flight.current||!controls.current)return;elapsed.current+=delta;const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;camera.position.set(...flightPoint(from.current,to.current,elapsed.current,reduced,flightControl.current));rotateFlight(fromRotation.current,toRotation.current,flightProgress(elapsed.current,reduced),camera.quaternion);
+ useFrame((_,delta)=>{if(!controls.current)return;
+ if(!flight.current){
+  // Drei applies the damped orbit first, then the scene constrains the rendered pose.
+  if(panBounds&&controls.current.enabled)constrainOrbitTarget(camera,controls.current.target,panBounds);
+  return;
+ }
+ elapsed.current+=delta;const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;camera.position.set(...flightPoint(from.current,to.current,elapsed.current,reduced,flightControl.current));rotateFlight(fromRotation.current,toRotation.current,flightProgress(elapsed.current,reduced),camera.quaternion);
  if(reduced||elapsed.current>=flightDuration){flight.current=false;const d=new THREE.Vector3(...target.current).sub(camera.position);angles.current={yaw:Math.atan2(d.x,d.z),pitch:Math.atan2(d.y,Math.hypot(d.x,d.z))};controls.current.target.set(...target.current);controls.current.enabled=view!=='seat';onReady();}});
- return <OrbitControls ref={controls} onStart={()=>{manualCamera.current=true;}} makeDefault enableDamping enablePan={false} minDistance={45} maxDistance={330*overviewScale(aspect)} minPolarAngle={.15} maxPolarAngle={Math.PI*.47} enableZoom={view!=='seat'} rotateSpeed={.5}/>;
+ // Keep the sector zoom range stable when resizing a manually positioned view.
+ const maxDistance=330*overviewScale(view==='sector'?1.5:aspect);
+ return <OrbitControls ref={controls} onStart={()=>{manualCamera.current=true;}} makeDefault enableDamping enablePan={panBounds!==null} minDistance={view==='sector'?sectorMinDistance:45} maxDistance={maxDistance} minPolarAngle={.15} maxPolarAngle={Math.PI*.47} enableZoom={view!=='seat'} rotateSpeed={.5}/>;
 }
 function Scene(p:Props){const {gl}=useThree();
 useEffect(()=>watchContextLoss(gl.domElement,p.onUnavailable),[gl,p.onUnavailable]);
