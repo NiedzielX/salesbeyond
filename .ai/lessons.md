@@ -1,5 +1,7 @@
 # Lekcje projektu
 
+- [2026-11-21] [Beyond na pionowych szarych powierzchniach](lessons/2026-11-21-beyond-placement.md) — korekta właściciela: prostokąt przy bramce i boki murawy, bez malowania podłoża.
+
 - [2026-11-21] [Maska widowni i miniatura po dotarciu](lessons/2026-11-21-crowd-mask-and-preview.md) — zachowuj oczekujące transfery GPU i odczytuj obraz po commit docelowej maski.
 
 - [2026-11-20] [Propozycje grup i odświeżanie live](lessons/2026-11-20-proposals-and-live-refresh.md) — nie usuwaj grupy przy pollingu i nie przywracaj danych demo zamiast znanej obserwacji.
