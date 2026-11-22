@@ -72,6 +72,8 @@ Beyond ma być na widocznym szarym prostokącie przy bramce oraz pionowych szary
 
 Kod `13007f8`/`7480ee4`/`36f9388`: napisy pionowe; bounded pan sektora i jawny rowFocused frame, UI wyjaśnia gesty i suwak. Root/controller/review/lint/typecheck/163+1/build passed; 114 kadrów rzędów, 57 POV widowni, dotychczasowa regresja lotu zachowana. Wdrożenie production READY `dpl_2UeCxRZJ8tQKT3WVU5JBd1B2QYXX`, HTTP potwierdzone w `docs/qa-evidence/lower-rows-2026-11-21/deployment-proof.json`. Rzeczywisty ekran desktop/mobile nadal otwarty.
 
+Korekta właściciela 2026-11-22: przy wartości startowej rzędu 1 suwak nie emituje `change`, więc poprzedni UI nie aktywował rowFocused. Dodać jawną akcję ustawienia/przywrócenia kadru na bieżącym rzędzie oraz pozwolić ręcznie obniżyć oko w sektorze z około 4.59 m do bezpiecznej granicy około 2.59 m. Zachować target wewnątrz sektora, panoramę, POV, dach i widownię.
+
 ### Ciągłość statusu wydarzenia w pełnej ścieżce — 2026-11-21
 W istniejącym zakresie wspólnej dostępności: po wiarygodnej obserwacji zamknięcia wydarzenia sama nawigacja, oczekiwanie na nowy blok lub błąd odczytu nie mogą przywracać otwartego statusu demo. Nowa odpowiedź serwera może ponownie otworzyć wydarzenie; wyłączenie trybu usługi wraca do oznaczonego demo. Sprawdzić realny hook, opóźnione odpowiedzi, zmianę sektora i reset, bez mutacji eventu produkcyjnego.
 

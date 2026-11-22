@@ -77,6 +77,7 @@ test('otwarcie zwykłego adresu zaczyna panoramą mimo zapisanego sektora i rzę
 test('wejście do bloku nie narzuca rzędu 6; kliknięty fotel i ręczny rząd zachowują numer',()=>{
  const prior=selectionReducer(initialSelection,{type:'row',row:6});
  const block=selectionReducer(prior,{type:'sector',id:'II-3'});assert.equal(block.row,1);assert.equal(block.rowFocused,false);
+ const focusedFirst=selectionReducer(block,{type:'row',row:block.row});assert.equal(focusedFirst.row,1);assert.equal(focusedFirst.rowFocused,true);
  const clicked=selectionReducer(prior,{type:'sector',id:'II-3',row:28});assert.equal(clicked.row,28);assert.equal(clicked.rowFocused,true);
  const moved=selectionReducer(block,{type:'row',row:39});assert.equal(moved.row,39);assert.equal(moved.rowFocused,true);
 });

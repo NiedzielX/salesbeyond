@@ -1,6 +1,10 @@
 import {MathUtils,type Box3,type Camera,type Vector3} from 'three';
 type OrbitState = {enabled:boolean;enableDamping:boolean;target:Vector3;update:()=>unknown};
 
+/** Sector orbit may approach the lowest rows while keeping the eye above pitch furniture. */
+export const sectorMaxPolarAngle=Math.PI*.49;
+export const sectorMinManualEyeY=2.5;
+
 /** Keep the pan inside the sector and move the camera with its target. */
 export function constrainOrbitTarget(camera:Camera,target:Vector3,bounds:Box3){
  const x=MathUtils.clamp(target.x,bounds.min.x,bounds.max.x);

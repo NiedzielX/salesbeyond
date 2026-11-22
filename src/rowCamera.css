@@ -1,0 +1,38 @@
+.row-camera-controls {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 10px 0 13px;
+}
+
+.row-camera-controls button {
+  flex: none;
+  border: 1px solid #bed2f2;
+  border-radius: 6px;
+  background: #edf4ff;
+  color: #2865b6;
+  padding: 8px 10px;
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.row-camera-controls span {
+  color: #52637b;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+@media (max-width: 700px) {
+  .row-camera-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .row-camera-controls button {
+    min-height: 40px;
+  }
+
+  .row-camera-controls span {
+    text-align: center;
+  }
+}

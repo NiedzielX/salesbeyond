@@ -10,7 +10,7 @@ import {createBeyondAdvertising} from '../integrations/beyondAdvertising';
 import {eneaLayout} from '../data/eneaLayout';
 import {aimRotation,rotateFlight} from './cameraRotation';
 import {watchContextLoss} from './contextLoss';
-import { constrainOrbitTarget, pauseOrbit } from './cameraControls';
+import { constrainOrbitTarget, pauseOrbit, sectorMaxPolarAngle } from './cameraControls';
 import {installSeatPicking} from '../integrations/seatPicking';
 import {writeSeatTransforms,createSeatColors} from '../integrations/seatInstances';
 import {captureSeatPreview} from './seatPreview';
@@ -95,7 +95,7 @@ function Camera({view,seat,sector,row,rowFocused,reset,crowd,flying,onReady,onPr
  if(reduced||elapsed.current>=flightDuration){flight.current=false;const d=new THREE.Vector3(...target.current).sub(camera.position);angles.current={yaw:Math.atan2(d.x,d.z),pitch:Math.atan2(d.y,Math.hypot(d.x,d.z))};controls.current.target.set(...target.current);controls.current.enabled=view!=='seat';onReady();}});
  // Keep the sector zoom range stable when resizing a manually positioned view.
  const maxDistance=330*overviewScale(view==='sector'?1.5:aspect);
- return <OrbitControls ref={controls} onStart={()=>{manualCamera.current=true;}} makeDefault enableDamping enablePan={panBounds!==null} minDistance={view==='sector'?sectorMinDistance:45} maxDistance={maxDistance} minPolarAngle={.15} maxPolarAngle={Math.PI*.47} enableZoom={view!=='seat'} rotateSpeed={.5}/>;
+ return <OrbitControls ref={controls} onStart={()=>{manualCamera.current=true;}} makeDefault enableDamping enablePan={panBounds!==null} minDistance={view==='sector'?sectorMinDistance:45} maxDistance={maxDistance} minPolarAngle={.15} maxPolarAngle={view==='sector'?sectorMaxPolarAngle:Math.PI*.47} enableZoom={view!=='seat'} rotateSpeed={.5}/>;
 }
 function Scene(p:Props){const {gl}=useThree();
 useEffect(()=>watchContextLoss(gl.domElement,p.onUnavailable),[gl,p.onUnavailable]);

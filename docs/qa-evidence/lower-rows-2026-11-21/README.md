@@ -2,9 +2,9 @@
 
 Reprodukcja dotyczy II-2 po zbliżeniu na sektor i obniżeniu kąta kamery. Wcześniej target pozostawał na środku bloku, pan był wyłączony, a jawny wybór rzędu nie zmieniał kadru. Pierwszy rząd wypadał poza ekranem.
 
-Poprawka pozwala przesuwać kadr wewnątrz granic sektora prawym przyciskiem, Shift + lewym przyciskiem lub dwoma palcami. Suwak kadruje wybrany rząd. Panorama i nieruchomy punkt oczu na fotelu zachowują dotychczasowe zasady. Dolny limit promienia orbity w sektorze wynosi 32 m; w kontrolnym płytkim ujęciu oko zatrzymuje się na wysokości 4.59 m.
+Poprawka pozwala przesuwać kadr wewnątrz granic sektora prawym przyciskiem, Shift + lewym przyciskiem lub dwoma palcami. Suwak zmienia rząd, a jawny przycisk „Pokaż rząd 01 w 3D” ustawia lub przywraca kadr także wtedy, gdy suwak już zaczyna na pierwszym rzędzie. Panorama i nieruchomy punkt oczu na fotelu zachowują dotychczasowe zasady. Dolny limit promienia orbity w sektorze wynosi 32 m; po korekcie z 2026-11-22 kontrolowane ręczne zejście zatrzymuje oko na około 2.59 m, powyżej murawy i paneli.
 
-[Wynik kontrolera](controller-proof.json) pochodzi z rzeczywistych komponentów Camera, R3F, Drei i Three uruchomionych w StrictMode z atrapą renderera. Pierwszy rząd II-2 po dwóch przesunięciach znalazł się w kadrze (`NDC y≈−.376`), a po wyborze suwakiem na środku (`y=0`). Sprawdzono też Shift + przeciągnięcie, dwupalcowe przesuwanie, zachowanie ręcznej pozycji po pollingu i resize, widok z fotela i 114 kadrów rzędów w 19 blokach. Testy domenowe obejmują dodatkowo cztery proporcje ekranu.
+[Wynik kontrolera](row-one-endpoint-proof.json) pochodzi z rzeczywistych komponentów Camera, R3F, Drei i Three uruchomionych w StrictMode z atrapą renderera. Odtwarza wejście do II-2 z `row=1,rowFocused=false`, następnie aktywację tego samego numeru i `rowFocused=true`. Pierwszy rząd po ręcznym zejściu ma `NDC y≈−.185` przy wysokości oka około 2.585 m, a po jawnej aktywacji trafia na środek (`y=0`). Sprawdzono też Shift + przeciągnięcie, dwupalcowe przesuwanie, zachowanie ręcznej pozycji po pollingu i resize, widok z fotela i 114 kadrów rzędów w 19 blokach. Testy domenowe obejmują dodatkowo cztery proporcje ekranu.
 
 Odtworzenie z katalogu repo:
 

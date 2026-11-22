@@ -17,5 +17,8 @@ Otwieraj zwykły adres panoramą; koszyk i preferencje odtwarzaj niezależnie. W
 ## Jak sprawdzić
 Regresje bootstrapu i rowFocused, dla wszystkich czterech stron znak płaszczyzny przekroju oraz zachowane wierzchołki dachu. Odbiór prawdziwego WebGL nadal wymagany: CPU nie potwierdza wyglądu ani pracy OrbitControls. Nie deklaruj oficjalnego bliźniaka.
 
+## Pierwszy rząd i dolna granica kamery
+Kontrolowany suwak ustawiony już na minimum nie emituje zmiany po ponownym wskazaniu tego samego końca. Nie uzależniaj aktywacji pierwszego rzędu wyłącznie od `onChange`: zapewnij jawną, klawiaturową i dotykową akcję ustawienia kadru na bieżącym rzędzie. Osobno sprawdzaj kąt dolnej orbity. Ograniczenie targetu do bryły foteli nie powinno zatrzymywać oka zbyt wysoko; minimalną wysokość potwierdź na prawdziwym kontrolerze i zachowaj ją powyżej murawy oraz paneli.
+
 ## Podejście z panoramy
 Przekrój zależny od docelowej trybuny nie gwarantuje wolnej trasy od kamery panoramy: pozostawiona przeciwna połowa może leżeć po drodze. W czasie lotu pomijaj roof/frame, po onReady przywracaj pełny dach panoramy lub lokalny przekrój. Zachowaj preferencję użytkownika, jeżeli dach wyłączył. Test rzeczywistego modelu na trasie panorama→III-3-1-29 odtwarza przecięcie membrany i weryfikuje jego brak przy widoczności lotu.

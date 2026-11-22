@@ -7,6 +7,7 @@ import 'react-dom/client';
 import {Vector3} from 'three';
 import {allSectors,sectorRows,seatsInRow,resolveSeat} from './src/data/stadium.ts';
 import {eyePosition} from './src/domain/camera.ts';
+import {initialSelection,selectionReducer} from './src/domain/selection.ts';
 let reduced=false;
 globalThis.window={navigator:globalThis.navigator,document:{createElement(){}},matchMedia(){return {matches:reduced}},devicePixelRatio:1};
 globalThis.IS_REACT_ACT_ENVIRONMENT=true;
@@ -52,6 +53,10 @@ try{
  function state(seat){return {enablePan:controls.enablePan,minDistance:controls.minDistance,target:controls.target.toArray(),eye:camera.position.toArray(),rowNdc:project(seat).toArray()};}
  function near(a,b,message){assert.ok(a.distanceTo(b)<1e-6,message);}
  const low=seatsInRow('II-2',1)[18];
+ const entered=selectionReducer(initialSelection,{type:'sector',id:'II-2'});
+ assert.equal(entered.row,1);assert.equal(entered.rowFocused,false);
+ const activated=selectionReducer(entered,{type:'row',row:entered.row});
+ assert.equal(activated.row,1);assert.equal(activated.rowFocused,true);
  await commit();await advance(180);
  const blockTarget=controls.target.clone();
  // Wheel input and the shallowest orbit reproduce the reported stuck framing.
@@ -60,7 +65,7 @@ try{
  const beforePan=state(low);
  drag(-480);await advance(360);drag(-480);await advance(360);
  const afterPan=state(low);
- await commit({row:1,rowFocused:true});await advance(150);
+ await commit({row:activated.row,rowFocused:activated.rowFocused});await advance(150);
  const afterRowSelection=state(low);
  const sample={beforePan,afterPan,afterRowSelection};
  if(process.argv.includes('--baseline')){
@@ -72,7 +77,7 @@ try{
   assert.ok(beforePan.rowNdc[1]<-1);
   assert.ok(new Vector3(...afterPan.target).distanceTo(blockTarget)>15,'right-drag moves the block orbit target');
   assert.ok(Math.abs(afterPan.rowNdc[1])<1,'right-drag reveals the lowest row');
-  assert.ok(afterPan.eye[1]>3,'camera stays above the pitch after a large drag');
+  assert.ok(afterPan.eye[1]>2.5&&afterPan.eye[1]<2.65,'sector orbit descends below the old 4.59 m clamp and stays above pitch furniture');
   assert.ok(Math.abs(afterRowSelection.rowNdc[1])<.1,'explicit row follows its position');
   assert.equal(controls.enabled,true);
   const high=seatsInRow('II-2',54)[18];
@@ -99,6 +104,7 @@ try{
   assert.ok(Math.abs(project(seat).y)<.1,'back follows the chosen row');
   await commit({view:'overview',seat:null,sector:null,reset:3});await advance(150);
   assert.equal(controls.enablePan,false);assert.equal(controls.minDistance,45);
+  assert.equal(controls.maxPolarAngle,Math.PI*.47);
   near(controls.target,new Vector3(),'overview remains centered');
   let rowsChecked=0;
   for(const aspect of [390/510,900/555]){
@@ -116,6 +122,6 @@ try{
     }
    }
   }
-  console.log(JSON.stringify({...sample,rowsChecked,captures:captures.length,frameNumber,browserVerified:false,webglVerified:false},null,2));
+  console.log(JSON.stringify({...sample,initialRowActivation:{enteredRow:entered.row,enteredFocused:entered.rowFocused,activatedFocused:activated.rowFocused},rowsChecked,captures:captures.length,frameNumber,browserVerified:false,webglVerified:false},null,2));
  }
 }finally{if(root)await act(async()=>root.unmount());await unlink(bundlePath);}

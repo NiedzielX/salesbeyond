@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {Box3,PerspectiveCamera,Vector3} from 'three';
 import {OrbitControls} from 'three-stdlib';
-import {constrainOrbitTarget,pauseOrbit} from '../components/cameraControls.ts';
+import {constrainOrbitTarget,pauseOrbit,sectorMaxPolarAngle,sectorMinManualEyeY} from '../components/cameraControls.ts';
 import {allSectors,sectorBounds,sectorFrame,sectorMinDistance,sectorRows,seatsInRow} from '../data/stadium.ts';
 test('stara bezwładność orbity nie przesuwa kamery po ukończonym locie',()=>{
  const camera=new PerspectiveCamera();camera.position.set(148,138,168);
@@ -42,7 +42,7 @@ test('przesuwanie przy płytkim zbliżeniu sektora II-2 odsłania pierwszy rząd
  controls.enableDamping=true;
  controls.enablePan=true;
  controls.minDistance=sectorMinDistance;
- controls.maxPolarAngle=Math.PI*.47;
+ controls.maxPolarAngle=sectorMaxPolarAngle;
  controls.target.set(...sectorFrame('II-2').target);
  const angle=controls.maxPolarAngle;
  camera.position.copy(controls.target).add(new Vector3(-sectorMinDistance*Math.sin(angle),sectorMinDistance*Math.cos(angle),0));
@@ -68,7 +68,7 @@ test('przesuwanie przy płytkim zbliżeniu sektora II-2 odsłania pierwszy rząd
   }
   assert.equal(controls.target.y,min[1],'the damped pan stops at the floor of the seating section');
   assert.ok(bounds.containsPoint(controls.target));
-  assert.ok(camera.position.y>3);
+  assert.ok(camera.position.y>sectorMinManualEyeY);
   assert.ok(Math.abs(lowerSeat.clone().project(camera).y)<1);
   assert.ok(Math.abs(camera.position.distanceTo(controls.target)-sectorMinDistance)<1e-6);
  }finally{controls.dispose();}
