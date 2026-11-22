@@ -1,6 +1,6 @@
 ---
 started: 2026-11-21
-ended: null
+ended: 2026-11-22
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
 outcome: partial
@@ -25,11 +25,12 @@ Kontynuować zatwierdzone pakiety A1–A3 pełnego doświadczenia kibica po wdro
 - Test kontrolera R3F/Drei/Three w StrictMode: wejście `row=1,rowFocused=false` → aktywacja tego samego numeru → `rowFocused=true`; po ręcznym zejściu eyeY 2.585, row 1 NDC y≈−.185; po akcji rzędu y=0; 114 kadrów rzędów i 3396 kroków. Panorama nadal `.47π`.
 - Focused testy domenowe: 14/14 pass. Niezależny review Sol: brak must-fix; 26/26 dodatkowych testów kamery/clearance/roof/preview/session/crowd pass.
 - Końcowe `npm run lint`, `npm run typecheck`, `npm test` (163 źródła + 1 emitted-server) i `npm run build`: exit 0. Build nadal raportuje ostrzeżenie o dużym chunku Stadium.
+- Commit `2f904ec`; Vercel production `dpl_3eJc86HiySgQJoX8ZpQmi73badLE` READY, alias `salesbeyond.vercel.app`, aliasError null. HTML/main JS/CSS/Stadium chunk HTTP 200 z prawidłowymi MIME i markerami nowego przycisku/instrukcji/kąta. API status service 200, II-3 1998 miejsc; runtime error/fatal 15m: 0. Dowód: `docs/qa-evidence/lower-rows-2026-11-21/deployment-proof-2026-11-22.json`.
 - Existing crowd controller regression: 57 perspektyw i 62 miniatury pass. Brak browser/WebGL/touch/keyboard acceptance.
 
 ## Wynik
 
-Kod i testy gotowe do produkcyjnego snapshotu. Outcome pozostaje partial do czasu deploy i nadal po nim w zakresie realnego browser/WebGL acceptance; kanał nie jest obchodzony.
+Poprawka zintegrowana, przetestowana i wdrożona. Outcome pozostaje partial wyłącznie w zakresie realnego browser/WebGL/touch/keyboard acceptance; kanał nie jest obchodzony. Snapshot Vercel pochodzi z lokalnego commitu, bez push/merge GitHub.
 
 ## Lekcje
 

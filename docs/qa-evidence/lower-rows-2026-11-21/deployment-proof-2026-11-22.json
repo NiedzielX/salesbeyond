@@ -1,0 +1,66 @@
+{
+  "verifiedAt": "2026-11-22T14:04:23.884Z",
+  "sourceCommit": "2f904ecac886d9bfd14ef214904cb27c50cd1998",
+  "deployment": {
+    "id": "dpl_3eJc86HiySgQJoX8ZpQmi73badLE",
+    "readyState": "READY",
+    "url": "salesbeyond-qaytkfcoa-n-b334.vercel.app",
+    "alias": [
+      "salesbeyond.vercel.app",
+      "salesbeyond-n-b334.vercel.app"
+    ],
+    "aliasError": null
+  },
+  "url": "https://salesbeyond.vercel.app",
+  "http": [
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/assets/index-BrFd7wQv.js",
+      "status": 200,
+      "type": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/index-CR-jvlBp.css",
+      "status": 200,
+      "type": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/Stadium-CVjFfW-3.js",
+      "status": 200,
+      "type": "application/javascript; charset=utf-8"
+    }
+  ],
+  "markers": {
+    "directRowButton": true,
+    "gestureHelp": true,
+    "rowCameraCss": true,
+    "sectorAngle": false
+  },
+  "api": {
+    "status": 200,
+    "mode": "service",
+    "section": "II-3",
+    "seats": 1998
+  },
+  "runtimeErrors": {
+    "levels": [
+      "error",
+      "fatal"
+    ],
+    "since": "15m",
+    "count": 0
+  },
+  "controller": {
+    "manualEyeY": 2.5851442905001516,
+    "manualRowNdcY": -0.18465560763358227,
+    "focusedRowNdcY": 0,
+    "rowsChecked": 114,
+    "frames": 3396
+  },
+  "browserVerified": false,
+  "webglVerified": false,
+  "githubPushed": false
+}
