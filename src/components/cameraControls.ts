@@ -3,7 +3,15 @@ type OrbitState = {enabled:boolean;enableDamping:boolean;target:Vector3;update:(
 
 /** Sector orbit may approach the lowest rows while keeping the eye above pitch furniture. */
 export const sectorMaxPolarAngle=Math.PI*.49;
-export const sectorMinManualEyeY=2.5;
+export const sectorPanTargetFloor=.75;
+export const sectorMinManualEyeY=1.7;
+
+/** Extend manual pan slightly below the first chair, without allowing a pitch-level camera. */
+export function sectorPanBounds(seatBounds:Box3){
+ const bounds=seatBounds.clone();
+ bounds.min.y=Math.min(bounds.min.y,sectorPanTargetFloor);
+ return bounds;
+}
 
 /** Keep the pan inside the sector and move the camera with its target. */
 export function constrainOrbitTarget(camera:Camera,target:Vector3,bounds:Box3){

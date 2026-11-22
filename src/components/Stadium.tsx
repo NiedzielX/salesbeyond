@@ -10,7 +10,7 @@ import {createBeyondAdvertising} from '../integrations/beyondAdvertising';
 import {eneaLayout} from '../data/eneaLayout';
 import {aimRotation,rotateFlight} from './cameraRotation';
 import {watchContextLoss} from './contextLoss';
-import { constrainOrbitTarget, pauseOrbit, sectorMaxPolarAngle } from './cameraControls';
+import { constrainOrbitTarget, pauseOrbit, sectorMaxPolarAngle, sectorPanBounds } from './cameraControls';
 import {installSeatPicking} from '../integrations/seatPicking';
 import {writeSeatTransforms,createSeatColors} from '../integrations/seatInstances';
 import {captureSeatPreview} from './seatPreview';
@@ -59,7 +59,7 @@ function Camera({view,seat,sector,row,rowFocused,reset,crowd,flying,onReady,onPr
  const focusedRow=view==='sector'&&rowFocused?row:undefined;
  const panBounds=useMemo(()=>{
   const bounds=view==='sector'&&sector?sectorBounds(sector):null;
-  return bounds?new THREE.Box3(new THREE.Vector3(...bounds.min),new THREE.Vector3(...bounds.max)):null;
+  return bounds?sectorPanBounds(new THREE.Box3(new THREE.Vector3(...bounds.min),new THREE.Vector3(...bounds.max))):null;
  },[view,sector]);
  const flight=useRef(true);const elapsed=useRef(0);const from=useRef<Point>([0,0,0]);const fromRotation=useRef(new THREE.Quaternion());const toRotation=useRef(new THREE.Quaternion());const to=useRef<Point>([0,0,0]);const target=useRef<Point>([0,0,0]);const angles=useRef({yaw:0,pitch:0});
  const flightControl=useRef<Point|undefined>(undefined);

@@ -20,5 +20,7 @@ Regresje bootstrapu i rowFocused, dla wszystkich czterech stron znak płaszczyzn
 ## Pierwszy rząd i dolna granica kamery
 Kontrolowany suwak ustawiony już na minimum nie emituje zmiany po ponownym wskazaniu tego samego końca. Nie uzależniaj aktywacji pierwszego rzędu wyłącznie od `onChange`: zapewnij jawną, klawiaturową i dotykową akcję ustawienia kadru na bieżącym rzędzie. Osobno sprawdzaj kąt dolnej orbity. Ograniczenie targetu do bryły foteli nie powinno zatrzymywać oka zbyt wysoko; minimalną wysokość potwierdź na prawdziwym kontrolerze i zachowaj ją powyżej murawy oraz paneli.
 
+Granice geometrii foteli i granice wygodnego kadrowania nie są tym samym. Dla ręcznego panowania używaj kopii obwiedni sektora i pozwól targetowi zejść umiarkowanie poniżej pierwszego siedziska, jednocześnie testując minimalną wysokość oka we wszystkich prostych i narożnych blokach. Nie rozszerzaj tej granicy na automatyczny fokus rzędu ani nieruchomy POV.
+
 ## Podejście z panoramy
 Przekrój zależny od docelowej trybuny nie gwarantuje wolnej trasy od kamery panoramy: pozostawiona przeciwna połowa może leżeć po drodze. W czasie lotu pomijaj roof/frame, po onReady przywracaj pełny dach panoramy lub lokalny przekrój. Zachowaj preferencję użytkownika, jeżeli dach wyłączył. Test rzeczywistego modelu na trasie panorama→III-3-1-29 odtwarza przecięcie membrany i weryfikuje jego brak przy widoczności lotu.

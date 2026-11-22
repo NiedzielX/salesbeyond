@@ -1,0 +1,23 @@
+{
+  "sector": "II-2",
+  "row": 1,
+  "beforePan": {
+    "targetY": 20.94,
+    "eyeY": 21.9504759862,
+    "rowNdcY": -5.7376605416
+  },
+  "afterPan": {
+    "targetY": 0.75,
+    "eyeY": 1.7551442905,
+    "rowNdcY": 0.0335780682
+  },
+  "focusedRow": {
+    "targetY": 1.58,
+    "rowNdcY": 0
+  },
+  "sectorsWithSafeLowerPan": 19,
+  "rowFramesChecked": 114,
+  "controllerFrames": 3396,
+  "browserVerified": false,
+  "webglVerified": false
+}

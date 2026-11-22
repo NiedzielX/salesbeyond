@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {Box3,PerspectiveCamera,Vector3} from 'three';
 import {OrbitControls} from 'three-stdlib';
-import {constrainOrbitTarget,pauseOrbit,sectorMaxPolarAngle,sectorMinManualEyeY} from '../components/cameraControls.ts';
+import {constrainOrbitTarget,pauseOrbit,sectorMaxPolarAngle,sectorMinManualEyeY,sectorPanBounds,sectorPanTargetFloor} from '../components/cameraControls.ts';
 import {allSectors,sectorBounds,sectorFrame,sectorMinDistance,sectorRows,seatsInRow} from '../data/stadium.ts';
 test('stara bezwładność orbity nie przesuwa kamery po ukończonym locie',()=>{
  const camera=new PerspectiveCamera();camera.position.set(148,138,168);
@@ -38,7 +38,10 @@ test('przesuwanie przy płytkim zbliżeniu sektora II-2 odsłania pierwszy rząd
  const camera=new PerspectiveCamera(43,900/555,.1,1200);
  const controls=new OrbitControls(camera,canvas as unknown as HTMLElement);
  const {min,max}=sectorBounds('II-2')!;
- const bounds=new Box3(new Vector3(...min),new Vector3(...max));
+ const seatBounds=new Box3(new Vector3(...min),new Vector3(...max));
+ const bounds=sectorPanBounds(seatBounds);
+ assert.equal(bounds.min.y,sectorPanTargetFloor);
+ assert.equal(seatBounds.min.y,min[1],'pan expansion does not mutate canonical seat bounds');
  controls.enableDamping=true;
  controls.enablePan=true;
  controls.minDistance=sectorMinDistance;
@@ -66,12 +69,23 @@ test('przesuwanie przy płytkim zbliżeniu sektora II-2 odsłania pierwszy rząd
    pointer(canvas.ownerDocument,'pointerup',30);
    for(let frame=0;frame<240;frame++)step();
   }
-  assert.equal(controls.target.y,min[1],'the damped pan stops at the floor of the seating section');
+  assert.equal(controls.target.y,sectorPanTargetFloor,'the damped pan continues below the first seat to expose the lower tier');
   assert.ok(bounds.containsPoint(controls.target));
-  assert.ok(camera.position.y>sectorMinManualEyeY);
+  assert.ok(camera.position.y>sectorMinManualEyeY&&camera.position.y<1.85,'the eye stays above the pitch without keeping row one at the viewport edge');
   assert.ok(Math.abs(lowerSeat.clone().project(camera).y)<1);
   assert.ok(Math.abs(camera.position.distanceTo(controls.target)-sectorMinDistance)<1e-6);
  }finally{controls.dispose();}
+});
+
+test('dolny pan prostych i narożnych sektorów zachowuje bezpieczną wysokość oka',()=>{
+ const eyeOffset=sectorMinDistance*Math.cos(sectorMaxPolarAngle);
+ for(const {id} of allSectors){
+  const raw=sectorBounds(id)!;
+  const bounds=sectorPanBounds(new Box3(new Vector3(...raw.min),new Vector3(...raw.max)));
+  assert.equal(bounds.min.y,sectorPanTargetFloor,id);
+  const eyeY=bounds.min.y+eyeOffset;
+  assert.ok(eyeY>sectorMinManualEyeY&&eyeY<1.85,`${id}: ${eyeY}`);
+ }
 });
 
 test('wybór rzędu kadruje jego miejsca w prostych i narożnych sektorach, także na telefonie',()=>{

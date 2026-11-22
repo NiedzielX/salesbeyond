@@ -77,7 +77,7 @@ try{
   assert.ok(beforePan.rowNdc[1]<-1);
   assert.ok(new Vector3(...afterPan.target).distanceTo(blockTarget)>15,'right-drag moves the block orbit target');
   assert.ok(Math.abs(afterPan.rowNdc[1])<1,'right-drag reveals the lowest row');
-  assert.ok(afterPan.eye[1]>2.5&&afterPan.eye[1]<2.65,'sector orbit descends below the old 4.59 m clamp and stays above pitch furniture');
+  assert.ok(afterPan.eye[1]>1.7&&afterPan.eye[1]<1.85,'sector orbit descends below the first chair while the eye stays above the pitch');
   assert.ok(Math.abs(afterRowSelection.rowNdc[1])<.1,'explicit row follows its position');
   assert.equal(controls.enabled,true);
   const high=seatsInRow('II-2',54)[18];
