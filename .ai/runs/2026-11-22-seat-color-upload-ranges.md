@@ -1,9 +1,9 @@
 ---
 started: 2026-11-22
-ended: null
+ended: 2026-11-22
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
-outcome: partial
+outcome: success
 ---
 
 # Zadanie
@@ -24,10 +24,11 @@ Kontynuować zatwierdzone R-Q1: zachować punktowe aktualizacje kolorów foteli 
 - `probe-webgl-attributes.mjs`: C2/3877, inicjalizacja 93 048 B, pojedynczy hover 24 B, zakolejkowane zmiany 72 B, wersje macierzy bez zmiany.
 - Niezależny review A1: kod produkcyjny bez must-fix po obsłudze initial/delayed upload; rekomendowana silniejsza regresja akumulacji dodana.
 - Pełne `npm test` 166+1, `npm run build`, wcześniejsze lint/typecheck i `git diff --check`: pass. Znane ostrzeżenie dużego chunku Stadium pozostaje.
+- Commit `4451a55`; snapshot 64 plików / 423 475 bajtów wdrożony jako production `dpl_8k3euiWbE7diSD2BApVZPfe6ayyK`. READY, aliasError null. HTML/main/CSS/Stadium 200, markery zakresów obecne, status service i II-3/1998 200, runtime errors 15m: 0.
 
 ## Wynik
 
-Kod, regresje i niezależny review gotowe; oczekuje na pełne bramki, commit i wdrożenie.
+Częściowe uploady kolorów wdrożone i zweryfikowane na rzeczywistym adapterze Three oraz przez produkcyjne assety/API. Pomiar realnego GPU/FPS pozostaje otwartym C5.
 
 ## Lekcje
 
