@@ -1,0 +1,16 @@
+{
+  "verifiedAt": "2026-11-22T20:11:38Z",
+  "commit": "c8976aba5105fd7d78a386c2051b4ecca8e2f85a",
+  "deploymentId": "dpl_UkHsrxWsu1oy7PkNXG9c4wQJ54qU",
+  "deploymentUrl": "salesbeyond-p10vzr08x-n-b334.vercel.app",
+  "productionAlias": "https://salesbeyond.vercel.app",
+  "readyState": "READY",
+  "aliasError": null,
+  "checks": {
+    "index": {"status": 200},
+    "asset": {"path": "assets/index-Di060QBk.js", "status": 200, "bytes": 305328},
+    "serviceStatus": {"status": 200, "configured": true, "mode": "service"},
+    "inventory": {"status": 200, "eventId": "enea-demo", "sectionId": "II-3", "eventStatus": "open", "version": 1, "seats": 1998},
+    "runtimeErrors15m": 0
+  }
+}

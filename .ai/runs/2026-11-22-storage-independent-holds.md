@@ -1,9 +1,9 @@
 ---
 started: 2026-11-22
-ended: null
+ended: 2026-11-22
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
-outcome: partial
+outcome: passed
 ---
 
 # Zadanie
@@ -24,10 +24,12 @@ Naprawić zatwierdzony przepływ A2, aby odmowa dostępu do `localStorage` nie w
 - Audyt A3 potwierdził wcześniejszą poprawkę jawnego kadrowania bieżącego rzędu i wskazał powtarzalne nazwy akcji „Zobacz” w liście holda. Dodano unikalny `aria-label` z sektorem, rzędem i numerem miejsca; odbiór czytnikiem ekranu pozostaje ręczny.
 - Pełne bramki po finalnym diffie: lint pass, typecheck pass, 168 testów JS + 1 test gotowego API pass, build pass (pozostaje istniejące ostrzeżenie o dużych chunkach).
 - Niezależny review poprawki storage i obu regresji: bez must-fix, targeted hook+domena 16/16. Niezależny read-only re-review nazwy dostępnej: bez regresji, handler i widoczny tekst bez zmiany.
+- Source `c8976ab` wdrożony jako production `dpl_UkHsrxWsu1oy7PkNXG9c4wQJ54qU`, stan READY, alias `salesbeyond.vercel.app`, bez alias error.
+- Produkcja: index 200, główny asset 200/305328 B, status usługi 200/configured/service, inventory II-3 200/1998 miejsc/open/version 1, runtime errors z 15 min: 0. Dowód: `docs/qa-evidence/storage-independent-holds/deployment-proof.json`.
 
 ## Wynik
 
-Poprawka gotowa do wdrożenia; dowód produkcyjny w toku.
+Odmowa lokalnego storage nie wyłącza serwerowych holdów; odzyskanie własnej blokady działa przez sesję. Nazwy akcji podglądu w liście holda są rozróżnialne. Kod i produkcja zweryfikowane; ręczny browser/screen-reader acceptance pozostaje otwarty zgodnie z V5.
 
 ## Lekcje
 
