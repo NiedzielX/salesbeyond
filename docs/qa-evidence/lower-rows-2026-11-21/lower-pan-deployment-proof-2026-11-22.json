@@ -1,0 +1,23 @@
+{
+  "deploymentId": "dpl_3HK5cpiMxFrCxLo2bxD9JdBbQAsA",
+  "deploymentUrl": "https://salesbeyond-cb4gsxjim-n-b334.vercel.app",
+  "productionAlias": "https://salesbeyond.vercel.app",
+  "sourceCommit": "b96f2037d57a4921a2de512a0422723c03e2f253",
+  "sourceFiles": 64,
+  "sourceBytes": 422366,
+  "state": "READY",
+  "aliasError": null,
+  "assets": {
+    "/": 200,
+    "/assets/index-DGGYa08n.js": 200,
+    "/assets/index-CR-jvlBp.css": 200,
+    "/assets/Stadium-bB1oqPll.js": 200
+  },
+  "stadiumMarkers": {"panTargetFloor075": true, "sectorPolar049Pi": true},
+  "api": {
+    "status": {"status": 200, "configured": true, "mode": "service"},
+    "inventoryII3": {"status": 200, "sectionId": "II-3", "seats": 1998, "version": 1, "eventStatus": "open"}
+  },
+  "runtimeErrorsLast15Minutes": 0,
+  "browserWebGLAcceptance": "not run"
+}

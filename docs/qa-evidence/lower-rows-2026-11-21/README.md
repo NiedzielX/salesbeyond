@@ -21,3 +21,5 @@ Wdrożono source `36f9388` na [salesbeyond.vercel.app](https://salesbeyond.verce
 Korektę endpointu rzędu 1 i niższej orbity wdrożono 2026-11-22 z source `2f904ec`: production `dpl_3eJc86HiySgQJoX8ZpQmi73badLE`, READY na [salesbeyond.vercel.app](https://salesbeyond.vercel.app). [Nowy dowód dostarczenia](deployment-proof-2026-11-22.json) potwierdza przycisk, instrukcję gestów, moduł kamery, API i brak błędów runtime; nadal nie zastępuje odbioru ekranu.
 
 Po kolejnym screenie właściciela rozszerzono ręczny pan nieco poniżej pierwszego fotela: target zatrzymuje się na 0.75 m, a oko na około 1.755 m. [Dowód kontrolera](lower-pan-proof-2026-11-22.json) pokazuje przesunięcie rzędu 1 z `NDC y=-5.738` do `y=0.034`; test obejmuje bezpieczną wysokość wszystkich 19 bloków. Automatyczny fokus rzędu nadal celuje w jego kanoniczną wysokość, a POV nie używa tego ograniczenia.
+
+Source `b96f203` wdrożono jako production `dpl_3HK5cpiMxFrCxLo2bxD9JdBbQAsA`, READY na głównym aliasie. [Dowód wdrożenia](lower-pan-deployment-proof-2026-11-22.json) potwierdza assety, marker nowej granicy, API i brak błędów runtime; nie zastępuje wizualnego odbioru WebGL.
