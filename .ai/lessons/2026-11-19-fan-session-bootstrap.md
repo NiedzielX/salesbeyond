@@ -16,3 +16,6 @@ Odtwarzaj w lazy bootstrap przed inicjalizacją reducerów i pierwszym efektem z
 
 ## Jak sprawdzić
 Testy fanSession.test.ts i review useFanSession/App: clear/remove+reload, błędy odczytu/zapisu, stare ID/ceny/statusy, pełny/legacy i zmiana fotela po otwarciu linku. Właściwy lifecycle React i clipboard wymagają osobnego browser QA.
+
+## Uzupełnienie: hold serwera bez lokalnego storage
+`localStorage` jest tylko opcjonalnym wskaźnikiem pomagającym odtworzyć hold; źródłem własności pozostaje sesja HttpOnly i serwerowe `current(eventId)`. Osobno chronić samo pobranie `window.localStorage` oraz późniejsze operacje storage. Błąd lokalnej trwałości nie może wpadać do wspólnej obsługi błędu statusu usługi ani wyłączać quote/hold/release. Regresja hooka ma zwracać aktywny hold przy rzucającym getterze storage, a osobny przypadek ma potwierdzać `unavailable` po faktycznym odrzuceniu `status()`.
