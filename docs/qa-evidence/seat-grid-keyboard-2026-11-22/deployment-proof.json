@@ -1,0 +1,17 @@
+{
+  "verifiedAt": "2026-11-22T20:27:58Z",
+  "commit": "cd4ebd206493add2ff2ace1c0009ec0c0661c18b",
+  "deploymentId": "dpl_ASSHaTMXpvPaEGz9Mv6EdAacp28K",
+  "deploymentUrl": "salesbeyond-dpu97i8j8-n-b334.vercel.app",
+  "productionAlias": "https://salesbeyond.vercel.app",
+  "readyState": "READY",
+  "aliasError": null,
+  "checks": {
+    "index": {"status": 200},
+    "mainAsset": {"path": "assets/index-DQNY15i0.js", "status": 200, "bytes": 305817},
+    "stadiumAsset": {"path": "assets/Stadium-DzcNaDOk.js", "status": 200, "bytes": 1031666},
+    "serviceStatus": {"status": 200, "configured": true, "mode": "service"},
+    "inventory": {"status": 200, "eventId": "enea-demo", "sectionId": "II-3", "eventStatus": "open", "version": 1, "seats": 1998},
+    "runtimeErrors15m": 0
+  }
+}
