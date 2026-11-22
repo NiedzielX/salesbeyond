@@ -1,0 +1,23 @@
+{
+  "deploymentId": "dpl_6h9coTqhCrWXWdYSLaDmgUQSYSpe",
+  "deploymentUrl": "https://salesbeyond-pct0h83bh-n-b334.vercel.app",
+  "productionAlias": "https://salesbeyond.vercel.app",
+  "sourceCommit": "8cc693c95537b81a296e6243232573027188d1aa",
+  "sourceFiles": 64,
+  "sourceBytes": 422035,
+  "state": "READY",
+  "aliasError": null,
+  "framework": "vite",
+  "assets": {
+    "/": {"status": 200, "contentType": "text/html; charset=utf-8"},
+    "/assets/index-B2eaM4qY.js": {"status": 200, "contentType": "application/javascript; charset=utf-8"},
+    "/assets/index-CR-jvlBp.css": {"status": 200},
+    "/assets/Stadium-lLpTwpBk.js": {"status": 200, "contentType": "application/javascript; charset=utf-8", "conditionalSeatHandlers": true}
+  },
+  "api": {
+    "status": {"status": 200, "configured": true, "mode": "service"},
+    "inventoryII3": {"status": 200, "eventId": "enea-demo", "sectionId": "II-3", "seats": 1998, "catalogVersion": 1, "eventStatus": "open"}
+  },
+  "runtimeErrorsLast15Minutes": 0,
+  "browserWebGLAcceptance": "not run"
+}

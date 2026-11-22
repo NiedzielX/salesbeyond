@@ -1,9 +1,9 @@
 ---
 started: 2026-11-22
-ended: null
+ended: 2026-11-22
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
-outcome: partial
+outcome: success
 ---
 
 # Zadanie
@@ -23,10 +23,12 @@ Zmniejszyć koszt wskazywania foteli w zatwierdzonym zakresie A1 bez zmiany zach
 - `node docs/qa-evidence/seat-pointer-2026-11-22/probe-r3f.mjs`: nested 28, one 14, inactive 0, reactivated 14 raycastów; identyczny aktywny trace i `instanceId`.
 - `npm run lint`, `npm run typecheck`, `npm test` (163+1) i `npm run build`: exit 0. Znane ostrzeżenie o dużym chunku Stadium pozostaje.
 - Niezależny review: 9/9 dodatkowych testów, brak must-fix. Nie wykonano browser/WebGL acceptance.
+- Commit `8cc693c`; snapshot 64 publicznych plików / 422 035 bajtów wdrożony bez env, historii i testów jako production `dpl_6h9coTqhCrWXWdYSLaDmgUQSYSpe`. READY, aliasError null.
+- Produkcyjny HTML, główny JS/CSS i chunk Stadium: 200. API status service: 200; II-3: 1998 miejsc, 200. Runtime errors 15 min: 0. Dowód: `docs/qa-evidence/seat-pointer-2026-11-22/deployment-proof.json`.
 
 ## Wynik
 
-Kod, regresja i review gotowe; oczekuje na wdrożenie oraz proof produkcji.
+Jeden właściciel zdarzeń foteli wdrożony i zweryfikowany na CPU/R3F oraz przez HTTP produkcji. Realny wizualny odbiór WebGL pozostaje otwartym kryterium całego MVP, nie blokadą tego przyrostu wydajności.
 
 ## Lekcje
 
