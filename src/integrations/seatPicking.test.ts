@@ -82,14 +82,25 @@ test('hover, selection, and basket color changes leave transform buffers untouch
  backs.setColorAt=(index,color)=>{backWrites.push(index);originalBack(index,color);};
  const feedback={selectedId:null as string|null,hoveredId:null as string|null,row:null as number|null,emphasized:false,chosen:new Set<string>()};
  assert.equal(updates.update(feedback),seats.length);assert.equal(backWrites.length,seats.length);
+ assert.deepEqual(base.instanceColor!.updateRanges,[],'initial GPU buffer creation already uploads the full attribute');
+ assert.deepEqual(backs.instanceColor!.updateRanges,[]);
  writes.length=0;backWrites.length=0;feedback.hoveredId=seats.find(seat=>seat.available)!.id;
  const hoveredIndex=seats.findIndex(seat=>seat.id===feedback.hoveredId);
  assert.equal(updates.update(feedback),1);assert.deepEqual(writes,[hoveredIndex]);assert.deepEqual(backWrites,[hoveredIndex]);
+ assert.deepEqual(base.instanceColor!.updateRanges,[{start:hoveredIndex*3,count:3}]);
+ assert.deepEqual(backs.instanceColor!.updateRanges,[{start:hoveredIndex*3,count:3}]);
+ base.instanceColor!.onUploadCallback();backs.instanceColor!.onUploadCallback();
+ assert.deepEqual(base.instanceColor!.updateRanges,[],'the initial full GPU upload clears any partial work queued before first render');
+ assert.deepEqual(backs.instanceColor!.updateRanges,[]);
  writes.length=0;backWrites.length=0;feedback.selectedId=feedback.hoveredId;feedback.hoveredId=null;
  assert.equal(updates.update(feedback),1);assert.deepEqual(writes,[hoveredIndex]);assert.deepEqual(backWrites,[hoveredIndex]);
+ assert.deepEqual(base.instanceColor!.updateRanges,[{start:hoveredIndex*3,count:3}]);
+ base.instanceColor!.clearUpdateRanges();backs.instanceColor!.clearUpdateRanges();
  writes.length=0;backWrites.length=0;feedback.selectedId=null;feedback.chosen.add(seats.find(seat=>seat.available&&seat.id!==seats[hoveredIndex].id)!.id);
  const chosenIndex=seats.findIndex(seat=>feedback.chosen.has(seat.id));
  assert.equal(updates.update(feedback),2);assert.deepEqual(writes,[hoveredIndex,chosenIndex]);assert.deepEqual(backWrites,[hoveredIndex,chosenIndex]);
+ for(const index of [hoveredIndex,chosenIndex])assert.ok(base.instanceColor!.updateRanges.some(range=>range.start<=index*3&&range.start+range.count>=index*3+3));
+ assert.ok(base.instanceColor!.updateRanges.reduce((sum,range)=>sum+range.count,0)<=6);
  assert.deepEqual(Array.from(base.instanceMatrix.array),baseMatrices);assert.deepEqual(Array.from(backs.instanceMatrix.array),backMatrices);
  geometry.dispose();material.dispose();
 });
@@ -115,6 +126,39 @@ test('inventory availability updates only changed seat colors and keeps hover de
  const hoveredIndex=seats.findIndex(seat=>seat.id===feedback.hoveredId);
  assert.equal(updates.update(feedback),2);assert.deepEqual(writes,[seats.findIndex(seat=>seat.id===hovered.id),hoveredIndex]);
  assert.deepEqual(Array.from(base.instanceMatrix.array),baseMatrices);assert.deepEqual(Array.from(backs.instanceMatrix.array),backMatrices);
+ geometry.dispose();material.dispose();
+});
+
+test('initial colors preserve an existing GPU attribute callback and refresh its full range',()=>{
+ const seats=sectorSeats('101'),geometry=new BoxGeometry(1,.16,.44),material=new MeshBasicMaterial();
+ const base=new InstancedMesh(geometry,material,seats.length),backs=new InstancedMesh(geometry,material,seats.length),color=new Color('white');
+ base.setColorAt(0,color);backs.setColorAt(0,color);
+ let uploads=0;const callback=()=>{uploads++};
+ base.instanceColor!.onUpload(callback);backs.instanceColor!.onUpload(callback);
+ const updates=createSeatColors(seats,base,backs);
+ assert.equal(updates.update({selectedId:null,hoveredId:null,row:null,emphasized:false,chosen:new Set()}),seats.length);
+ for(const mesh of [base,backs]){
+  assert.deepEqual(mesh.instanceColor!.updateRanges,[{start:0,count:seats.length*3}]);
+  assert.equal(mesh.instanceColor!.onUploadCallback,callback);
+  mesh.instanceColor!.onUploadCallback();
+ }
+ assert.equal(uploads,2);
+ geometry.dispose();material.dispose();
+});
+
+test('multiple color commits accumulate partial GPU ranges until the renderer uploads them',()=>{
+ const seats=sectorSeats('C2'),geometry=new BoxGeometry(1,.16,.44),material=new MeshBasicMaterial();
+ const base=new InstancedMesh(geometry,material,seats.length),backs=new InstancedMesh(geometry,material,seats.length);
+ const updates=createSeatColors(seats,base,backs),feedback={selectedId:null as string|null,hoveredId:null as string|null,row:null as number|null,emphasized:false,chosen:new Set<string>()};
+ updates.update(feedback);base.instanceColor!.onUploadCallback();backs.instanceColor!.onUploadCallback();
+ const first=seats.findIndex(seat=>seat.available),second=seats.findIndex((seat,index)=>seat.available&&index>first+10);
+ feedback.selectedId=seats[first].id;assert.equal(updates.update(feedback),1);
+ feedback.hoveredId=seats[second].id;assert.equal(updates.update(feedback),1);
+ for(const mesh of [base,backs])for(const index of [first,second])assert.ok(mesh.instanceColor!.updateRanges.some(range=>range.start<=index*3&&range.start+range.count>=index*3+3));
+ const pending=JSON.stringify(base.instanceColor!.updateRanges);
+ assert.equal(updates.update(feedback),0);assert.equal(JSON.stringify(base.instanceColor!.updateRanges),pending,'a no-op must not discard pending GPU work');
+ base.instanceColor!.onUploadCallback();backs.instanceColor!.onUploadCallback();
+ assert.deepEqual(base.instanceColor!.updateRanges,[]);assert.deepEqual(backs.instanceColor!.updateRanges,[]);
  geometry.dispose();material.dispose();
 });
 
