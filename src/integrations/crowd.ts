@@ -21,23 +21,24 @@ export function createCrowdGeometry():BufferGeometry{
 export type CrowdController={setHidden(ids:readonly string[]):number};
 /** Writes one instance per seat; availability is intentionally ignored. */
 export function writeCrowdInstances(seats:readonly Seat[],mesh:InstancedMesh):CrowdController{
- const object=new Object3D(),byId=new Map<string,number>(),canonical:Matrix4[]=new Array(seats.length),hidden=new Set<number>();
+ const object=new Object3D(),byId=new Map<string,number>(),hidden=new Map<number,Matrix4>();
  mesh.instanceMatrix.setUsage(DynamicDrawUsage);
  seats.forEach((seat,index)=>{
   byId.set(seat.id,index);
   object.position.set(...seat.position);object.rotation.set(0,seat.heading??0,0);object.scale.set(1,1,1);object.updateMatrix();
-  canonical[index]=object.matrix.clone();mesh.setMatrixAt(index,canonical[index]);
+  mesh.setMatrixAt(index,object.matrix);
  });
  mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();mesh.computeBoundingBox();
  mesh.raycast=()=>{};
  const zero=new Matrix4().makeScale(0,0,0);
  return {setHidden(ids){
   const next=new Set<number>();for(const id of ids){const index=byId.get(id);if(index!==undefined)next.add(index);}
-  const candidates=new Set([...hidden,...next].values()),changed:number[]=[];let count=0;
-  for(const index of candidates){const shouldHide=next.has(index);if(hidden.has(index)===shouldHide)continue;
-   mesh.setMatrixAt(index,shouldHide?zero:canonical[index]);changed.push(index);count++;
+  const candidates=new Set([...hidden.keys(),...next]),changed:number[]=[];let count=0;
+  for(const index of candidates){const shouldHide=next.has(index),canonical=hidden.get(index);if(!!canonical===shouldHide)continue;
+   if(shouldHide){mesh.getMatrixAt(index,object.matrix);hidden.set(index,object.matrix.clone());mesh.setMatrixAt(index,zero);}
+   else{mesh.setMatrixAt(index,canonical!);hidden.delete(index);}
+   changed.push(index);count++;
   }
-  hidden.clear();for(const index of next)hidden.add(index);
   if(count){const attribute=mesh.instanceMatrix;
    // Keep earlier changes until Three uploads and clears the pending ranges.
    for(const index of changed)attribute.addUpdateRange(index*16,16);

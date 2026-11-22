@@ -65,8 +65,10 @@ test('batched hide and restore retain every pending GPU matrix range',()=>{
  const seats=stadiumSeats().slice(0,3),mesh=new InstancedMesh(createCrowdGeometry(),new MeshBasicMaterial(),3);
  try{
  const controller=writeCrowdInstances(seats,mesh);
+ const baseline=new Float32Array(mesh.instanceMatrix.array);
  mesh.instanceMatrix.clearUpdateRanges(); // Simulate the initial full upload.
- controller.setHidden([seats[0].id]);controller.setHidden([seats[1].id]);controller.setHidden([seats[2].id]);
+ controller.setHidden([seats[0].id]);controller.setHidden([seats[1].id]);controller.setHidden([seats[2].id]);controller.setHidden([]);
  for(let index=0;index<3;index++)assert.ok(mesh.instanceMatrix.updateRanges.some(range=>range.start<=index*16&&range.start+range.count>=(index+1)*16),`pending matrix ${index} was dropped`);
+ assert.deepEqual(new Float32Array(mesh.instanceMatrix.array),baseline,'all canonical matrices are restored bit-for-bit');
  }finally{mesh.geometry.dispose();mesh.material.dispose();}
 });

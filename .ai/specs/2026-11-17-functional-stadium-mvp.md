@@ -176,6 +176,8 @@ Realizacja R-Q2 2026-11-22: grupa foteli jest jedynym właścicielem zdarzeń R3
 
 Realizacja R-Q1 uploadów 2026-11-22: zmienione indeksy RGB tworzą koaleskowane `updateRanges` dla obu siatek, zakresy kilku commitów czekających na render są zachowywane, a pierwszy pełny `bufferData` czyści kolejkę bez ponownego pełnego uploadu. Rzeczywisty `Three.WebGLAttributes` z atrapą GL dla C2: inicjalizacja 93 048 B, hover jednego fotela 24 B; macierze bez zmiany. Istniejący atrybut i callback właściciela pozostają obsłużone. Source `4451a55`, production `dpl_8k3euiWbE7diSD2BApVZPfe6ayyK` READY; HTTP assety/API/runtime pass. Odbiór GPU/FPS na urządzeniu pozostaje osobnym kryterium C5.
 
+R-Q2: dekoracyjny pierścień 65 drzew ma zachować dokładne pozycje, wysokości, skale i dwa kolory przy najwyżej trzech instancjonowanych batchach zamiast 130 osobnych meshów. Kontroler 38 078 sylwetek nie może dublować pełnego bufora macierzy; przechowuje kopie wyłącznie instancji aktualnie ukrytych i przywraca cały bufor bitowo, nie gubiąc oczekujących `updateRanges`. Pomiar heap/init Node jest dowodem CPU, nie zastępuje C5 GPU/FPS.
+
 Korekta kamery po screenie 2026-11-22: ręczny target sektora może zejść do 0.75 m zamiast zatrzymywać się na wysokości pierwszego fotela; przy promieniu 32 m i `.49π` oko pozostaje na około 1.755 m nad murawą. Ograniczenie dotyczy tylko ręcznego sektora, nie panoramy, automatycznego fokusu rzędu ani POV. Test obejmuje wszystkie 19 bloków, a controller II-2 przesuwa rząd 1 do `NDC y≈0.034`. Source `b96f203`, production `dpl_3HK5cpiMxFrCxLo2bxD9JdBbQAsA` READY; assety/API/runtime proof pass. Browser/WebGL acceptance nadal otwarty.
 
 ### Przygotowanie wykonywalnej warstwy holdów przed połączeniem infrastruktury
