@@ -201,3 +201,5 @@ RealizacjaR-H/R-I/R-U: source91272b3 wdrożonyproductionREADY 2026-11-20, backen
 R-H5: trwałość lokalnego wskaźnika holda jest opcjonalna. Odmowa dostępu do `localStorage` nie może wyłączyć skonfigurowanej usługi ani pominąć serwerowego `current(eventId)`; własny aktywny hold ma zostać odzyskany z sesji HttpOnly. Błąd samego `status()` nadal ustawia usługę jako niedostępną. Wymagany test zamontowanego hooka dla obu ścieżek.
 
 R-A3: powtarzalne akcje podglądu w liście wyceny/aktywnego holda mają unikalną nazwę dostępną zawierającą sektor, rząd i miejsce; widoczny krótki tekst może pozostać „Zobacz”. Ręczny odbiór czytnikiem ekranu pozostaje częścią V5.
+
+Uzupełnienie R-A3: sekundowy licznik aktywnej blokady nie jest live regionem. Przejście do `released` lub `expired` generuje jeden jednoznaczny komunikat w polite status region, aby wynik operacji był dostępny bez ogłaszania każdej sekundy.

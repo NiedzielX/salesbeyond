@@ -2,6 +2,7 @@ import {useEffect,useId,useRef,useState} from 'react';
 import {Clock3,ShieldCheck,RefreshCw} from 'lucide-react';
 import type {Seat} from '../data/stadium';
 import type {useLiveHold} from './useLiveHold';
+import {terminalHoldAnnouncement} from '../domain/liveHoldAnnouncement';
 type Props={service:ReturnType<typeof useLiveHold>;seats:readonly Seat[];avoidSingle:boolean;onPreview:(seat:Seat)=>void;resolve:(id:string)=>Seat|null};
 const money=(minor:number,currency='PLN')=>new Intl.NumberFormat('pl-PL',{style:'currency',currency}).format(minor/100);
 const messages:Record<string,string>={held:'Ktoś właśnie zablokował część miejsc. Zmień wybór i sprawdź go ponownie.',unavailable:'Część miejsc jest już niedostępna. Sprawdź inny wybór.',catalog_changed:'Zmieniono katalog. Sprawdź aktualną cenę i dostępność.',event_closed:'Wybór na to wydarzenie jest zamknięty.',single_seat_gap:'Ten wybór pozostawi pojedyncze wolne miejsce. Zmień grupę lub preferencję.',seat_limit:'Przekroczono limit miejsc.',rate_limited:'Za dużo prób. Odczekaj minutę przed ponowieniem.',not_found:'Nie znaleziono aktywnej blokady w tej sesji.',active_hold_exists:'W tej sesji jest już inna blokada. Odśwież jej stan.'};
@@ -23,6 +24,7 @@ export default function LiveHoldPanel({service,seats,avoidSingle,onPreview,resol
  const active=state.phase==='active'&&remaining>0;
  const pending=['quoting','creating','restoring'].includes(state.phase)||state.phase==='active'&&!!state.operation;
  const ambiguous=state.phase==='create-unknown'||state.phase==='restore-unknown';
+ const terminalAnnouncement=state.phase==='terminal'?terminalHoldAnnouncement(state.hold.status):'';
  const rows=hold?.items??(currentQuote?quote?.items:null);
  const currency=hold?.currency??quote?.currency??'PLN';
  return <section className={`hold-panel ${active?'hold-active':''}`} aria-labelledby={titleId}>
@@ -31,7 +33,7 @@ export default function LiveHoldPanel({service,seats,avoidSingle,onPreview,resol
   {hold&&<div className="hold-clock" aria-live="off"><Clock3 size={18}/>{active?<>Pozostało <strong>{Math.floor(remaining/60)}:{String(remaining%60).padStart(2,'0')}</strong></>:hold.status==='released'?'Miejsca zostały zwolnione.':'Termin blokady minął. Sprawdź dostępność ponownie.'}</div>}
   {rows&&<ul className="hold-items">{rows.map(item=>{const seat=resolve(item.seatId);return <li key={item.seatId}><span>{seat?`${seat.sectorId} · rząd ${seat.row} · miejsce ${seat.number}`:item.seatId}</span><b>{money(item.priceMinor,currency)}</b>{seat&&<button aria-label={`Zobacz perspektywę: sektor ${seat.sectorId}, rząd ${seat.row}, miejsce ${seat.number}`} onClick={()=>onPreview(seat)}>Zobacz</button>}</li>;})}</ul>}
   {(hold||currentQuote)&&<div className="hold-total">Cena potwierdzona przez serwer <strong>{money(hold?.subtotalMinor??quote!.subtotalMinor,currency)}</strong></div>}
-  <div className="hold-status" role="status" aria-live="polite">{pending?(state.phase==='quoting'?'Sprawdzam dostępność i cenę…':state.phase==='creating'?'Potwierdzam blokadę całej grupy…':state.phase==='active'&&state.operation==='releasing'?'Zwalniam grupę miejsc…':'Sprawdzam aktualny stan blokady…'):ambiguous?'Nie otrzymano pewnego potwierdzenia. Ponów tę samą operację — nie tworzymy nowego żądania.':error?messages[error.code]??'Nie udało się potwierdzić operacji. Sprawdź połączenie i spróbuj ponownie.':state.phase==='quoted'&&currentQuote?'Dostępność jest aktualna w chwili sprawdzenia. Dopiero potwierdzenie blokady zabezpiecza miejsca.':''}</div>
+  <div className="hold-status" role="status" aria-live="polite">{pending?(state.phase==='quoting'?'Sprawdzam dostępność i cenę…':state.phase==='creating'?'Potwierdzam blokadę całej grupy…':state.phase==='active'&&state.operation==='releasing'?'Zwalniam grupę miejsc…':'Sprawdzam aktualny stan blokady…'):ambiguous?'Nie otrzymano pewnego potwierdzenia. Ponów tę samą operację — nie tworzymy nowego żądania.':error?messages[error.code]??'Nie udało się potwierdzić operacji. Sprawdź połączenie i spróbuj ponownie.':state.phase==='quoted'&&currentQuote?'Dostępność jest aktualna w chwili sprawdzenia. Dopiero potwierdzenie blokady zabezpiecza miejsca.':terminalAnnouncement}</div>
   <div className="hold-actions">
    {ambiguous?<button className="primary-button" onClick={()=>void service.retry()}><RefreshCw size={16}/> Sprawdź ponownie tę operację</button>:state.phase==='active'?<><button disabled={!!state.operation} onClick={()=>void service.refresh()}>Odśwież stan</button><button disabled={!!state.operation} onClick={()=>void service.release()}>Zwolnij całą grupę</button></>:<><button disabled={pending||!seats.length} onClick={()=>void service.quote(seats.map(s=>s.id),avoidSingle)}>{currentQuote?'Sprawdź ponownie':'Sprawdź dostępność i cenę'}</button>{state.phase==='quoted'&&currentQuote&&<button className="primary-button" onClick={()=>void service.create()}>Potwierdź blokadę miejsc</button>}</>}
   </div>

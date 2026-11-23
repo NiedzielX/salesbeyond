@@ -1,5 +1,7 @@
 # Lekcje projektu
 
+- [2026-11-23] [Stan końcowy poza wyciszonym zegarem](lessons/2026-11-23-terminal-state-announcements.md) — nie ogłaszaj każdej sekundy; wynik wygaśnięcia lub zwolnienia przekaż raz przez stabilny status region.
+
 - [2026-11-22] [Rzadkie kopie macierzy i batchowanie instancji](lessons/2026-11-22-sparse-instance-state.md) — nie dubluj pełnego bufora transformacji; backup tylko maskowanych instancji, statyczne otoczenie grupuj.
 
 - [2026-11-21] [Beyond na pionowych szarych powierzchniach](lessons/2026-11-21-beyond-placement.md) — korekta właściciela: prostokąt przy bramce i boki murawy, bez malowania podłoża.
