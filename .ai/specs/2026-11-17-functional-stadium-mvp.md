@@ -41,6 +41,8 @@ Fotorealistyczne kadry, filmy AI, maski w postprodukcji, VIP, oficjalne sektory/
 Uzupełnienie AC7: gęsty rząd miejsc jest jedną nazwaną grupą i jednym wejściowym tab-stopem. Wybrany fotel, a bez niego pierwszy, przyjmuje Tab; Left/Right oraz Home/End przesuwają wyłącznie fokus po wszystkich widocznych fotelach, także zajętych i poza filtrem. Enter/Space zachowują natywny podgląd. Klawisze są ograniczone na krańcach i nie zatrzymują zwykłego Tab/Shift+Tab.
 
 Uzupełnienie dotyku AC7: na szerokości mobilnej scena i plan domyślnie oddają pionowy gest natywnemu przewijaniu strony. Widoczny przycisk o celu co najmniej 44 px włącza pełne sterowanie gestami sceny i jawnie pozwala wrócić do przewijania; przejście powierzchni lub widoku przywraca bezpieczny tryb przewijania. Tap wyboru i poziomy gest pozostają dostępne w trybie przewijania. Rzeczywiste zachowanie pointer-cancel/scroll wymaga odbioru przeglądarkowego 390 px.
+
+Uzupełnienie fallbacku AC7: brak możliwości utworzenia kontekstu WebGL2 jest wykrywany przed montowaniem renderera 3D i kieruje do istniejącego planu 2D bez wyjątku konfiguracji Canvas w konsoli. Error boundary i `webglcontextlost` nadal zabezpieczają awarie późniejsze; `null` probe nie rozstrzyga przyczyny i retry pozostaje przez odświeżenie strony.
 - AC8 (R4): Jeżeli autotour pozostaje: start → ręczny wybór/stop/Escape → brak późniejszego automatycznego przestawienia wyboru. Kroki odtworzenia i regresja logiki timerów.
 - AC9 (R9): npm ci, npm run lint, npm run typecheck, npm test, npm run build kończą się kodem 0. README opisuje działające polecenia i ograniczenia. Jeżeli infrastruktura QA zawiedzie, specyfikacja pozostaje in-progress, a raport nazywa niesprawdzone AC.
 

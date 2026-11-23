@@ -1,5 +1,7 @@
 # Lekcje projektu
 
+- [2026-11-23] [Sprawdź WebGL2 przed montowaniem renderera](lessons/2026-11-23-webgl-preflight.md) — error boundary nie wycisza błędów konstrukcji Canvas; negatywny probe kieruj do fallbacku przed mountem.
+
 - [2026-11-23] [Pochodzenie snapshotu nie jest stanem transferu](lessons/2026-11-23-inventory-provenance.md) — zachowany snapshot nadal pochodzi z usługi podczas refresh/error; stan transferu komunikuj osobno.
 
 - [2026-11-23] [Stan końcowy poza wyciszonym zegarem](lessons/2026-11-23-terminal-state-announcements.md) — nie ogłaszaj każdej sekundy; wynik wygaśnięcia lub zwolnienia przekaż raz przez stabilny status region.

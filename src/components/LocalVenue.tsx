@@ -4,6 +4,7 @@ import type {Selection} from '../domain/selection';
 import {domainSeat} from '../data/venueChart';
 import {createVenueSession} from '../integrations/venueSession';
 import {watchContextLoss} from './contextLoss';
+import {webGL2Available} from '../domain/webglSupport';
 type Props=Selection&{roof:boolean;reset:number;onSector:(id:SectorId)=>void;onSeat:(seat:Seat)=>void;onOverview:()=>void;onReady:(arrived:boolean)=>void;onUnavailable:()=>void;onPreview:(url:string|null)=>void};
 export default function LocalVenue(props:Props){
  const host=useRef<HTMLDivElement>(null);
@@ -11,9 +12,7 @@ export default function LocalVenue(props:Props){
  const session=useRef<ReturnType<typeof createVenueSession>|null>(null);
  useEffect(()=>{
   const element=host.current!;
-  const probe=document.createElement('canvas'),context=probe.getContext('webgl2');
-  if(!context){console.info('Local stadium: WebGL2 is unavailable.');latest.current.onUnavailable();return;}
-  context.getExtension('WEBGL_lose_context')?.loseContext();
+  if(!webGL2Available()){console.info('Local stadium: WebGL2 is unavailable.');latest.current.onUnavailable();return;}
   const current=createVenueSession({
    revision:latest.current.reset,
    host:{selection:()=>latest.current,onSeat:seat=>latest.current.onSeat(seat),onSector:id=>latest.current.onSector(id),onOverview:()=>latest.current.onOverview()},

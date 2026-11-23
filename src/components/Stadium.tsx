@@ -18,6 +18,7 @@ import Crowd from './Crowd';
 import LandscapeTrees from './LandscapeTrees';
 import { eyePosition, flightDuration, flightPoint, flightProgress, lookTarget, overviewPosition, overviewScale, seatTransferControl, type Point } from '../domain/camera';
 import type { View } from '../domain/selection';
+import {webGL2Available} from '../domain/webglSupport';
 export type { View } from '../domain/selection';
 type Props = {sector: SectorId | null; seat:Seat|null; row:number;rowFocused?:boolean; chosenIds:readonly string[]; inventory?:ReadonlyMap<string,Seat>; view:View; roof:boolean; crowd:boolean; flying:boolean; onSector:(id:SectorId,row?:number)=>void; onSeat:(seat:Seat)=>void; reset:number; onReady:()=>void; onUnavailable:()=>void;onPreview:(image:string|null)=>void};
 function Box({position,size,color,rotation=0,tiltX=0,tiltZ=0}: {position:[number,number,number];size:[number,number,number];color:string;rotation?:number;tiltX?:number;tiltZ?:number}){return <mesh position={position} rotation={[tiltX,rotation,tiltZ]} receiveShadow castShadow><boxGeometry args={size}/><meshStandardMaterial color={color} roughness={.8}/></mesh>}
@@ -123,4 +124,4 @@ class Boundary extends Component<{children:ReactNode;notify:()=>void},{error:boo
  static getDerivedStateFromError(){return {error:true}}
  render(){return this.state.error?<Unavailable notify={this.props.notify}/>:this.props.children}
 }
-export default function Stadium(props:Props){return <Boundary notify={props.onUnavailable}><Canvas fallback={<p>Sektor, rząd i miejsce możesz wybrać w panelu obok.</p>} shadows dpr={[1,1.7]} camera={{position:[148,138,168],fov:43,near:.1,far:1200}} gl={{antialias:true,localClippingEnabled:true}}><Scene {...props}/></Canvas></Boundary>}
+export default function Stadium(props:Props){const [available]=useState(webGL2Available);return available?<Boundary notify={props.onUnavailable}><Canvas fallback={<p>Sektor, rząd i miejsce możesz wybrać w panelu obok.</p>} shadows dpr={[1,1.7]} camera={{position:[148,138,168],fov:43,near:.1,far:1200}} gl={{antialias:true,localClippingEnabled:true}}><Scene {...props}/></Canvas></Boundary>:<Unavailable notify={props.onUnavailable}/>}

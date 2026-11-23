@@ -20,6 +20,9 @@ Wznowić faktyczny odbiór produkcji A1–A3 po ponownym udostępnieniu Cloud Br
 - Faktyczny flow produkcyjny 2D przeszedł dla `II-2 / rząd 1 / miejsce 16`: live snapshot, kanoniczne 85 zł, koszyk, propozycja grupy bez side-effect, quote, hold 10 min, reload/recovery i release. Po zwolnieniu istniejący polite status pokazał pojedynczy komunikat terminalny.
 - Browser repro ujawnił błąd pochodzenia danych: podczas quote/create/release nagłówek filtra przełączał się na „katalog demo”, choć zaakceptowany snapshot `II-2` i jego overlay pozostawały używane. Źródło było błędnie uzależnione od `loading/error` zamiast obecności przyjętego snapshotu bloku.
 - Niezależny read-only audyt Luny potwierdził diagnozę oraz wąski fix: pochodzenie wynika z klucza w `snapshot.bySection`; nowy/nieodczytany blok pozostaje katalogiem aż do pełnej poprawnej odpowiedzi.
+- Source `0c16a72` wdrożony jako production `dpl_FmU8WCAPyzukfDD84w3FUjGRggkj` READY. HTTP index/main/Stadium/API/inventory 200; runtime errors Vercel 0. Browser recheck w stanie odświeżania potwierdził nagłówek „z usługi demo”.
+- Kontrola konsoli ujawniła kolejną potwierdzoną lukę AC7: przy braku WebGL fallback był funkcjonalny, ale montowanie R3F wcześniej logowało dwa błędy `THREE.WebGLRenderer` i złapany `TypeError` z konfiguracji Canvas.
+- Niezależny audyt potwierdził, że error boundary nie zapobiega błędom konstrukcji renderera. Dodano WebGL2 preflight przed montowaniem `<Canvas>`; negatywny lub rzucający probe trafia do istniejącego `onUnavailable`, a prawdziwa utrata już utworzonego kontekstu nadal używa `watchContextLoss`.
 
 ## Weryfikacja
 
@@ -32,7 +35,16 @@ Wznowić faktyczny odbiór produkcji A1–A3 po ponownym udostępnieniu Cloud Br
 - `npm test` — pass: 174 testy aplikacji oraz 1 test emitowanego API.
 - `npm run build` — pass; istniejące ostrzeżenie o dużym lazy chunku `Stadium` pozostaje jawne.
 - Niezależny final source review Luny — pass, bez must-fix.
-- W toku: deploy i ponowny browser check etykiety. Desktop ma faktyczny widok przeglądarki; osobny viewport 390×844 i A1/WebGL nadal niepotwierdzone.
+- Production `0c16a72`: READY, HTTP/assets/API pass, Vercel runtime errors 0; browser etykieta pass.
+- Layout rzeczywistego Cloud Chrome 1180×757: `scrollWidth=clientWidth=1165`, brak overflow X.
+- WebGL2 preflight przed implementacją: `webglSupport.test.ts` — fail `ERR_MODULE_NOT_FOUND`.
+- Targeted po implementacji: helper + istniejący context-loss — 9/9 pass (null, throw, context z/bez opcjonalnego lose extension, późniejszy context loss i cleanup).
+- `npm run lint` — pass.
+- `npm run typecheck` — pass.
+- `npm test` — pass: 177 testów aplikacji oraz 1 test emitowanego API.
+- `npm run build` — pass; istniejące ostrzeżenie o dużym lazy chunku `Stadium`.
+- Niezależny final review preflightu — pass, bez must-fix; jawne ograniczenia: probe jest best-effort, in-app retry nie istnieje, odświeżenie jest jedynym retry.
+- W toku: kolejny deploy i świeża karta browser dla konsoli. Osobny viewport 390×844 i A1/WebGL nadal niepotwierdzone.
 
 ## Wynik
 
