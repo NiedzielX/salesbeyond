@@ -110,7 +110,7 @@ Przegląd briefu z właścicielem i świeży audyt produktu ujawniły luki mimo 
 | P2 | Podziały trybun, schody i przejście poprzeczne lokalnej bryły, segmenty skośnego dachu obu scen | kod/testy, obejrzany model CPU | Q1/Q3; CPU nie zastępuje aplikacji |
 | P3 | Miniatura z kamery fotela również w domyślnej scenie; zgodność z ID i stanem lotu | kod/testy/review; GPU nieodebrane | Q4/Q7, także wybór tuż przed końcem starego lotu |
 | P4 | Aktualny build dostępny na Vercel „sales” | 942fed8 (pełny katalog/2D/koszyk) wdrożone READY na salesbeyond.vercel.app po e03783f | odczytać READY i zasoby każdej nowej rewizji |
-| P5 | Cały scenariusz panorama → sektor → rząd → fotel → widok → karta → zmiana miejsca na telefonie i desktopie | blocked przez dostęp do rzeczywistego WebGL/browser | Q1–Q8, bez zastępowania ich buildem |
+| P5 | Cały scenariusz panorama → sektor → rząd → fotel → widok → karta → zmiana miejsca na telefonie i desktopie | częściowo odebrany w produkcyjnym Chromium WebGL2 1440×900 i emulacji touch 390×844; pełna macierz nadal otwarta | Q1–Q8, bez zastępowania ich buildem |
 | P6 | Decyzja o docelowym rendererze i naprawa zauważonych różnic | po P5 | F3/F4, porównane obrazy/lot i wielkości ładowania |
 | P7 | Gotowe demo MVP pod linkiem, z odebranym flow i ograniczeniami opisanymi przy wydaniu | po P4/P5/P6 | F5, raport rzeczywistego działania |
 
@@ -129,7 +129,7 @@ Paczka `salesbeyond-mvp-review-85e6977.zip` zawiera poprzedni kod i pozostaje hi
 | A3: natywny renderer 2D, synchronizacja wyboru i fallback | Kod + testy kontraktu zdarzeń/cyklu życia; odbiór w aplikacji otwarty |
 | A4: kadr bloku od strony boiska i wspólne punkty oczu | Testy projekcji dla wszystkich bloków i proporcji .6/.95/1.6/2.4 |
 | A5: bieżący deploy Vercel | 06cd758, production READY, salesbeyond.vercel.app; zasoby HTTP 200, szczegóły w logu |
-| A6: pełny browser QA desktop/telefon | Blocked: automatyczna kontrola odrzuciła ponowne otwarcie, brak dowodu zdjęcia wcześniejszej blokady. Bez obejść |
+| A6: pełny browser QA desktop/telefon | Odblokowany 2026-11-23 przez jawną zgodę właściciela; smoke WebGL2 desktop + emulowane touch mobile wykonany. Otwarte: pełna macierz trybun/rzędów, dwie sesje, AT i fizyczne urządzenie |
 | A7: kolejne funkcje fan experience | Filtry cen/dostępności, liczniki i propozycja grupy przed dodaniem: kod/testy; wielokrotny wybór odtwarzany w 2D/3D. Dalej reguły wydarzenia i kontrakt hold/handoff |
 
 

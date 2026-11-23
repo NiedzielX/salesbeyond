@@ -1,0 +1,66 @@
+{
+  "date": "2026-11-23",
+  "scope": "A1-A3 resumed WebGL smoke and confirmed regressions",
+  "productionBeforeFix": {
+    "url": "https://salesbeyond.vercel.app",
+    "source": "2acd4ff5cb95a75b06d9a87f052bd2f0bf70920a",
+    "desktop": {
+      "viewport": "1440x900",
+      "webgl2": true,
+      "flow": "overview -> II-2 -> row 1 -> seat 16 -> crowd -> basket",
+      "visualFinding": "The full-height Beyond goal panel obscured a large part of the nearby pitch from row 1."
+    },
+    "mobile": {
+      "viewport": "390x844 touch emulation",
+      "webgl2": true,
+      "horizontalOverflow": false,
+      "touchControlHeightCssPx": 44,
+      "selectedSeat": "II-2-1-16",
+      "crowdPressed": true,
+      "basketCanonicalSeat": true
+    },
+    "consoleFindings": [
+      "401 from current-hold discovery without a session",
+      "404 from the implicit favicon request"
+    ]
+  },
+  "candidateBuildAfterFix": {
+    "environment": "Vite production preview in Chromium 156 with SwiftShader WebGL2",
+    "desktop": {
+      "viewport": "1440x900",
+      "horizontalOverflow": false,
+      "selectedSeat": "II-2-1-16",
+      "crowdPressed": true,
+      "basketCanonicalSeat": true,
+      "consoleErrors": 0,
+      "pageErrors": 0,
+      "visual": "Inspected: the smaller upright Beyond panel remains visible above the goal and no longer obscures the pitch."
+    },
+    "mobile": {
+      "viewport": "390x844 touch emulation",
+      "horizontalOverflow": false,
+      "selectedSeat": "II-2-1-16",
+      "crowdPressed": true,
+      "basketCanonicalSeat": true,
+      "touchControlHeightCssPx": 44,
+      "consoleErrors": 0,
+      "pageErrors": 0
+    },
+    "performanceQualification": "SwiftShader produced only 1-2 requestAnimationFrame callbacks per 500 ms; this is functional/layout evidence, not a physical-device performance result."
+  },
+  "automated": {
+    "applicationTests": 179,
+    "emittedApiTests": 1,
+    "lint": "pass",
+    "typecheck": "pass",
+    "build": "pass",
+    "independentReview": "PASS"
+  },
+  "openEvidence": [
+    "Representative first/middle/last-row and corner visual matrix for every stand",
+    "Two independent browser sessions contending for the same live seat",
+    "Keyboard, assistive-technology and physical-phone acceptance",
+    "Hardware-GPU load, frame-time and memory baseline",
+    "Public production smoke of the candidate fixes after an owner-authorized deployment"
+  ]
+}

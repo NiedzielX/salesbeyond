@@ -1,5 +1,9 @@
 # Lekcje projektu
 
+- [2026-11-23] [Pusty wynik discovery nie jest błędem transportu](lessons/2026-11-23-empty-discovery-response.md) — opcjonalny własny zasób zwracaj jako jawny pusty sukces bez cookie; błędy operacji i backendu pozostają błędami.
+
+- [2026-11-23] [Sprawdzaj reklamy promieniem z pierwszego rzędu](lessons/2026-11-23-pitch-side-sightlines.md) — pionowy obiekt poza murawą nadal może zasłonić boisko; testuj odcinki widzenia i oglądaj POV WebGL.
+
 - [2026-11-23] [Sprawdź WebGL2 przed montowaniem renderera](lessons/2026-11-23-webgl-preflight.md) — error boundary nie wycisza błędów konstrukcji Canvas; negatywny probe kieruj do fallbacku przed mountem.
 
 - [2026-11-23] [Pochodzenie snapshotu nie jest stanem transferu](lessons/2026-11-23-inventory-provenance.md) — zachowany snapshot nadal pochodzi z usługi podczas refresh/error; stan transferu komunikuj osobno.

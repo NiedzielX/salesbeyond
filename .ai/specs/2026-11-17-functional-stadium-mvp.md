@@ -82,6 +82,10 @@ Korekta właściciela 2026-11-22: przy wartości startowej rzędu 1 suwak nie em
 
 Realizacja: `2f904ec`; jawny przycisk działa również dla niezmienionego rzędu 1 i wymusza recenter po ręcznej orbicie. Sektor używa `.49π`, panorama nadal `.47π`; kontroler potwierdził eyeY 2.585 m, rząd NDC y≈−.185 ręcznie i y=0 po aktywacji, 114 kadrów. Niezależny review bez must-fix, 163+1/lint/typecheck/build passed. Production READY `dpl_3eJc86HiySgQJoX8ZpQmi73badLE`; HTTP/API proof w `docs/qa-evidence/lower-rows-2026-11-21/deployment-proof-2026-11-22.json`. Browser acceptance pozostaje otwarte.
 
+Korekta z rzeczywistego WebGL 2026-11-23: odbiór `II-2 / rząd 1 / miejsce 16` ujawnił, że pełny panel Beyond 2.4×7.32 m przecina linię widzenia do pobliskiej murawy. Panel pozostaje pionowy i przy bramce, lecz jest subtelnym prostokątem ponad poprzeczką; boczne napisy pozostają bez zmian. Test promienia z pierwszego rzędu dla obu końców stadionu najpierw reprodukował przecięcie, a po korekcie potwierdza wolną linię widzenia. Obejrzano poprawiony kadr WebGL desktop i mobile.
+
+Korekta czystej konsoli 2026-11-23: bezpieczny odczyt własnej aktywnej blokady zwraca teraz `200 {ok:true,hold:null}` przy braku sesji lub blokady, zamiast oczekiwanych transportowych `401/404`. Discovery nadal nie tworzy cookie, obcy parametr sesji jest ignorowany, a create/get/release zachowują wymaganie własnej sesji. Klient akceptuje pusty wynik i zachowuje kompatybilność ze starszymi `401/404`. Dodano favicon SVG, aby zwykłe otwarcie nie generowało `404 /favicon.ico`.
+
 ### Ciągłość statusu wydarzenia w pełnej ścieżce — 2026-11-21
 W istniejącym zakresie wspólnej dostępności: po wiarygodnej obserwacji zamknięcia wydarzenia sama nawigacja, oczekiwanie na nowy blok lub błąd odczytu nie mogą przywracać otwartego statusu demo. Nowa odpowiedź serwera może ponownie otworzyć wydarzenie; wyłączenie trybu usługi wraca do oznaczonego demo. Sprawdzić realny hook, opóźnione odpowiedzi, zmianę sektora i reset, bez mutacji eventu produkcyjnego.
 

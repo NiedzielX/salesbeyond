@@ -76,6 +76,11 @@ test('current reads the active hold without a session bootstrap',async()=>{
  assert.equal(calls.length,1);
 });
 
+test('current accepts an empty successful discovery response',async()=>{
+ const client=createSeatHoldClient({fetcher:fetcherFor(()=>json({ok:true,hold:null}))});
+ assert.equal(await client.current(eventId),null);
+});
+
 test('current distinguishes missing session or hold from backend failures',async()=>{
  let calls=0;
  for(const [status,code] of [[401,'session_required'],[404,'not_found']] as const){

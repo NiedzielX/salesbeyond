@@ -83,8 +83,8 @@ test('current hold reads only the cookie owner without bootstrapping a session',
  const path='/api/events/enea-demo/holds/current';
  for(const badCookie of ['', '__Host-salesbeyond_fan=invalid']){
   const response=await api(request(path,'GET',undefined,{Cookie:badCookie}));
-  assert.equal(response.status,401);
-  assert.equal((await response.json()).error.code,'session_required');
+  assert.equal(response.status,200);
+  assert.deepEqual(await response.json(),{ok:true,hold:null});
   assert.equal(response.headers.get('set-cookie'),null);
  }
  const method=await api(request(path,'DELETE'));
@@ -100,11 +100,11 @@ test('current hold reads only the cookie owner without bootstrapping a session',
  assert.deepEqual(calls,[{eventId:'enea-demo',owner:ownerHash}]);
  const foreign=await api(request(path+'?sessionHash='+ownerHash,'GET',undefined,
   {Cookie:'__Host-salesbeyond_fan='+'b'.repeat(64)}));
- assert.equal(foreign.status,404);
- const error=(await foreign.json()).error;
- assert.equal(error.code,'not_found');
- assert.equal(error.holdId,undefined);
- assert.equal((await api(request('/api/events/other-event/holds/current'))).status,404);
+ assert.equal(foreign.status,200);
+ assert.deepEqual(await foreign.json(),{ok:true,hold:null});
+ const other=await api(request('/api/events/other-event/holds/current'));
+ assert.equal(other.status,200);
+ assert.deepEqual(await other.json(),{ok:true,hold:null});
 });
 
 test('current hold rejects a released hold or a hold from a different event in the backend result',async()=>{

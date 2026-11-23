@@ -23,7 +23,8 @@ test('gateway forwards current as a cookie-bound event lookup to Supabase',async
  });
  const path=origin+'/api/seat-api?op=current&eventId=enea-demo';
  const missingSession=await runtime(new Request(path));
- assert.equal(missingSession.status,401);
+ assert.equal(missingSession.status,200);
+ assert.deepEqual(await missingSession.json(),{ok:true,hold:null});
  assert.equal(missingSession.headers.get('set-cookie'),null);
  const secret='d'.repeat(64);
  const headers={Cookie:'__Host-salesbeyond_fan='+secret};
@@ -31,8 +32,8 @@ test('gateway forwards current as a cookie-bound event lookup to Supabase',async
  assert.equal(missingEvent.status,404);
  assert.equal(seen.length,0);
  const missingHold=await runtime(new Request(path,{headers}));
- assert.equal(missingHold.status,404);
- assert.equal((await missingHold.json()).error.code,'not_found');
+ assert.equal(missingHold.status,200);
+ assert.deepEqual(await missingHold.json(),{ok:true,hold:null});
  assert.equal(seen.length,1);
  assert.equal(seen[0].url,'https://test.supabase.co/rest/v1/rpc/sb_current_hold');
  assert.equal(seen[0].init?.method,'POST');

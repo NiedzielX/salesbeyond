@@ -39,15 +39,15 @@ Stan na 2026-11-20: źródła 91272b3 wdrożone production READY na salesbeyond.
 
 | Kolejność | Konkretny rezultat | Kryterium odbioru | Stan |
 |---|---|---|---|
-| V1 | Trzy uwagi właściciela zamknięte na ekranie | Zwykły adres zaczyna od panoramy; pełny dach w panoramie, zamierzony przekrój w sektorze; rzeczywisty kliknięty rząd zamiast narzuconego 6. Obserwacja na desktopie i małym ekranie | Kod/regresje wdrożone; odbiór pending |
+| V1 | Trzy uwagi właściciela zamknięte na ekranie | Zwykły adres zaczyna od panoramy; pełny dach w panoramie, zamierzony przekrój w sektorze; rzeczywisty kliknięty rząd zamiast narzuconego 6. Obserwacja na desktopie i małym ekranie | Smoke Chromium WebGL2 potwierdził panoramę i rząd 1 na desktop/mobile; pełna macierz sektorów nadal otwarta |
 | V2 | Czytelna sylwetka Enei i poprawne kadry | Panorama z dachem, cztery trybuny, narożniki, sektor i perspektywa fotela porównane z blueprintem/nagraniem/referencjami. Lista konkretnych różnic przed poprawianiem geometrii | Odbiór obrazu pending; bez deklaracji oficjalnego bliźniaka |
 | V3 | Pełna ścieżka kibica w działającej aplikacji | 2D → sektor/rząd/fotel → 3D → grupa/koszyk → cena z serwera → blokada → reload → zwolnienie/wygaśnięcie. Osobna sesja wywołuje czytelny konflikt; podgląd i ID pozostają zgodne | API/adaptery passed; prawdziwa UI ścieżka pending |
-| V4 | Wygodne użycie na telefonie | Wybór dotykiem i klawiaturą, panel nie zasłania sceny, brak poziomego przewijania; prawidłowe loading/error/expiry i powrót fokusu. Sprawdzić ładowanie i responsywność przed dalszą optymalizacją | Pending |
+| V4 | Wygodne użycie na telefonie | Wybór dotykiem i klawiaturą, panel nie zasłania sceny, brak poziomego przewijania; prawidłowe loading/error/expiry i powrót fokusu. Sprawdzić ładowanie i responsywność przed dalszą optymalizacją | Emulacja touch 390×844: brak overflow, cel 44 px, wybór/crowd/koszyk pass; klawiatura, AT, fizyczne urządzenie i wydajność pozostają otwarte |
 | V5 | Powtarzalne demo dla klubu | Stały link, odebrany scenariusz panoramy/wyboru/grupy/blokady i jawne dane demo; aktualny raport ograniczeń | Po V1–V4 |
 
 Ja integruję model, kamerę i pełny flow. Równoległe, ograniczone zadania Lun dotyczą audytu różnic, adapterów i testów; wyniki przechodzą root review i własne bramki. Nie oznacza to pracy agentów po zakończeniu tury.
 
-Aktualna blokada dotyczy wyłącznie prawdziwego odbioru przeglądarkowego: wcześniejsza automatyczna odmowa dostępu pozostaje nierozwiązana. Sam powrót namespace narzędzia lub restart środowiska nie dowodzi zdjęcia blokady. Nie ponawiać przez inne narzędzie/subagenta. Odpowiedź właściciela na wysłane pytanie o trzy objawy nadal pending; nie traktować braku odpowiedzi jako pass.
+Właściciel jawnie zdjął blokadę browser QA 2026-11-23. Cloud Chrome potwierdził czysty fallback 2D bez WebGL, a Chromium ze SwiftShader potwierdził WebGL2 na 1440×900 i emulacji touch 390×844. To smoke, nie pełny odbiór A1–A3 ani pomiar fizycznego telefonu; szczegóły i otwarte kryteria są w `docs/qa-evidence/a1-a3-webgl-2026-11-23/verification.json`.
 
 Dokładność Enei dopracowywać na podstawie porównanych kadrów, a nie zgadywanych wymiarów. BLEND/GLB i zakup skanu nie są wymaganiami. Następny przyrost ma poprawiać odbiór stadionu i pełny scenariusz kibica; backend jest już podstawą tego scenariusza. Braki RLS innych tabel współdzielonej aplikacji wine wymagają osobnego przeglądu, nie są częścią wizualnego etapu Enei.
 

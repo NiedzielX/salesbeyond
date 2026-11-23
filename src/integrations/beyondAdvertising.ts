@@ -18,10 +18,11 @@ export function createBeyondAdvertising():ModelPart[]{
  };
  const boards:BoxGeometry[]=[];
  for(const end of [-1,1]){
-  // Existing goal-back rectangles, shared with the CPU review export.
-  boards.push(new BoxGeometry(.12,2.4,7.32).translate(end*54,1.2,0));
-  word(1.1,(u,v)=>[end*54.075,1.2+v,-end*u]);
-  word(1.1,(u,v)=>[end*53.925,1.2+v,end*u]);
+  // Keep the requested upright goal rectangle above the crossbar so the
+  // first-row view still reaches the nearby pitch.
+  boards.push(new BoxGeometry(.12,.48,2.2).translate(end*54,2.72,0));
+  word(.22,(u,v)=>[end*54.075,2.72+v,-end*u]);
+  word(.22,(u,v)=>[end*53.925,2.72+v,end*u]);
   for(const along of [-36,0,36])word(.72,(u,v)=>[along-end*u,.78+v,end*42.565]);
  }
  indexed.dispose();flat.dispose();

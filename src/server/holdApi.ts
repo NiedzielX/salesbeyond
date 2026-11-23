@@ -71,7 +71,7 @@ export function createHoldApi(config:{store:HoldStore|null;origin:string;rateKey
  }else if(eventPath||ownHold){
  const methods=currentEventId?['GET']:eventPath?['POST']:['GET','DELETE'];
  if(!methods.includes(method)){headers.set('Allow',methods.join(', '));return fail('method_not_allowed',405);}
- const secret=sessionCookie(request);if(!secret)return fail('session_required',401);const owner=await sessionHash(secret);
+ const secret=sessionCookie(request);if(!secret){if(currentEventId)return respond({ok:true,hold:null});return fail('session_required',401);}const owner=await sessionHash(secret);
  if(currentEventId)result=await store.current(currentEventId,owner);
  else if(ownHold){if(!uuid.test(ownHold[1]))return fail('not_found',404);result=method==='DELETE'?await store.release(ownHold[1],owner):await store.get(ownHold[1],owner);}
  else{
@@ -88,7 +88,7 @@ export function createHoldApi(config:{store:HoldStore|null;origin:string;rateKey
  if(!result.ok){
  if(currentEventId){
  if(result.code!=='not_found')throw new Error('Invalid backend error');
- return fail('not_found',404);
+ return respond({ok:true,hold:null});
  }
  if(typeof result.code!=='string'||!errorCodes.has(result.code))throw new Error('Invalid backend error');
  const details:Obj={};if(Array.isArray(result.seatIds)&&result.seatIds.every(safeId))details.seatIds=result.seatIds;if(typeof result.holdId==='string'&&uuid.test(result.holdId))details.holdId=result.holdId;

@@ -97,7 +97,7 @@ export function createSeatHoldClient(options:{fetcher?:Fetcher;endpoint?:string}
   async current(eventId:string):Promise<SeatHold|null>{
    if(!safeId(eventId)||eventId.length>80)throw new SeatHoldClientError('invalid_request',null);
    try{
-    const value=await request('current',{eventId}),hold=validateHold(value.hold);
+    const value=await request('current',{eventId});if(value.hold===null)return null;const hold=validateHold(value.hold);
     if(hold.eventId!==eventId||hold.status!=='active')invalidResponse();
     return hold;
    }catch(error){
