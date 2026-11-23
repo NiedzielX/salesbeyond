@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-23",
+  "browser": {
+    "product": "Cloud Chrome",
+    "viewport": {"innerWidth": 1180, "innerHeight": 757, "clientWidth": 1165},
+    "horizontalOverflow": false,
+    "webgl": "unavailable in this browser",
+    "fallback2dObserved": true
+  },
+  "observedFlow": {
+    "section": "II-2",
+    "row": 1,
+    "seat": 16,
+    "pricePln": 85,
+    "liveInventoryLoaded": true,
+    "groupSuggestionWithoutSideEffect": true,
+    "quote": true,
+    "holdCreated": true,
+    "holdRecoveredAfterReload": true,
+    "holdReleased": true,
+    "terminalReleaseMessageObserved": "Blokada została zwolniona. Miejsca można wybrać ponownie."
+  },
+  "inventoryProvenanceFix": {
+    "sourceCommit": "0c16a7276749a1573a6054782861244c38b77535",
+    "deploymentId": "dpl_FmU8WCAPyzukfDD84w3FUjGRggkj",
+    "deploymentState": "READY",
+    "browserRecheck": "pass during active refresh",
+    "observedHeading": "Blok II-2 · ceny i dostępność z usługi demo"
+  },
+  "webglPreflightFix": {
+    "sourceCommit": "2acd4ff5cb95a75b06d9a87f052bd2f0bf70920a",
+    "deploymentId": "dpl_C42m3pF7ph4cp8eo8fzD8Arr6w4R",
+    "deploymentState": "READY",
+    "http": {"index": 200, "mainAsset": 200, "stadiumAsset": 200, "apiStatus": 200, "inventory": 200},
+    "runtimeErrorsLast15Minutes": 0,
+    "tests": {"application": 177, "emittedApi": 1},
+    "browserConsoleRecheck": "blocked by standing automatic browser security refusal; no workaround attempted"
+  },
+  "openEvidence": [
+    "Actual WebGL/3D visual acceptance",
+    "390x844 touch and overflow acceptance",
+    "Fresh browser console comparison after WebGL preflight deploy"
+  ]
+}

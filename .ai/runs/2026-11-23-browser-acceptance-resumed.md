@@ -1,6 +1,6 @@
 ---
 started: 2026-11-23
-ended: null
+ended: 2026-11-23
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
 outcome: partial
@@ -44,8 +44,10 @@ Wznowić faktyczny odbiór produkcji A1–A3 po ponownym udostępnieniu Cloud Br
 - `npm test` — pass: 177 testów aplikacji oraz 1 test emitowanego API.
 - `npm run build` — pass; istniejące ostrzeżenie o dużym lazy chunku `Stadium`.
 - Niezależny final review preflightu — pass, bez must-fix; jawne ograniczenia: probe jest best-effort, in-app retry nie istnieje, odświeżenie jest jedynym retry.
-- W toku: kolejny deploy i świeża karta browser dla konsoli. Osobny viewport 390×844 i A1/WebGL nadal niepotwierdzone.
+- Source `2acd4ff` wdrożony jako production `dpl_C42m3pF7ph4cp8eo8fzD8Arr6w4R` READY; alias bez błędu, index/main/Stadium/API/inventory HTTP 200, runtime errors Vercel 0.
+- Świeża karta do końcowego porównania konsoli została automatycznie odrzucona przez standing browser security policy. Nie użyto istniejącej karty, raw CDP ani innego kanału jako obejścia. Console-clean po preflight pozostaje niepotwierdzone w realnej przeglądarce.
+- Osobny viewport 390×844 i A1/WebGL nadal niepotwierdzone.
 
 ## Wynik
 
-W toku.
+Partial. Produkcyjny fallback 2D i pełny A2 flow zostały po raz pierwszy faktycznie odebrane w Cloud Chrome; poprawka pochodzenia live snapshotu została po deployu potwierdzona w stanie refreshu. Drugi potwierdzony błąd — wyjątek konstrukcji Canvas przy braku WebGL — ma test-first fix, niezależny review, pełne bramki i deploy READY, lecz końcowy browser console recheck został automatycznie zablokowany. Dowód: `docs/qa-evidence/browser-acceptance-2026-11-23/verification.json`.
