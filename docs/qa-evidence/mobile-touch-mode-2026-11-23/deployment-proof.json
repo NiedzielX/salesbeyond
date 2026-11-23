@@ -1,0 +1,39 @@
+{
+  "checkedAt": "2026-11-23",
+  "sourceCommit": "2754393bc80ec5bf931f3c4d72fb7791fa88f501",
+  "deployment": {
+    "id": "dpl_8pDSnPfF4FjwjySBMZqRFQdVGmgr",
+    "state": "READY",
+    "url": "salesbeyond-n9i2gdqcj-n-b334.vercel.app",
+    "productionAlias": "salesbeyond.vercel.app",
+    "aliasError": null
+  },
+  "http": {
+    "index": 200,
+    "mainAsset": {
+      "path": "assets/index-B_csPO7j.js",
+      "status": 200
+    },
+    "stadiumAsset": {
+      "path": "assets/Stadium-B1X18r81.js",
+      "status": 200
+    },
+    "seatApiStatus": {
+      "status": 200,
+      "configured": true,
+      "mode": "service"
+    },
+    "inventory": {
+      "status": 200,
+      "eventId": "enea-demo",
+      "eventStatus": "open",
+      "version": 1,
+      "sectionCount": 19,
+      "seatCount": 38078,
+      "sectionII3Seats": 1998,
+      "sectionII3Available": 1870
+    }
+  },
+  "runtimeErrorsLast15Minutes": 0,
+  "browserEvidenceDebt": "Real touch pointer/scroll acceptance at 390px was not run because browser/CUA is blocked."
+}
