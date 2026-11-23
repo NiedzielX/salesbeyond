@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-11-23",
+  "sourceCommit": "31b3b063efe4e559884e0758547c178e176d0b27",
+  "deployment": {
+    "id": "dpl_Fmc6iWa5yf2WAAEEznhCVm9YRDQ6",
+    "state": "READY",
+    "url": "salesbeyond-abatbturt-n-b334.vercel.app",
+    "productionAlias": "salesbeyond.vercel.app",
+    "aliasError": null
+  },
+  "http": {
+    "index": 200,
+    "mainAsset": {"path": "assets/index-Zjan1BDX.js", "status": 200},
+    "stadiumAsset": {"path": "assets/Stadium-DiDEP5o7.js", "status": 200},
+    "seatApiStatus": {"status": 200, "configured": true, "mode": "service"},
+    "inventory": {
+      "status": 200,
+      "eventId": "enea-demo",
+      "eventStatus": "open",
+      "version": 1,
+      "sectionCount": 19,
+      "seatCount": 38078,
+      "sectionII3Seats": 1998,
+      "sectionII3Available": 1870
+    }
+  },
+  "runtimeErrorsLast15Minutes": 0,
+  "browserEvidenceDebt": "Manual screen-reader acceptance remains open because browser/CUA is blocked."
+}

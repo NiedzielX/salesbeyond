@@ -1,9 +1,9 @@
 ---
 started: 2026-11-23
-ended: null
+ended: 2026-11-23
 agent: /root
 spec: .ai/specs/2026-11-17-functional-stadium-mvp.md
-outcome: partial
+outcome: passed
 ---
 
 # Zadanie
@@ -31,4 +31,14 @@ Kontynuować zatwierdzone A3 po wdrożeniu mobilnego trybu dotyku: zapewnić czy
 
 ## Wynik
 
-Zmiana źródłowa i pełne bramki zakończone. Commit/deploy produkcyjny w toku.
+Commit źródłowy `31b3b06` wdrożony na production jako `dpl_Fmc6iWa5yf2WAAEEznhCVm9YRDQ6`; stan READY, alias `salesbeyond.vercel.app`, brak `aliasError`.
+
+Kontrola production:
+
+- `/`, główny JS i lazy chunk `Stadium` — HTTP 200.
+- status usługi oraz inventory wydarzenia — HTTP 200, `configured: true`, `mode: service`, 19 sekcji / 38 078 miejsc, `II-3` 1 998 / 1 870 dostępnych.
+- runtime errors z ostatnich 15 minut — brak.
+
+Dowód: `docs/qa-evidence/hold-terminal-announcements-2026-11-23/deployment-proof.json`.
+
+Inkrement zakończony źródłowo i wdrożeniowo. Otwarty pozostaje ręczny odbiór czytnikiem ekranu w V5.
