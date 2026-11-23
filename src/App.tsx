@@ -25,6 +25,7 @@ import {scheduleTour} from './domain/tour';
 import {selectionReducer} from './domain/selection';
 import {seatGridTarget} from './domain/seatGridNavigation';
 import {sceneTouchControl,type SceneTouchMode} from './domain/sceneTouch';
+import {serviceBackedSection} from './domain/inventorySource';
 import { allSectors, stadiumSeats, stands, seatsInRow, sectorSeats, sectorRows, getSeat, resolveSeat, rows, type SectorId, type Seat } from './data/stadium';
 export default function App(){
  const {initial,notice:sessionNotice,dismiss:dismissSessionNotice,save:saveSession}=useFanSession(localRenderer);
@@ -48,7 +49,7 @@ export default function App(){
  const resolveCurrent=useCallback((id:string)=>overlays.get(id)??resolveSeat(id),[overlays]);
  const seat=useMemo(()=>previewSeat?(overlays.get(previewSeat.id)??previewSeat):null,[previewSeat,overlays]);
  const ruleInventory=useMemo(()=>inventory.map(s=>overlays.get(s.id)??s),[inventory,overlays]);
- const scopeLive=!!sector&&!!sectionInventory.snapshot.bySection[sector]&&!sectionInventory.error&&!sectionInventory.loading;
+ const scopeLive=serviceBackedSection(sectionInventory.snapshot,sector);
  const [basket,cart]=useReducer((state:Seat[],action:BasketAction)=>basketReducer(state,action,resolveCurrent),initial.basket);
  const chosenIds=useMemo(()=>[...new Set([...basket.map(s=>s.id),...ownedIds])],[basket,ownedIds]);
  const chosen=useMemo(()=>new Set(chosenIds),[chosenIds]);const [basketMessage,setBasketMessage]=useState('');

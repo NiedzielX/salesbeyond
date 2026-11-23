@@ -1,5 +1,7 @@
 # Lekcje projektu
 
+- [2026-11-23] [Pochodzenie snapshotu nie jest stanem transferu](lessons/2026-11-23-inventory-provenance.md) — zachowany snapshot nadal pochodzi z usługi podczas refresh/error; stan transferu komunikuj osobno.
+
 - [2026-11-23] [Stan końcowy poza wyciszonym zegarem](lessons/2026-11-23-terminal-state-announcements.md) — nie ogłaszaj każdej sekundy; wynik wygaśnięcia lub zwolnienia przekaż raz przez stabilny status region.
 
 - [2026-11-22] [Rzadkie kopie macierzy i batchowanie instancji](lessons/2026-11-22-sparse-instance-state.md) — nie dubluj pełnego bufora transformacji; backup tylko maskowanych instancji, statyczne otoczenie grupuj.

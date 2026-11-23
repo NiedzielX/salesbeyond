@@ -73,6 +73,15 @@ test('event status survives navigation and pending or failed inventory, then fol
     await resolveNext(response(sectionA, 'closed', 1));
     assert.equal(latest?.eventStatus, 'closed');
 
+    await act(async () => { latest?.refresh(); });
+    assert.equal(latest?.loading, true);
+    assert.ok(latest?.snapshot.bySection[sectionA[0]], 'an accepted service snapshot remains while refreshing');
+    const refreshFailure = requests.shift();
+    assert.ok(refreshFailure);
+    await act(async () => { refreshFailure.reject(new Error('offline')); await Promise.resolve(); });
+    assert.equal(latest?.error, true);
+    assert.ok(latest?.snapshot.bySection[sectionA[0]], 'a failed refresh retains the last accepted service snapshot');
+
     await commit(true, sectionB[0]);
     assert.equal(latest?.eventStatus, 'closed', 'status remains available while the next section is loading');
     const failedRequest = requests.shift();
