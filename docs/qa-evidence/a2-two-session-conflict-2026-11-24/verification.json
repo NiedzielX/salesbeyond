@@ -39,9 +39,22 @@
     "expectedTransportSignal": "Session B's rejected create request emitted HTTP 409 in the browser console.",
     "probe": "probe-two-session.mjs"
   },
+  "naturalExpiryUiRun": {
+    "seatId": "II-2-1-1",
+    "initialClock": "10:00",
+    "holdCreated": true,
+    "terminalHeadingShown": "Blokada zakończona",
+    "expiryCopyShown": "Termin blokady minął. Sprawdź dostępność ponownie.",
+    "currentAfterExpiry": null,
+    "seatStatusAfterExpiry": "available",
+    "cleanupReleaseNeeded": false,
+    "pageErrors": [],
+    "probe": "probe-expiry.mjs",
+    "evidence": "expiry-verification.json"
+  },
   "limitations": [
     "The first browser-assisted run inherited session A's hold; a later Playwright run with two fresh isolated contexts proved fresh creation, conflict, recovery and cleanup.",
     "A second immediate repetition hit the production rate limiter while preparing the second quote, as expected from the demo protection. The successful fresh-context run remains the acceptance evidence.",
-    "Expiry is tracked separately and is not claimed by this conflict proof."
+    "Browser runs use automated Chromium rather than a physical device or physical assistive technology."
   ]
 }

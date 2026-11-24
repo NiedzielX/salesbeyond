@@ -4,7 +4,7 @@
 
 Źródło zatwierdzonego zakresu: `.ai/specs/2026-11-17-functional-stadium-mvp.md`; aktualna ścieżka i kryteria: `docs/FAN_EXPERIENCE_ROADMAP.md` V1–V5.
 
-1. **Pełny scenariusz kibica A2**: pojedyncza sesja selection → koszyk → quote → hold → reload/recovery → release jest odebrana. Czysty przebieg dwóch izolowanych sesji potwierdził quote obu stron, create A, czytelny konflikt 409 w B, recovery po reloadzie i cleanup. Do domknięcia pozostał osobny odbiór wygaśnięcia.
+1. **Pełny scenariusz kibica A2 — odebrany transakcyjnie**: pojedyncza sesja selection → koszyk → quote → hold → reload/recovery → release przeszła. Czysty przebieg dwóch izolowanych sesji potwierdził quote obu stron, create A, czytelny konflikt 409 w B, recovery i cleanup. Naturalne expiry 10:00 → 0:00 pokazało terminal UI, `current=null` i fotel `available`.
 2. **Wygląd Enei i kadry**: model kodowy, dach, Beyond, niższe rzędy i widownia są wdrożone oraz mają dowody. Nadal potrzebne jest końcowe porównanie ruchu i charakterystycznych kadrów z blueprintem/nagraniem; nie deklarować oficjalnego cyfrowego bliźniaka.
 3. **Nawigacja B3 — odebrana**: commit `1d97188` działa na production. Desktop WebGL2 i mobile 390×844 potwierdzają sąsiadów, recenter, kontrolki 44 px, brak overflow/błędów; fallback bez WebGL również przeszedł. Specyfikacja jest w `implemented/`.
 4. **Mały ekran i dostępność A3**: podstawowe touch/keyboard/fokus/overflow oraz komunikaty holda mają automatyczne i browser dowody. Pozostają fizyczny telefon i fizyczny czytnik ekranu jako jawne ograniczenia, nie blokada prototypu.
@@ -12,7 +12,7 @@
 
 **Dostarczone**: 38 078 ID / 19 bloków; model/2D/3D; koszyk/grupy/filtry; Supabase/Vercel i atomowe holdy; current recovery; aktualizowany wybrany blok 2D/3D/panel; B3; 190+1 testów, prawdziwe PG/HTTP i publiczny browser QA. Nie planować ponownej budowy już połączonego backendu.
 
-**Pozostała blokada odbioru**: expiry A2. Dostęp do przeglądarki/WebGL jest aktywny; nie wracać do historycznej blokady narzędzia.
+**Pozostała blokada odbioru**: wizualna macierz V1/V2 i manualny screen reader V4. Dostęp do przeglądarki/WebGL jest aktywny; nie wracać do historycznej blokady narzędzia.
 
 Poniżej zachowana historia wykonania; stare statusy nie są bieżącym backlogiem.
 

@@ -153,3 +153,8 @@ Przeprowadzono niezależny przegląd w świeżej sesji Sol, osobnej od autorskie
 
 - Właściciel osobno zatwierdził B3; implementacja `1d97188`, local production-build QA i publiczny smoke spełniają kryteria domeny, kontrolera, klawiatury, dotyku, fallbacku i local renderer.
 - Status całego dokumentu pozostaje `draft`, ponieważ B1/B2/B4/B5 i wszystkie C nadal są propozycjami, a nie zgodą na implementację.
+
+### A2 production acceptance 2026-11-24
+
+- Pełny cykl holda na production ma browser dowód: świeży quote/create, konflikt dwóch izolowanych sesji, reload recovery, release oraz naturalne expiry 10 minut.
+- Po expiry UI pokazuje stan terminalny, własny `current` jest pusty, a fotel wraca do `available`; dowody i powtarzalne probes: `docs/qa-evidence/a2-two-session-conflict-2026-11-24/`.
