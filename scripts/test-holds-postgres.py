@@ -43,6 +43,43 @@ try:
     preserved=sql("select count(*) from sb_hold.seats where event_id='enea-demo' and active_hold is not null;").stdout.strip()
     if preserved!='2': raise AssertionError('Repeated seed changed live hold pointers')
     print('Full 38,078-seat canonical seed: passed; duplicate seed refused, live hold preserved',flush=True)
+    alt_migration=(root/'database/20261124120000_enea_demo_alt.sql').read_text()
+    sql(alt_migration)
+    proof="""
+    select case when
+      (select count(*) from sb_hold.seats where event_id='enea-demo-alt') = 38078
+      and (select status='open' and currency='PLN' and version=1 and max_seats=10 and hold_seconds=600
+        and not prevent_single from sb_hold.events where id='enea-demo-alt')
+      and not exists (
+        select 1 from sb_hold.seats a join sb_hold.seats b using (seat_id)
+        where a.event_id='enea-demo' and b.event_id='enea-demo-alt'
+          and (a.section_id,a.row,a.number,a.run_id,a.run_order,a.state)
+            is distinct from (b.section_id,b.row,b.number,b.run_id,b.run_order,b.state)
+      )
+      and not exists (
+        select 1 from sb_hold.seats a join sb_hold.seats b using (seat_id)
+        where a.event_id='enea-demo' and b.event_id='enea-demo-alt'
+          and b.price_minor <> round(a.price_minor::numeric * 1.2 / 100)::integer * 100
+      )
+      and not exists (
+        select 1 from sb_hold.seats a left join sb_hold.seats b
+          on b.event_id='enea-demo-alt' and b.seat_id=a.seat_id
+        where a.event_id='enea-demo' and b.seat_id is null
+      )
+      and not exists (
+        select 1 from sb_hold.seats b left join sb_hold.seats a
+          on a.event_id='enea-demo' and a.seat_id=b.seat_id
+        where b.event_id='enea-demo-alt' and a.seat_id is null
+      )
+      and (select count(*)=2 from sb_hold.seats where event_id='enea-demo' and active_hold is not null)
+    then 'passed' else 'failed' end;
+    """
+    if sql(proof).stdout.strip()!='passed': raise AssertionError('Second event copy or source hold preservation failed')
+    sql("select public.sb_create_hold('enea-demo-alt',repeat('f',64),array(select seat_id from sb_hold.seats where event_id='enea-demo-alt' and state='available' order by seat_id limit 2),1,'alt-proof');")
+    sql(alt_migration)
+    idempotency=sql("select (select count(*)=38078 from sb_hold.seats where event_id='enea-demo-alt') and (select count(*)=2 from sb_hold.seats where event_id='enea-demo-alt' and active_hold is not null) and (select count(*)=2 from sb_hold.seats where event_id='enea-demo' and active_hold is not null);").stdout.strip()
+    if idempotency!='t': raise AssertionError('Rerunning event migration changed inventory or active holds')
+    print('Second event migration: copied 38,078 seats with rounded +20% prices; rerun preserved both events’ holds',flush=True)
     command(['python3',str(root/'scripts/test-holds-concurrency.py'),name,'hold_test'])
     print(json.dumps({'result':'passed','database':'local ephemeral PostgreSQL 17.6','cloudApplied':False}),flush=True)
 except subprocess.CalledProcessError as error:
