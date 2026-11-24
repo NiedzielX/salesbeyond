@@ -1,5 +1,5 @@
 ---
-status: draft
+status: in-progress
 created: 2026-11-24
 owner: NiedzielX
 related:
@@ -128,7 +128,7 @@ Lint, typecheck, pełne testy i build przechodzą. Browser QA obejmuje 1440×900
 
 ## Realizacja
 
-Nie rozpoczęto. Status `draft`; właściciel zatwierdza zakres.
+Właściciel zatwierdził rozpoczęcie B1 poleceniem „ok, działajmy” 2026-11-24. Implementacja rozpoczęta; produkcyjna migracja i deploy nadal wymagają osobnego polecenia.
 
 ## Niezależny przegląd
 
