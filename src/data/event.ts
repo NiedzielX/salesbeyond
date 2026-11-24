@@ -24,7 +24,7 @@ export const eventCatalog: readonly DemoEvent[] = [
     catalogPriceMultiplier: 1,
   },
   {
-    id: 'enea-demo-2',
+    id: 'enea-demo-alt',
     title: 'Spotkanie demonstracyjne B',
     dateLabel: 'Termin demo · wiosna 2027',
     status: 'open',

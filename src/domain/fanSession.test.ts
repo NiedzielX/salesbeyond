@@ -5,6 +5,7 @@ import {canonicalBasket,reconcileBasket,basketReducer} from './basket.ts';
 import {stadiumSeats,sectorSeats,resolveSeat} from '../data/stadium.ts';
 import {selectionReducer,initialSelection} from './selection.ts';
 import {createSeatNavigationIndex} from './seatNavigation.ts';
+import {seatsForEvent} from '../data/event.ts';
 const all=stadiumSeats(),free=all.filter(s=>s.available),taken=all.find(s=>!s.available)!;
 function memoryStorage(){const data=new Map<string,string>();return {getItem:(key:string)=>data.get(key)??null,setItem:(key:string,value:string)=>{data.set(key,value);}} satisfies FanStorage;}
 
@@ -43,6 +44,28 @@ test('usunięcie i wyczyszczenie pozostają po reload, a awaria storage nie prze
  assert.equal(readFanSession(blocked).unavailable,true);assert.equal(saveFanSession(blocked,state),false);assert.equal(saveFanSession(null,state),false);assert.equal(readFanSession(null).unavailable,true);
  const legacy={...freshFanState(),basket:sectorSeats('101').filter(s=>s.available).slice(0,2)};saveFanSession(store,legacy,true);assert.equal(readFanSession(store,true).state.basket.length,2);assert.equal(readFanSession(store).state.basket.length,0);
 });
+test('sesje wydarzeń są rozdzielone, a drugi cennik odtwarza się wyłącznie przez swój resolver',()=>{
+ const store=memoryStorage();
+ const eventA=seatsForEvent('enea-demo'),eventB=seatsForEvent('enea-demo-alt');
+ const seatA=eventA.find(seat=>seat.available)!,seatB=eventB.find(seat=>seat.id===seatA.id)!;
+ const resolveA=(id:string)=>eventA.find(seat=>seat.id===id)??null;
+ const resolveB=(id:string)=>eventB.find(seat=>seat.id===id)??null;
+ assert.notEqual(seatA.price,seatB.price);
+ assert.equal(saveFanSession(store,{...freshFanState(),basket:[seatA]},false,'enea-demo'),true);
+ assert.equal(saveFanSession(store,{...freshFanState(),basket:[seatB]},false,'enea-demo-alt'),true);
+ const restoredA=readFanSession(store,false,'enea-demo',resolveA).state.basket;
+ const restoredB=readFanSession(store,false,'enea-demo-alt',resolveB).state.basket;
+ assert.deepEqual(restoredA.map(seat=>[seat.id,seat.price]),[[seatA.id,seatA.price]]);
+ assert.deepEqual(restoredB.map(seat=>[seat.id,seat.price]),[[seatB.id,seatB.price]]);
+ assert.equal(applySeatLink(freshFanState(),`?seat=${seatB.id}`,false,resolveB).state.selection.seat?.price,seatB.price);
+ assert.notEqual(fanSessionKey(false,'enea-demo'),fanSessionKey(false,'enea-demo-alt'));
+});
+test('stary zapis v1 jest migrowany logicznie tylko dla domyślnego wydarzenia',()=>{
+ const store=memoryStorage(),state={...freshFanState(),basket:free.slice(0,2)};
+ store.setItem('salesbeyond:enea-demo:fan:v1:full',encodeFanSession(state));
+ assert.deepEqual(readFanSession(store,false,'enea-demo').state.basket.map(seat=>seat.id),state.basket.map(seat=>seat.id));
+ assert.deepEqual(readFanSession(store,false,'enea-demo-alt',id=>seatsForEvent('enea-demo-alt').find(seat=>seat.id===id)??null).state.basket,[]);
+});
 test('kontrola podsumowania odrzuca zmienioną dostępność i sygnalizuje zmianę ceny z katalogu',()=>{
  const previous=free.slice(0,3);
  const resolve=(id:string)=>{const s=resolveSeat(id);return s?{...s,available:id!==previous[0].id,price:id===previous[1].id?s.price+20:s.price}:null};
@@ -54,8 +77,10 @@ test('bezpośredni link otwiera właściwy fotel, zachowuje własny koszyk i nie
  const result=applySeatLink(state,`?seat=${encodeURIComponent(taken.id)}`);assert.equal(result.state.selection.seat?.id,taken.id);assert.deepEqual(result.state.basket,state.basket);
  assert.equal(applySeatLink(state,'?seat=unknown').invalidLink,true);assert.equal(applySeatLink(state,'?seat=III-2-1-1',true).invalidLink,true);
  const link=seatLink('https://salesbeyond.vercel.app/?tracking=old#private',taken.id)!;const url=new URL(link);assert.equal(url.searchParams.get('seat'),taken.id);assert.equal(url.searchParams.has('tracking'),false);assert.equal(url.hash,'');
+ assert.equal(url.searchParams.get('event'),'enea-demo');
  assert.equal(applySeatLink(state,url.search).state.selection.seat?.id,taken.id);
  assert.equal(new URL(seatLink('https://salesbeyond.vercel.app',free[0].id,true)!).searchParams.get('renderer'),'local');
+ assert.equal(new URL(seatLink('https://salesbeyond.vercel.app',free[0].id,false,'enea-demo-alt')!).searchParams.get('event'),'enea-demo-alt');
  assert.equal(seatLink('bad-url',taken.id),null);assert.equal(seatLink('file:///tmp/index.html',taken.id),null);assert.equal(seatLink('https://salesbeyond.vercel.app','unknown'),null);
  assert.equal(new URL(seatLink('https://name:pass@salesbeyond.vercel.app',taken.id)!).username,'');
 });

@@ -3,7 +3,6 @@ import type {Seat} from '../data/stadium.ts';
 import {createSeatInventoryOverlay, type InventoryOverlayState} from '../domain/inventoryOverlay.ts';
 import {createSeatHoldClient,type SeatInventory} from '../integrations/seatHoldClient.ts';
 
-const EVENT_ID = 'enea-demo';
 const POLL_INTERVAL_MS = 15_000;
 let nextRequestSequence = 0;
 
@@ -16,8 +15,8 @@ export type SectionInventorySnapshot = Readonly<{
   refresh: () => void;
 }>;
 
-const emptySnapshot = (): InventoryOverlayState => Object.freeze({
-  eventId: EVENT_ID,
+const emptySnapshot = (eventId:string): InventoryOverlayState => Object.freeze({
+  eventId,
   version: 0,
   bySection: Object.freeze({}),
   countsBySection: Object.freeze({}),
@@ -31,13 +30,14 @@ export function useSectionInventory(
   ownedHoldIds: readonly string[],
   refreshKey: string,
   createClient: typeof createSeatHoldClient = createSeatHoldClient,
+  eventId = 'enea-demo',
 ): SectionInventorySnapshot {
   const seatsRef = useRef(stableSeats);
   const ownedIdsRef = useRef(ownedHoldIds);
   seatsRef.current = stableSeats;
   ownedIdsRef.current = ownedHoldIds;
 
-  const [snapshot, setSnapshot] = useState<InventoryOverlayState>(emptySnapshot);
+  const [snapshot, setSnapshot] = useState<InventoryOverlayState>(()=>emptySnapshot(eventId));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [eventStatus,setEventStatus]=useState<SeatInventory['status']|null>(null);
@@ -50,7 +50,7 @@ export function useSectionInventory(
   useEffect(() => {
     if (!enabled || !sectorId) {
       requestRef.current = null;
-      setSnapshot(emptySnapshot());
+      setSnapshot(emptySnapshot(eventId));
       setLoading(false);
       setError(false);
       setUpdatedAt(null);
@@ -62,7 +62,7 @@ export function useSectionInventory(
     let fetching = false;
     let manualRefreshQueued = false;
     const client = createClient();
-    const overlay = createSeatInventoryOverlay(seatsRef.current, EVENT_ID);
+    const overlay = createSeatInventoryOverlay(seatsRef.current, eventId);
 
     setSnapshot(overlay.snapshot());
     setLoading(true);
@@ -81,7 +81,7 @@ export function useSectionInventory(
         do {
           manualRefreshQueued = false;
           const requestSequence = ++nextRequestSequence;
-          const inventory = await client.inventory(EVENT_ID, sectorId);
+          const inventory = await client.inventory(eventId, sectorId);
           if (disposed) return;
           if (manualRefreshQueued) continue;
           setSnapshot(overlay.apply(inventory, {
@@ -110,7 +110,7 @@ export function useSectionInventory(
       manualRefreshQueued = false;
       if (requestRef.current) requestRef.current = null;
     };
-  }, [enabled, sectorId, createClient]);
+  }, [enabled, eventId, sectorId, createClient]);
 
   useEffect(() => {
     if (previousRefreshKey.current === refreshKey) return;

@@ -130,6 +130,8 @@ Lint, typecheck, pełne testy i build przechodzą. Browser QA obejmuje 1440×900
 
 Właściciel zatwierdził rozpoczęcie B1 poleceniem „ok, działajmy” 2026-11-24. Implementacja rozpoczęta; produkcyjna migracja i deploy nadal wymagają osobnego polecenia.
 
+Implementacja lokalna zakończona: katalog, routing, chooser, event-scoped session/inventory/hold, historia i migracja eventu B przechodzą lint, typecheck, 199 testów domenowych/integracyjnych, build oraz QA desktop/mobile. W trakcie browser QA poprawiono rozjazd ID migracji, utratę ceny eventu przy kanonizacji selection i restore fotela przez Back. Produkcyjna baza nadal zawiera tylko `enea-demo`; B1 pozostaje `in-progress` do osobnej autoryzacji migracji i deployu.
+
 ## Niezależny przegląd
 
 Świeży read-only review Luny wskazał cztery must-fix: historię podczas aktywnego holda, rozdzielenie statusów runtime/test, precyzyjny kontrakt storage/hold pointer oraz kanonizację historycznego renderera. Wszystkie włączono do R2/R5/R6 i AC2–AC6. Doprecyzowano też lifecycle disposal bez release, miejsca prezentacji ceny i dokładną sekwencję Back/Forward. Pełny drugi inventory pozostaje świadomym zakresem, ponieważ obecny live overlay waliduje komplet aktywnego bloku i każdy fotel obu wydarzeń ma przejść pełny flow.
