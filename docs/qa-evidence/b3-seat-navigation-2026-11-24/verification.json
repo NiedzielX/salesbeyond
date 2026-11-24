@@ -109,12 +109,51 @@
     "navigationAfterLoss": { "from": "II-2-1-16", "to": "II-2-1-17" },
     "applicationErrors": []
   },
+  "productionSmoke": {
+    "deployment": "https://salesbeyond.vercel.app",
+    "deploymentId": "dpl_3wAuEqcpAD7F4w1tNFe5G2xwVDAm",
+    "commit": "1d97188",
+    "http": {
+      "root": 200,
+      "favicon": 200,
+      "seatApiStatus": 200,
+      "seatApiCurrent": 200
+    },
+    "cloudBrowserFallback": {
+      "navigation": { "from": "II-2-1-16", "to": "II-2-1-17" },
+      "urlUpdated": true,
+      "fallback2dShownAfterWebglFailure": true
+    },
+    "swiftshaderWebgl2": {
+      "desktop": {
+        "viewport": "1440x900",
+        "navigation": { "from": "II-2-1-16", "to": "II-2-1-17" },
+        "recenterEnabledAndClicked": true,
+        "scrollWidth": 1440,
+        "applicationErrors": []
+      },
+      "mobile": {
+        "viewport": "390x844",
+        "navigation": { "from": "II-2-1-16", "to": "II-2-1-17" },
+        "recenterEnabledAndClicked": true,
+        "scrollWidth": 390,
+        "controlHeight": 44,
+        "applicationErrors": []
+      }
+    },
+    "vercelRuntime": {
+      "errorClustersLastHour": 0,
+      "errorFatalLogsLast30Minutes": 0
+    },
+    "evidence": "production-verification.json"
+  },
   "screenshots": [
     "desktop-1440x900.png",
-    "mobile-390x844.png"
+    "mobile-390x844.png",
+    "production-desktop-1440x900.png",
+    "production-mobile-390x844.png"
   ],
   "limitations": [
-    "This is local production-build QA, not a public production deployment smoke.",
     "The mobile run uses browser emulation rather than a physical phone.",
     "Assistive-technology announcements were verified structurally and by automated tests, not with a physical screen reader.",
     "The live-overlay integration uses a deterministic API mock; backend ownership and transaction behavior are covered by the existing API/domain suites."

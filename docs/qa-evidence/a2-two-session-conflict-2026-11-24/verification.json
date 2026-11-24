@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-24",
+  "target": "https://salesbeyond.vercel.app/",
+  "browser": "Cloud Chrome Playwright UI",
+  "flow": {
+    "seat": "II-2-1-16",
+    "section": "II-2",
+    "row": 1,
+    "number": 16,
+    "pricePln": 85,
+    "sessionA": {
+      "quoteObserved": true,
+      "holdStateAtConfirmation": "An active owner hold was surfaced when confirmation was clicked; it was already present in the browser session and was not newly attributed to this run.",
+      "reloadRecoveryObserved": "Przywrócono Twoją blokadę",
+      "releaseObserved": "Blokada została zwolniona. Miejsca można wybrać ponownie."
+    },
+    "sessionB": {
+      "independentCookieJar": true,
+      "sameSeatCreateHttp": 409,
+      "sameSeatCreateError": "held",
+      "seatIds": ["II-2-1-16"],
+      "currentAfterRelease": null
+    },
+    "inventoryAfterRelease": "available",
+    "cleanup": {
+      "browserTabsClosed": true,
+      "temporaryCookieJarRemoved": true,
+      "activeHoldLeftByRun": false
+    }
+  },
+  "freshTwoContextUiRun": {
+    "bothSessionsQuotedBeforeHold": true,
+    "sessionAHoldCreatedFromFreshContext": true,
+    "sessionBConflictShown": "Ktoś właśnie zablokował część miejsc",
+    "sessionBActiveHoldAfterConflict": false,
+    "sessionAReloadRecoveryShown": "Przywrócono Twoją blokadę",
+    "sessionAReleasedByCleanup": true,
+    "pageErrors": [],
+    "expectedTransportSignal": "Session B's rejected create request emitted HTTP 409 in the browser console.",
+    "probe": "probe-two-session.mjs"
+  },
+  "limitations": [
+    "The first browser-assisted run inherited session A's hold; a later Playwright run with two fresh isolated contexts proved fresh creation, conflict, recovery and cleanup.",
+    "A second immediate repetition hit the production rate limiter while preparing the second quote, as expected from the demo protection. The successful fresh-context run remains the acceptance evidence.",
+    "Expiry is tracked separately and is not claimed by this conflict proof."
+  ]
+}

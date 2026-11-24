@@ -2,7 +2,7 @@
 started: 2026-11-23
 ended: 2026-11-23
 agent: /root
-spec: .ai/specs/2026-11-23-seat-navigation-and-pitch-recenter.md
+spec: .ai/specs/implemented/2026-11-23-seat-navigation-and-pitch-recenter.md
 outcome: success
 ---
 

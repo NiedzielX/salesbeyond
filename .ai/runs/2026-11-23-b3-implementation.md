@@ -1,9 +1,9 @@
 ---
 started: 2026-11-23T16:02:20Z
-ended:
+ended: 2026-11-24T11:25:00Z
 agent: codex-root
-spec: .ai/specs/2026-11-23-seat-navigation-and-pitch-recenter.md
-outcome: in-progress
+spec: .ai/specs/implemented/2026-11-23-seat-navigation-and-pitch-recenter.md
+outcome: success
 ---
 
 # B3 — nawigacja między miejscami i recenter kamery
@@ -34,10 +34,13 @@ Wdrożyć zatwierdzoną specyfikację B3: fizyczne poprzednie/następne miejsce,
 - Dodatkowa macierz AC6–AC7: Tab/Shift+Tab, Enter i spacja bez skoku scrolla; tap w trybie przewijania strony i sterowania sceną; local 2D→3D z działającą nawigacją i bez recenteru; po recenterze symulowana utrata kontekstu z dostępnym `WEBGL_lose_context`, fallback 2D, ukryty recenter i nadal działające następne miejsce. Wszystkie przebiegi bez błędów aplikacji.
 - Świeży, niezależny review `gpt-6.2-sol` odtworzył race, zweryfikował poprawkę generacji i po uzupełnieniu ścieżek back/Plan 2D/failScene nie znalazł dalszych must-fix.
 - Pełne wyniki: `docs/qa-evidence/b3-seat-navigation-2026-11-24/verification.json`.
+- Commit `1d97188` wdrożono na production jako `dpl_3wAuEqcpAD7F4w1tNFe5G2xwVDAm`; alias `salesbeyond.vercel.app` jest READY, a `/`, favicon i odczyty API zwracają HTTP 200.
+- Publiczny smoke: w cloudowym Chrome bez WebGL nawigacja `II-2-1-16` → `II-2-1-17` zaktualizowała URL, po czym aplikacja poprawnie uruchomiła fallback 2D. Osobny Chromium/SwiftShader WebGL2 potwierdził tę samą nawigację, aktywny i działający `Na boisko`, brak błędów aplikacji i brak poziomego overflow dla 1440×900 oraz emulacji touch 390×844. Obejrzano oba zrzuty produkcyjne.
+- Vercel po smoke: zagregowane runtime errors z ostatniej godziny — brak; runtime `error`/`fatal` dla deploymentu z ostatnich 30 minut — brak.
 
 ## Wynik
 
-Implementacja i lokalny odbiór produkcyjnego buildu są zakończone. Status pozostaje `in-progress`, ponieważ AC5 rozdziela lokalny build QA od publicznego smoke, a deploy B3 nie został jeszcze osobno autoryzowany.
+Implementacja, autoryzowany deploy i publiczny odbiór B3 są zakończone. Wszystkie AC1–AC8 mają dowód; specyfikację przeniesiono do `implemented/`.
 
 ## Lekcje
 

@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: implemented
 created: 2026-11-23
 owner: NiedzielX
 related:
@@ -90,4 +90,4 @@ Przeprowadzony 2026-11-23 przez osobną sesję `gpt-6.2-sol` bez kontekstu autor
 
 ## Realizacja
 
-Rozpoczęto 2026-11-23 po jawnym zatwierdzeniu właściciela. Kod i lokalny odbiór produkcyjnego buildu zakończono 2026-11-24: domena sąsiedztwa, wspólna ścieżka wyboru, dostępny interfejs i jednorazowy recenter mają testy oraz browser QA w WebGL2, fallbacku i `?renderer=local`. Niezależny review odtworzył i pomógł zamknąć race spóźnionego zakończenia lotu; finalny sanity check nie znalazł dalszych must-fix. Dowody: `docs/qa-evidence/b3-seat-navigation-2026-11-24/verification.json`; przebieg: `.ai/runs/2026-11-23-b3-implementation.md`. Status pozostaje `in-progress` do osobno autoryzowanego publicznego smoke B3 wymaganego przez AC5.
+Rozpoczęto 2026-11-23 po jawnym zatwierdzeniu właściciela. Kod, lokalny odbiór produkcyjnego buildu i publiczny smoke zakończono 2026-11-24 w commicie `1d97188` oraz deploymencie `dpl_3wAuEqcpAD7F4w1tNFe5G2xwVDAm`: domena sąsiedztwa, wspólna ścieżka wyboru, dostępny interfejs i jednorazowy recenter mają testy oraz browser QA w WebGL2, fallbacku i `?renderer=local`. Publiczny desktop 1440×900 i emulacja touch 390×844 potwierdziły nawigację 16→17, działający recenter, 44-pikselowe kontrolki, brak poziomego overflow i brak błędów aplikacji; cloudowy Chrome bez WebGL potwierdził zachowanie fallbacku. Niezależny review odtworzył i pomógł zamknąć race spóźnionego zakończenia lotu; finalny sanity check nie znalazł dalszych must-fix. Dowody: `docs/qa-evidence/b3-seat-navigation-2026-11-24/verification.json`; przebieg: `.ai/runs/2026-11-23-b3-implementation.md`.

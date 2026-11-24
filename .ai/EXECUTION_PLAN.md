@@ -1,19 +1,18 @@
 # Plan wykonawczy całego MVP
 
-## Bieżąca kolejka MVP — 2026-11-21
+## Bieżąca kolejka MVP — 2026-11-24
 
 Źródło zatwierdzonego zakresu: `.ai/specs/2026-11-17-functional-stadium-mvp.md`; aktualna ścieżka i kryteria: `docs/FAN_EXPERIENCE_ROADMAP.md` V1–V5.
 
-1. **Odbiór trzech zgłoszeń**: start panoramy, dach, rzeczywisty rząd. Kod/testy opublikowane; wynik na ekranie pending.
-2. **Wygląd Enei i kadry**: przyrost 2026-11-20 poprawia zaobserwowane w porównaniu CPU/referencja podziały membrany, kratownicę i elewację. Wspólne kadry panoramy/sektora/fotela i test osi widoku 171 foteli: `docs/qa-evidence/enea-fidelity-2026-11-20/README.md`. Odbiór w aplikacji i porównanie ruchu z nagraniem nadal pending.
-   **Bieżący przyrost**: Beyond za bramkami oraz potwierdzone przecinanie stopni/membrany przez kamerę poprawione w kodzie; końcowe oko pod murawą nieodtworzone. Widownia C1–C5 ma kod, przełącznik i porównanie CPU; kontroler StrictMode potwierdza57perspektyw i zgodne miniatury. Obraz/płynność desktopu i telefonu oraz pełny UI pozostają do niezależnego odbioru.
-3. **Pełny scenariusz kibica w UI**: 2D/3D, grupa, quote/hold, reload/current recovery, konflikt drugiej sesji, release/expiry. Przyrost kodu20listopada zachowuje grupę przy pollingu, waliduje jej ostatnie dane i naprawia powtórny podgląd z dolnych list. Rzeczywista ścieżka UI nadal pending.
-4. **Mały ekran i wygoda**: kod nie przenosi fokusu przy montażu i ogranicza wysokość dialogu z własnym przewijaniem. Dotyk, klawiatura, rzeczywisty fokus/overflow i responsywność nadal wymagają odbioru.
-5. **Odebrane demo klubowe**: stały link i powtarzalny scenariusz po przejściu punktów 1–4.
+1. **Pełny scenariusz kibica A2**: pojedyncza sesja selection → koszyk → quote → hold → reload/recovery → release jest odebrana. Czysty przebieg dwóch izolowanych sesji potwierdził quote obu stron, create A, czytelny konflikt 409 w B, recovery po reloadzie i cleanup. Do domknięcia pozostał osobny odbiór wygaśnięcia.
+2. **Wygląd Enei i kadry**: model kodowy, dach, Beyond, niższe rzędy i widownia są wdrożone oraz mają dowody. Nadal potrzebne jest końcowe porównanie ruchu i charakterystycznych kadrów z blueprintem/nagraniem; nie deklarować oficjalnego cyfrowego bliźniaka.
+3. **Nawigacja B3 — odebrana**: commit `1d97188` działa na production. Desktop WebGL2 i mobile 390×844 potwierdzają sąsiadów, recenter, kontrolki 44 px, brak overflow/błędów; fallback bez WebGL również przeszedł. Specyfikacja jest w `implemented/`.
+4. **Mały ekran i dostępność A3**: podstawowe touch/keyboard/fokus/overflow oraz komunikaty holda mają automatyczne i browser dowody. Pozostają fizyczny telefon i fizyczny czytnik ekranu jako jawne ograniczenia, nie blokada prototypu.
+5. **Odebrane demo klubowe**: po A2 przygotować krótki, powtarzalny scenariusz demonstracyjny i końcową macierz V1–V5 na stałym linku.
 
-**Dostarczone**: 38 078 ID / 19 bloków; model/2D/3D; koszyk/grupy/filtry; Supabase/Vercel i atomowe holdy; current recovery; aktualizowany wybrany blok 2D/3D/panel; 160+1 testów, prawdziwe PG/HTTP. Nie planować ponownej budowy już połączonego backendu.
+**Dostarczone**: 38 078 ID / 19 bloków; model/2D/3D; koszyk/grupy/filtry; Supabase/Vercel i atomowe holdy; current recovery; aktualizowany wybrany blok 2D/3D/panel; B3; 190+1 testów, prawdziwe PG/HTTP i publiczny browser QA. Nie planować ponownej budowy już połączonego backendu.
 
-**Pozostała blokada odbioru**: automatyczna odmowa przeglądarki, bez potwierdzenia zdjęcia blokady; nie próbować obejść. Pending pytanie do właściciela o wynik trzech poprawek. Nie uznawać tego za odbiór ani tworzyć fikcyjnych screenów.
+**Pozostała blokada odbioru**: expiry A2. Dostęp do przeglądarki/WebGL jest aktywny; nie wracać do historycznej blokady narzędzia.
 
 Poniżej zachowana historia wykonania; stare statusy nie są bieżącym backlogiem.
 

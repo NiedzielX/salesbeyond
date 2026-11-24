@@ -1,0 +1,78 @@
+{
+  "checkedAt": "2026-11-24T11:20:21.271Z",
+  "deployment": "https://salesbeyond.vercel.app",
+  "desktop": {
+    "viewport": "1440x900",
+    "selectedSeat": "II-2-1-17",
+    "webgl2": true,
+    "recenterEnabledAndClicked": true,
+    "scrollWidth": 1440,
+    "controls": [
+      {
+        "name": "Poprzednie",
+        "box": {
+          "x": 1063.09375,
+          "y": 707.46875,
+          "width": 93.328125,
+          "height": 44
+        }
+      },
+      {
+        "name": "Na boisko",
+        "box": {
+          "x": 1163.421875,
+          "y": 707.46875,
+          "width": 93.328125,
+          "height": 44
+        }
+      },
+      {
+        "name": "Następne",
+        "box": {
+          "x": 1263.75,
+          "y": 707.46875,
+          "width": 93.34375,
+          "height": 44
+        }
+      }
+    ],
+    "applicationErrors": []
+  },
+  "mobile": {
+    "viewport": "390x844",
+    "selectedSeat": "II-2-1-17",
+    "webgl2": true,
+    "recenterEnabledAndClicked": true,
+    "scrollWidth": 390,
+    "controls": [
+      {
+        "name": "Poprzednie",
+        "box": {
+          "x": 44.5,
+          "y": 399.5625,
+          "width": 95.65625,
+          "height": 44
+        }
+      },
+      {
+        "name": "Na boisko",
+        "box": {
+          "x": 147.15625,
+          "y": 399.5625,
+          "width": 95.671875,
+          "height": 44
+        }
+      },
+      {
+        "name": "Następne",
+        "box": {
+          "x": 249.828125,
+          "y": 399.5625,
+          "width": 95.65625,
+          "height": 44
+        }
+      }
+    ],
+    "applicationErrors": []
+  }
+}
