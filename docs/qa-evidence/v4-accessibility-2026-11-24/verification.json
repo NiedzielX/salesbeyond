@@ -1,0 +1,59 @@
+{
+  "checkedAt": "2026-11-24T15:23:12.263Z",
+  "deployment": "https://salesbeyond.vercel.app/?seat=II-2-1-16",
+  "errors": [],
+  "keyboard": {
+    "tabTarget": "Na boisko",
+    "shiftTabTarget": "Poprzednie",
+    "afterEnter": "https://salesbeyond.vercel.app/?seat=II-2-1-17",
+    "afterSpace": "https://salesbeyond.vercel.app/?seat=II-2-1-16",
+    "scrollDelta": 0,
+    "errors": []
+  },
+  "mobile": {
+    "viewport": "390x844 emulated touch",
+    "url": "https://salesbeyond.vercel.app/?seat=II-2-1-17",
+    "scrollWidth": 390,
+    "controls": {
+      "Poprzednie": {
+        "x": 44.5,
+        "y": 399.5625,
+        "width": 95.65625,
+        "height": 44
+      },
+      "Na boisko": {
+        "x": 147.15625,
+        "y": 399.5625,
+        "width": 95.671875,
+        "height": 44
+      },
+      "Następne": {
+        "x": 249.828125,
+        "y": 399.5625,
+        "width": 95.65625,
+        "height": 44
+      }
+    },
+    "gestureMode": {
+      "initialPressed": "false",
+      "scenePressed": "true",
+      "sceneMessage": "Gesty sterują teraz stadionem. Naciśnij ponownie „Sterowanie sceną”, aby wrócić do przewijania.",
+      "pagePressed": "false",
+      "pageMessage": "Pionowy gest przewija teraz stronę."
+    },
+    "errors": []
+  },
+  "reducedMotion": {
+    "reduce": {
+      "arrivalMs": 8010,
+      "url": "https://salesbeyond.vercel.app/?seat=II-2-1-17",
+      "errors": []
+    },
+    "no-preference": {
+      "arrivalMs": 11711,
+      "url": "https://salesbeyond.vercel.app/?seat=II-2-1-17",
+      "errors": []
+    }
+  },
+  "completedAt": "2026-11-24T15:24:33.164Z"
+}
