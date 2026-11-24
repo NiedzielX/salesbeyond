@@ -1,0 +1,57 @@
+{
+  "checkedAt": "2026-11-24T15:18:16.890Z",
+  "deployment": "https://salesbeyond.vercel.app/",
+  "stages": [
+    {
+      "name": "plan-2d",
+      "at": "2026-11-24T15:18:26.265Z",
+      "url": "https://salesbeyond.vercel.app/"
+    },
+    {
+      "name": "seat-selected-on-plan",
+      "at": "2026-11-24T15:18:33.897Z",
+      "announcement": "Sektor II-2, rząd 1, miejsce 16.",
+      "ticket": "TWOJE MIEJSCE DEMO\nTrybuna II\nWolne · stan z usługi demo\nSEKTOR\nII-2\nRZĄD\n01\nMIEJSCE\n16\nCena z usługi demo\n85 zł",
+      "url": "https://salesbeyond.vercel.app/?seat=II-2-1-16"
+    },
+    {
+      "name": "same-seat-in-3d",
+      "at": "2026-11-24T15:18:48.154Z",
+      "announcement": "Sektor II-2, rząd 1, miejsce 16.",
+      "ticket": "TWOJE MIEJSCE DEMO\nTwoja perspektywa · geometria 3D\nTrybuna II\nWolne · stan z usługi demo\nSEKTOR\nII-2\nRZĄD\n01\nMIEJSCE\n16\nCena z usługi demo\n85 zł",
+      "webgl2": true,
+      "url": "https://salesbeyond.vercel.app/?seat=II-2-1-16"
+    },
+    {
+      "name": "group-added",
+      "at": "2026-11-24T15:18:57.031Z",
+      "beforeSearch": 0,
+      "afterSearch": 0,
+      "afterAdd": 2,
+      "proposal": "PROPOZYCJA · DANE DEMO\nBlok II-2 · rząd 1\nMiejsca 20, 21 · 85,00 zł / os.\n170,00 zł\nza całą grupę\nObejrzyj widok\nDodaj całą grupę",
+      "basket": "Twój wybór 2 / 10\n\nSprawdź dostępność i cenę, a następnie potwierdź blokadę poniżej.\n\nWyczyść\nDodano grupę: 2 miejsc · blok II-2, rząd 1.\nTrybuna II · II-2\nRząd 1 · Miejsce 20\n85,00 zł\nTrybuna II · II-2\nRząd 1 · Miejsce 21\n85,00 zł\nRazem\n170,00 zł\nPodsumowanie wyboru"
+    },
+    {
+      "name": "quote",
+      "at": "2026-11-24T15:18:59.356Z",
+      "panel": "WYDARZENIE DEMO · WSPÓLNA DOSTĘPNOŚĆ\nPotwierdź swój wybór\n\nPlan stadionu i ceny na nim są poglądowe. Tutaj sprawdzisz bieżącą dostępność i cenę na serwerze przed czasową blokadą.\n\nII-2 · rząd 1 · miejsce 20\n85,00 zł\nZobacz\nII-2 · rząd 1 · miejsce 21\n85,00 zł\nZobacz\nCena potwierdzona przez serwer\n170,00 zł\nDostępność jest aktualna w chwili sprawdzenia. Dopiero potwierdzenie blokady zabezpiecza miejsca.\nSprawdź ponownie\nPotwierdź blokadę miejsc\nBlokada testowa nie jest biletem ani zakupem. Płatności nie są podłączone."
+    },
+    {
+      "name": "hold-created",
+      "at": "2026-11-24T15:19:10.891Z",
+      "panel": "WYDARZENIE DEMO · WSPÓLNA DOSTĘPNOŚĆ\nMiejsca są czasowo zablokowane\n\nBlokada dotyczy wskazanych miejsc w tym wydarzeniu demo. Możesz obejrzeć ich perspektywę lub zwolnić całą grupę.\n\nPozostało\n10:00\nII-2 · rząd 1 · miejsce 20\n85,00 zł\nZobacz\nII-2 · rząd 1 · miejsce 21\n85,00 zł\nZobacz\nCena potwierdzona przez serwer\n170,00 zł\nOdśwież stan\nZwolnij całą grupę\nBlokada testowa nie jest biletem ani zakupem. Płatności nie są podłączone."
+    },
+    {
+      "name": "hold-recovered",
+      "at": "2026-11-24T15:19:28.740Z",
+      "panel": "WYDARZENIE DEMO · WSPÓLNA DOSTĘPNOŚĆ\nPrzywrócono Twoją blokadę\n\nBlokada dotyczy wskazanych miejsc w tym wydarzeniu demo. Możesz obejrzeć ich perspektywę lub zwolnić całą grupę.\n\nPozostało\n9:43\nII-2 · rząd 1 · miejsce 20\n85,00 zł\nZobacz\nII-2 · rząd 1 · miejsce 21\n85,00 zł\nZobacz\nCena potwierdzona przez serwer\n170,00 zł\nOdśwież stan\nZwolnij całą grupę\nBlokada testowa nie jest biletem ani zakupem. Płatności nie są podłączone."
+    },
+    {
+      "name": "hold-released",
+      "at": "2026-11-24T15:19:41.644Z",
+      "panel": "WYDARZENIE DEMO · WSPÓLNA DOSTĘPNOŚĆ\nBlokada zakończona\n\nPlan stadionu i ceny na nim są poglądowe. Tutaj sprawdzisz bieżącą dostępność i cenę na serwerze przed czasową blokadą.\n\nMiejsca zostały zwolnione.\nII-2 · rząd 1 · miejsce 20\n85,00 zł\nZobacz\nII-2 · rząd 1 · miejsce 21\n85,00 zł\nZobacz\nCena potwierdzona przez serwer\n170,00 zł\nBlokada została zwolniona. Miejsca można wybrać ponownie.\nSprawdź dostępność i cenę\nBlokada testowa nie jest biletem ani zakupem. Płatności nie są podłączone."
+    }
+  ],
+  "errors": [],
+  "completedAt": "2026-11-24T15:19:41.644Z"
+}
