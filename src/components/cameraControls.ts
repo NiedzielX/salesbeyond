@@ -1,5 +1,18 @@
-import {MathUtils,type Box3,type Camera,type Vector3} from 'three';
+import {MathUtils,Vector3,type Box3,type Camera} from 'three';
+import type {Point} from '../domain/camera.ts';
+import {aimRotation} from './cameraRotation.ts';
 type OrbitState = {enabled:boolean;enableDamping:boolean;target:Vector3;update:()=>unknown};
+
+/** Re-aim a seat view at the pitch without changing the eye position. */
+export function recenterCamera(position:Point){
+ const target:Point=[0,1,0];
+ const direction:Point=[target[0]-position[0],target[1]-position[1],target[2]-position[2]];
+ return {
+  quaternion:aimRotation(position,target,new Vector3(0,1,0)),
+  yaw:Math.atan2(direction[0],direction[2]),
+  pitch:Math.atan2(direction[1],Math.hypot(direction[0],direction[2]))
+ };
+}
 
 /** Sector orbit may approach the lowest rows while keeping the eye above pitch furniture. */
 export const sectorMaxPolarAngle=Math.PI*.49;

@@ -1,5 +1,5 @@
 ---
-status: draft
+status: in-progress
 created: 2026-11-23
 owner: NiedzielX
 related:
@@ -86,8 +86,8 @@ Kolejność implementacji: czerwone testy domeny → helper nawigacji → czerwo
 
 ## Niezależny przegląd
 
-Przeprowadzony 2026-11-23 przez osobną sesję `gpt-6.2-sol` bez kontekstu autora, read-only. Review wskazał synchronizację kwaternionu z yaw/pitch, jednoznaczną macierz dostępności recenteru i jednorazowe żądanie, stabilny fokus/status na granicach oraz wykonalne testy integracji URL/sesji/koszyka/holda. W drugim przebiegu doprecyzowano podział AC4 na czystą geometrię i harness prawdziwego `Camera`, osobną weryfikację sesji bez maskowania deep linkiem oraz warunkową obecność recenteru. Wszystkie must-fix wprowadzono. Dodano też rekomendacje o kanonicznym indeksie `inventory`, stabilnym layoucie, dokładnym 44×44 CSS px, `?renderer=local`, szybkim retargetowaniu i rozdzieleniu build QA od autoryzowanego deployu. Status pozostaje `draft`; zatwierdzenie należy wyłącznie do właściciela.
+Przeprowadzony 2026-11-23 przez osobną sesję `gpt-6.2-sol` bez kontekstu autora, read-only. Review wskazał synchronizację kwaternionu z yaw/pitch, jednoznaczną macierz dostępności recenteru i jednorazowe żądanie, stabilny fokus/status na granicach oraz wykonalne testy integracji URL/sesji/koszyka/holda. W drugim przebiegu doprecyzowano podział AC4 na czystą geometrię i harness prawdziwego `Camera`, osobną weryfikację sesji bez maskowania deep linkiem oraz warunkową obecność recenteru. Wszystkie must-fix wprowadzono. Dodano też rekomendacje o kanonicznym indeksie `inventory`, stabilnym layoucie, dokładnym 44×44 CSS px, `?renderer=local`, szybkim retargetowaniu i rozdzieleniu build QA od autoryzowanego deployu. Właściciel zatwierdził specyfikację 2026-11-23 słowami: „Zatwierdzam specyfikację B3 i deploy poprawek A1–A3 na production.” Po rozpoczęciu implementacji status zmieniono na `in-progress`.
 
 ## Realizacja
 
-Nie rozpoczęto. Implementacja wymaga jawnego zatwierdzenia tej specyfikacji przez właściciela.
+Rozpoczęto 2026-11-23 po jawnym zatwierdzeniu właściciela. Kod i lokalny odbiór produkcyjnego buildu zakończono 2026-11-24: domena sąsiedztwa, wspólna ścieżka wyboru, dostępny interfejs i jednorazowy recenter mają testy oraz browser QA w WebGL2, fallbacku i `?renderer=local`. Niezależny review odtworzył i pomógł zamknąć race spóźnionego zakończenia lotu; finalny sanity check nie znalazł dalszych must-fix. Dowody: `docs/qa-evidence/b3-seat-navigation-2026-11-24/verification.json`; przebieg: `.ai/runs/2026-11-23-b3-implementation.md`. Status pozostaje `in-progress` do osobno autoryzowanego publicznego smoke B3 wymaganego przez AC5.

@@ -53,3 +53,10 @@ Cała kolejka zatwierdzonego zakresu: `.ai/EXECUTION_PLAN.md` (38 pozycji). Mate
 - Miniatura dostępna także w klasycznym rendererze: render z kamery po ukończeniu lotu, odczyt JPEG w tej samej klatce. Panel wymaga pasującego ID, arrived, !flying i dostępnego 3D. Błąd odczytu oznacza brak miniatury. Zmienić miejsce tuż przed końcem poprzedniego lotu, resetować w locie, wracać i ponawiać ten sam fotel; żaden stary obraz nie powinien być przedstawiony jako nowy.
 - Nowy target kamery klasycznej publikowany w useLayoutEffect przed RAF; review źródeł zidentyfikowało i poprawiło okno mieszania nowego wyboru ze starym zegarem lotu. Bez runtime reprodukcji w obecnym środowisku.
 - Te kroki pozostają NIEODEBRANE wizualnie. Kontrola CPU w `qa-evidence/geometry-review` nie zastępuje WebGL.
+
+### Nawigacja foteli B3 — 2026-11-24
+
+- Wariant `?renderer=local` korzysta ze wspólnej panelowej nawigacji poprzednie/następne miejsce, ale celowo nie pokazuje kontrolki wycentrowania kamery obcego renderera.
+- Chromium WebGL2 potwierdził przejście `101-1-2` → `101-1-3` na planie 2D i `101-1-3` → `101-1-4` po powrocie do 3D, brak recenteru, brak błędów aplikacji i brak poziomego overflow przy 1440×900. Ten przebieg nie zastępuje nadal otwartego, pełnego odbioru geometrii lokalnej sceny.
+- Wariant własny potwierdził recenter po dotarciu, szybkie kolejne wybory z ostatnim ID jako wynikiem, stabilny fokus na granicy oraz brak zmiany koszyka. Fallback bez WebGL zachował nawigację i ukrył recenter.
+- Dowody: `docs/qa-evidence/b3-seat-navigation-2026-11-24/verification.json` oraz obejrzane zrzuty desktop/mobile. Mobile to emulacja dotyku, nie fizyczne urządzenie.

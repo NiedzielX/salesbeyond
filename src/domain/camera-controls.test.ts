@@ -2,8 +2,29 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {Box3,PerspectiveCamera,Vector3} from 'three';
 import {OrbitControls} from 'three-stdlib';
-import {constrainOrbitTarget,pauseOrbit,sectorMaxPolarAngle,sectorMinManualEyeY,sectorPanBounds,sectorPanTargetFloor} from '../components/cameraControls.ts';
+import {constrainOrbitTarget,pauseOrbit,recenterCamera,sectorMaxPolarAngle,sectorMinManualEyeY,sectorPanBounds,sectorPanTargetFloor} from '../components/cameraControls.ts';
+import {lookTarget} from './camera.ts';
 import {allSectors,sectorBounds,sectorFrame,sectorMinDistance,sectorRows,seatsInRow} from '../data/stadium.ts';
+test('recenter kieruje bez przesunięcia oka na murawę i synchronizuje yaw/pitch',()=>{
+ const eye:[number,number,number]=[31,14,-42];
+ const before=[...eye];
+ const result=recenterCamera(eye);
+ const expected=new Vector3(0,1,0).sub(new Vector3(...eye)).normalize();
+ const quaternionDirection=new Vector3(0,0,-1).applyQuaternion(result.quaternion);
+ const angleDirection=new Vector3(...lookTarget([0,0,0],result.yaw,result.pitch)).normalize();
+ assert.ok(quaternionDirection.distanceTo(expected)<1e-6);
+ assert.ok(angleDirection.distanceTo(expected)<1e-6);
+ assert.deepEqual(eye,before,'recenter geometry leaves the eye position untouched');
+});
+
+test('wielokrotne recenter wylicza identyczną orientację',()=>{
+ const eye:[number,number,number]=[-76,8,23];
+ const first=recenterCamera(eye);
+ const second=recenterCamera(eye);
+ assert.ok(first.quaternion.angleTo(second.quaternion)<1e-6);
+ assert.ok(Math.abs(first.yaw-second.yaw)<1e-6);
+ assert.ok(Math.abs(first.pitch-second.pitch)<1e-6);
+});
 test('stara bezwładność orbity nie przesuwa kamery po ukończonym locie',()=>{
  const camera=new PerspectiveCamera();camera.position.set(148,138,168);
  const controls=new OrbitControls(camera);controls.enableDamping=true;

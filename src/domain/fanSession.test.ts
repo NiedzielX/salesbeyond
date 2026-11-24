@@ -4,6 +4,7 @@ import {freshFanState,decodeFanSession,encodeFanSession,fanSessionKey,readFanSes
 import {canonicalBasket,reconcileBasket,basketReducer} from './basket.ts';
 import {stadiumSeats,sectorSeats,resolveSeat} from '../data/stadium.ts';
 import {selectionReducer,initialSelection} from './selection.ts';
+import {createSeatNavigationIndex} from './seatNavigation.ts';
 const all=stadiumSeats(),free=all.filter(s=>s.available),taken=all.find(s=>!s.available)!;
 function memoryStorage(){const data=new Map<string,string>();return {getItem:(key:string)=>data.get(key)??null,setItem:(key:string,value:string)=>{data.set(key,value);}} satisfies FanStorage;}
 
@@ -66,6 +67,29 @@ test('nawigacja aktualizuje link po zmianie fotela i usuwa go po powrocie do sta
  const current=new URL(selectionUrl(original,selected)!);assert.equal(current.searchParams.get('seat'),free[0].id);assert.equal(current.searchParams.get('renderer'),'local');assert.equal(current.hash,'#section');
  const reset=new URL(selectionUrl(current.toString(),initialSelection)!);assert.equal(reset.searchParams.has('seat'),false);assert.equal(reset.searchParams.get('renderer'),'local');
  assert.equal(selectionUrl('invalid',selected),null);
+});
+
+test('sąsiednie miejsce przechodzi kanoniczną ścieżką, zapisuje sesję i nie zmienia koszyka ani holda',()=>{
+ const inventory=stadiumSeats(),navigation=createSeatNavigationIndex(inventory);
+ const source=inventory.find(candidate=>navigation.neighborsOf(candidate.id).next!==null)!;
+ const canonicalTarget=navigation.neighborsOf(source.id).next!;
+ const overlayTarget={...canonicalTarget,price:canonicalTarget.price+20,available:false};
+ const basket=free.slice(0,2),hold={id:'hold-demo',seatIds:basket.map(item=>item.id),status:'active'} as const;
+ const basketBefore=basket.map(item=>item.id),holdBefore=structuredClone(hold);
+ const selected=selectionReducer(selectionReducer(initialSelection,{type:'seat',seat:source}),{type:'seat',seat:overlayTarget});
+ assert.equal(selected.seat?.id,canonicalTarget.id);
+ assert.equal((overlayTarget.id===selected.seat?.id?overlayTarget:selected.seat)?.price,overlayTarget.price,'bieżący overlay pozostaje źródłem prezentowanej ceny');
+ assert.deepEqual(basket.map(item=>item.id),basketBefore);
+ assert.deepEqual(hold,holdBefore);
+ const linked=new URL(selectionUrl('https://salesbeyond.vercel.app/',selected)!);
+ assert.equal(linked.searchParams.get('seat'),canonicalTarget.id);
+ const store=memoryStorage(),state={...freshFanState(),basket,selection:selected};
+ assert.equal(saveFanSession(store,state),true);
+ linked.searchParams.delete('seat');
+ assert.equal(linked.searchParams.has('seat'),false,'reload nie może maskować zapisu przez deep link');
+ const restored=readFanSession(store).state;
+ assert.equal(restored.selection.seat?.id,canonicalTarget.id);
+ assert.deepEqual(restored.basket.map(item=>item.id),basketBefore);
 });
 
 test('otwarcie zwykłego adresu zaczyna panoramą mimo zapisanego sektora i rzędu',async()=>{
