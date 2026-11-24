@@ -1,0 +1,48 @@
+{
+  "checkedAt": "2026-11-24T15:14:03.019Z",
+  "results": [
+    {
+      "name": "desktop-row-one-ui",
+      "seat": "II-2-1-16",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "url": "https://salesbeyond.vercel.app/?seat=II-2-1-16",
+      "announcement": "Sektor II-2, rząd 1, miejsce 16.",
+      "ticketText": "TWOJE MIEJSCE DEMO\nTwoja perspektywa · geometria 3D\nTrybuna II\nWolne · stan z usługi demo\nSEKTOR\nII-2\nRZĄD\n01\nMIEJSCE\n16\nCena z usługi demo\n85 zł",
+      "applicationErrors": [],
+      "scrollWidth": 1440,
+      "screenshot": "desktop-row-one-ui.png"
+    },
+    {
+      "name": "desktop-corner-ui",
+      "seat": "C1-37-47",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "url": "https://salesbeyond.vercel.app/?seat=C1-37-47",
+      "announcement": "Sektor C1, rząd 37, miejsce 47.",
+      "ticketText": "TWOJE MIEJSCE DEMO\nTwoja perspektywa · geometria 3D\nŁącznik C1\nWolne · stan z usługi demo\nSEKTOR\nC1\nRZĄD\n37\nMIEJSCE\n47\nCena z usługi demo\n75 zł",
+      "applicationErrors": [],
+      "scrollWidth": 1440,
+      "screenshot": "desktop-corner-ui.png"
+    },
+    {
+      "name": "mobile-row-one-ui",
+      "seat": "II-2-1-16",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mobile": true,
+      "url": "https://salesbeyond.vercel.app/?seat=II-2-1-16",
+      "announcement": "Sektor II-2, rząd 1, miejsce 16.",
+      "ticketText": "TWOJE MIEJSCE DEMO\nTwoja perspektywa · geometria 3D\nTrybuna II\nWolne · stan z usługi demo\nSEKTOR\nII-2\nRZĄD\n01\nMIEJSCE\n16\nCena z usługi demo\n85 zł",
+      "applicationErrors": [],
+      "scrollWidth": 390,
+      "screenshot": "mobile-row-one-ui.png"
+    }
+  ]
+}

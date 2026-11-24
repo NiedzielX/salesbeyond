@@ -1,0 +1,114 @@
+{
+  "checkedAt": "2026-11-24T15:09:21.784Z",
+  "deployment": "https://salesbeyond.vercel.app/",
+  "views": [
+    {
+      "name": "overview-roof",
+      "seat": null,
+      "purpose": "bryła, pełny dach, otwór i cztery trybuny",
+      "viewport": "1440x900",
+      "url": "https://salesbeyond.vercel.app/",
+      "webgl2": true,
+      "scrollWidth": 1440,
+      "applicationErrors": [],
+      "manualReview": "PASS: spójna zamknięta bryła, cztery trybuny i narożniki, pełna biała membrana z centralnym otworem oraz całe boisko; jasny dach ma niski kontrast z tłem, lecz jego obrys i konstrukcja pozostają czytelne.",
+      "screenshot": "overview-roof.png"
+    },
+    {
+      "name": "stand-i",
+      "seat": "I-2-25-29",
+      "purpose": "Trybuna I, środkowy rząd i przekrój dachu",
+      "viewport": "1440x900",
+      "url": "https://salesbeyond.vercel.app/?seat=I-2-25-29",
+      "webgl2": true,
+      "scrollWidth": 1440,
+      "applicationErrors": [],
+      "manualReview": "PASS: pełna przeciwległa trybuna, czytelny napis LECH i murawa; zamierzony przekrój dachu nie przecina widoku. Numer miejsca potwierdza kontrolowany URL/skrypt, nie sam wycinek sceny.",
+      "screenshot": "stand-i.png"
+    },
+    {
+      "name": "stand-ii-row-one",
+      "seat": "II-2-1-16",
+      "purpose": "dolny rząd Trybuny II i reklamy Beyond",
+      "viewport": "1440x900",
+      "url": "https://salesbeyond.vercel.app/?seat=II-2-1-16",
+      "webgl2": true,
+      "scrollWidth": 1440,
+      "applicationErrors": [],
+      "manualReview": "PASS: oko pozostaje nad murawą, bramka i pobliskie pole gry są widoczne, pionowa tablica Beyond nie przecina linii widzenia do boiska. Tablica jest dominującym elementem lewego skraju, ale nie zasłania celu.",
+      "screenshot": "stand-ii-row-one.png"
+    },
+    {
+      "name": "stand-iii",
+      "seat": "III-2-24-29",
+      "purpose": "Trybuna III, narożniki i dach",
+      "viewport": "1440x900",
+      "url": "https://salesbeyond.vercel.app/?seat=III-2-24-29",
+      "webgl2": true,
+      "scrollWidth": 1440,
+      "applicationErrors": [],
+      "manualReview": "PASS: perspektywa ze środkowego/górnego rzędu zachowuje całe boisko i ciągłość przeciwległej trybuny; przekrój dachu nie przecina murawy.",
+      "screenshot": "stand-iii.png"
+    },
+    {
+      "name": "stand-iv",
+      "seat": "IV-2-17-20",
+      "purpose": "Trybuna IV i niższy profil dachu",
+      "viewport": "1440x900",
+      "url": "https://salesbeyond.vercel.app/?seat=IV-2-17-20",
+      "webgl2": true,
+      "scrollWidth": 1440,
+      "applicationErrors": [],
+      "manualReview": "PASS: niższy profil kadru nadal pokazuje boisko, bramkę i trzy poziomy widowni; boczne napisy Beyond pozostają subtelne.",
+      "screenshot": "stand-iv.png"
+    },
+    {
+      "name": "corner-c1",
+      "seat": "C1-37-47",
+      "purpose": "ciągłość narożnika między trybunami",
+      "viewport": "1440x900",
+      "url": "https://salesbeyond.vercel.app/?seat=C1-37-47",
+      "webgl2": true,
+      "scrollWidth": 1440,
+      "applicationErrors": [],
+      "manualReview": "PASS: narożnik jest połączony z sąsiednimi trybunami bez widocznej szczeliny, boisko nie jest zasłonięte, a asymetryczny dach i napis LECH wzmacniają rozpoznawalność obiektu.",
+      "screenshot": "corner-c1.png"
+    },
+    {
+      "name": "mobile-overview",
+      "seat": null,
+      "purpose": "panorama i pełny dach na 390x844",
+      "mobile": true,
+      "viewport": "390x844",
+      "url": "https://salesbeyond.vercel.app/",
+      "webgl2": true,
+      "scrollWidth": 390,
+      "applicationErrors": [],
+      "manualReview": "PASS: pełna bryła i sektorowe etykiety mieszczą się w 390 px bez poziomego overflow; gęstość etykiet obniża czytelność, ale nie blokuje wyboru.",
+      "screenshot": "mobile-overview.png"
+    },
+    {
+      "name": "mobile-row-one",
+      "seat": "II-2-1-16",
+      "purpose": "dolny rząd i widoczność boiska na 390x844",
+      "mobile": true,
+      "viewport": "390x844",
+      "url": "https://salesbeyond.vercel.app/?seat=II-2-1-16",
+      "webgl2": true,
+      "scrollWidth": 390,
+      "applicationErrors": [],
+      "manualReview": "PASS: rząd 1 nie zapada się w murawę, boisko i bramka pozostają widoczne, kontrolki mieszczą się w 390 px. Bliska bramka naturalnie dominuje środek kadru.",
+      "screenshot": "mobile-row-one.png"
+    }
+  ],
+  "manualConclusion": {
+    "v1": "PASS dla macierzy desktop/mobile: zwykły adres otwiera panoramę z pełnym dachem, wybrane miejsca mają zamierzony przekrój, a kontrolowany przypadek rzędu 1 zachowuje prawidłową wysokość oka.",
+    "v2": "PASS dla proceduralnego MVP Enea-like: cztery trybuny, połączone narożniki, membranowy dach, napis LECH, boisko i perspektywy z sześciu reprezentatywnych punktów są spójne. Nie jest to dowód oficjalnego ani fotogrametrycznego cyfrowego bliźniaka.",
+    "evidenceLimit": "Screenshoty są wycinkami sceny. Dokładne ID fotela/rzędu wynikają z kontrolowanych parametrów URL i raportu skryptu; pełny panel UI z numerem miejsca nie znajduje się w tych kadrach.",
+    "remainingVisualDifferences": [
+      "Biała membrana ma niski kontrast z jasnym tłem panoramy.",
+      "Etykiety sektorów w mobilnej panoramie są gęste.",
+      "Pionowa tablica Beyond jest mocno widoczna w bliskim kadrze rzędu 1, choć nie zasłania murawy."
+    ]
+  }
+}
