@@ -4,6 +4,7 @@ import {
   type CreateSeatHoldInput,
   type HoldInventorySeat,
   type HoldItem,
+  type TicketSelection,
   type SeatHold,
   type createSeatHoldClient,
 } from '../integrations/seatHoldClient.ts';
@@ -11,6 +12,11 @@ import {basketLimit} from './basket.ts';
 
 type HoldClient = Pick<ReturnType<typeof createSeatHoldClient>, 'inventory' | 'create' | 'get' | 'release'> & {
   current(eventId: string): Promise<SeatHold | null>;
+  quoteV2?: ReturnType<typeof createSeatHoldClient>['quoteV2'];
+  createV2?: ReturnType<typeof createSeatHoldClient>['createV2'];
+  currentV2?: ReturnType<typeof createSeatHoldClient>['currentV2'];
+  getV2?: ReturnType<typeof createSeatHoldClient>['getV2'];
+  releaseV2?: ReturnType<typeof createSeatHoldClient>['releaseV2'];
 };
 type HoldStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 type HoldSource = 'created' | 'recovered';
@@ -22,6 +28,8 @@ export type LiveHoldQuote = Readonly<{
   items: readonly Readonly<HoldItem>[];
   subtotalMinor: number;
   avoidSingle?: boolean;
+  quoteToken?: string;
+  expiresAt?: string;
 }>;
 
 type ConfirmedHold = Readonly<Omit<SeatHold, 'items'>> & {
@@ -50,7 +58,8 @@ export type LiveHoldState = Readonly<
 const holdIdPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const rejectedByStore = new Set([
   'not_found', 'event_closed', 'catalog_changed', 'seat_limit', 'held', 'unavailable',
-  'single_seat_gap', 'idempotency_key_reused',
+  'single_seat_gap', 'idempotency_key_reused', 'below_minimum', 'invalid_ticket_type',
+  'quote_expired', 'quote_consumed',
 ]);
 const rejectedBeforeStore = new Set([
   'backend_not_configured', 'session_required', 'origin_not_allowed', 'rate_limited', 'invalid_request',
@@ -145,20 +154,24 @@ export function createLiveHoldFlow({
     if (hold.eventId !== eventId) throw new SeatHoldClientError('not_found', 404);
     return Object.freeze({
       ...hold,
-      items: Object.freeze(hold.items.map(({seatId, priceMinor}) => Object.freeze({seatId, priceMinor}))),
+      items: Object.freeze(hold.items.map(({seatId, priceMinor, ticketTypeId}) => Object.freeze({seatId, priceMinor, ...(ticketTypeId?{ticketTypeId}:{})}))),
     });
   }
 
   async function discoverHold() {
-    const hold = await client.current(eventId);
+    const hold = await (client.currentV2?.(eventId) ?? client.current(eventId));
     if (hold === null) return null;
     if (hold.eventId !== eventId || hold.status !== 'active') invalidResponse();
     return verifiedHold(hold);
   }
 
-  async function quote(ids: readonly string[], avoidSingle?: boolean) {
+  async function quote(selectionInput: readonly string[] | readonly TicketSelection[], avoidSingle?: boolean) {
     if (disposed || state.locked) return;
-    const seatIds = [...ids];
+    const typed = typeof selectionInput[0] === 'object';
+    const selections: TicketSelection[] = typed
+      ? (selectionInput as readonly TicketSelection[]).map(item=>({...item}))
+      : (selectionInput as readonly string[]).map(seatId=>({seatId,ticketTypeId:''}));
+    const seatIds = selections.map(item=>item.seatId);
     if (!seatIds.length) {
       begin({phase: 'idle', locked: false});
       return;
@@ -174,6 +187,19 @@ export function createLiveHoldFlow({
         if (!seat) throw new SeatHoldClientError('unavailable', null, {seatIds: [seatId]});
         return {seatId, ...seat};
       });
+      if (typed) {
+        if (!client.quoteV2 || selections.some(item=>!item.ticketTypeId)) throw new SeatHoldClientError('invalid_request', null);
+        const overview = await client.inventory(eventId);
+        if (!current(operation)) return;
+        if (overview.eventId!==eventId || !overview.sections) invalidResponse();
+        if (overview.status!=='open') throw new SeatHoldClientError('event_closed',null);
+        if (seatIds.length>overview.maxSeats) throw new SeatHoldClientError('seat_limit',null);
+        const response=await client.quoteV2({eventId,items:selections,expectedCatalogVersion:overview.version,avoidSingle});
+        if (!current(operation)) return;
+        const snapshot=Object.freeze({eventId,version:response.version,currency:response.currency,items:Object.freeze(response.items.map(item=>Object.freeze({...item}))),subtotalMinor:response.subtotalMinor,avoidSingle,quoteToken:response.quoteToken,expiresAt:response.expiresAt});
+        publish({phase:'quoted',locked:false,quote:snapshot});
+        return;
+      }
       const sections = [...new Set(selection.map(seat => seat.sectorId))];
       const inventories = await Promise.all(sections.map(section => client.inventory(eventId, section)));
       if (!current(operation)) return;
@@ -238,7 +264,7 @@ export function createLiveHoldFlow({
 
   async function readSavedHold(id: string) {
     try {
-      return verifiedHold(await client.get(id), id);
+      return verifiedHold(await (client.getV2?.(id) ?? client.get(id)), id);
     } catch (cause) {
       if (clientError(cause).code === 'not_found') return null;
       throw cause;
@@ -302,14 +328,16 @@ export function createLiveHoldFlow({
       avoidSingle: snapshot.avoidSingle,
     };
     try {
-      const response = await client.create(input);
+      const response = snapshot.quoteToken&&client.createV2
+        ? await client.createV2({eventId,quoteToken:snapshot.quoteToken,idempotencyKey})
+        : await client.create(input);
       if (!current(operation)) return;
       if (response.eventId !== eventId) invalidResponse();
       const hold = verifiedHold(response);
-      const prices = new Map(hold.items.map(item => [item.seatId, item.priceMinor]));
+      const prices = new Map(hold.items.map(item => [item.seatId, `${item.ticketTypeId??''}:${item.priceMinor}`]));
       if (hold.version !== snapshot.version || hold.currency !== snapshot.currency
         || hold.subtotalMinor !== snapshot.subtotalMinor || hold.items.length !== snapshot.items.length
-        || snapshot.items.some(item => prices.get(item.seatId) !== item.priceMinor)) {
+        || snapshot.items.some(item => prices.get(item.seatId) !== `${item.ticketTypeId??''}:${item.priceMinor}`)) {
         invalidResponse();
       }
       pendingKey = null;
@@ -359,7 +387,9 @@ export function createLiveHoldFlow({
     const operation = begin({phase: 'active', locked: true, hold: previous, source, operation: action});
     if (!current(operation)) return;
     try {
-      const result = await (action === 'refreshing' ? client.get(previous.id) : client.release(previous.id));
+      const result = await (action === 'refreshing'
+        ? (client.getV2?.(previous.id) ?? client.get(previous.id))
+        : (client.releaseV2?.(previous.id) ?? client.release(previous.id)));
       if (!current(operation)) return;
       const hold = verifiedHold(result, previous.id);
       if (action === 'releasing' && hold.status === 'active') invalidResponse();
@@ -386,6 +416,10 @@ export function createLiveHoldFlow({
       return () => { listeners.delete(listener); };
     },
     quote,
+    invalidateQuote() {
+      if (disposed || state.locked) return;
+      begin({phase:'idle',locked:false});
+    },
     create,
     retry,
     refresh: () => state.phase === 'restore-unknown' ? retry() : updateHold('refreshing'),

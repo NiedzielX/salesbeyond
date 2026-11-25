@@ -149,3 +149,47 @@ test('odrzuca zewnętrzny endpoint, nie-stringowe statusy i miejsca innego bloku
  const invalid=createSeatHoldClient({fetcher:fetcherFor(url=>okSession(url)??json({ok:true,hold:hold({status:['active']})}))});await assert.rejects(invalid.create(input),error=>error instanceof SeatHoldClientError&&error.code==='invalid_response');
  const wrongBlock=createSeatHoldClient({fetcher:fetcherFor(()=>json({ok:true,eventId,status:'open',version:7,currency:'PLN',maxSeats:10,holdSeconds:600,preventSingle:false,seats:[{seatId:'102-6-1',sectionId:'102',row:6,number:1,priceMinor:8500,status:'available'}]}))});await assert.rejects(wrongBlock.inventory(eventId,'101'),error=>error instanceof SeatHoldClientError&&error.code==='invalid_response');
 });
+
+test('v2 quote wysyła wyłącznie pary fotel-typ, a create używa tylko tokenu i klucza',async()=>{
+ const typedItems=[{seatId:'101-6-1',ticketTypeId:'child'},{seatId:'101-6-2',ticketTypeId:'standard'}];
+ const quoteToken='87654321-8765-4321-9876-123456789abc';
+ const calls:{op:string|null;body:unknown}[]=[];
+ const client=createSeatHoldClient({fetcher:fetcherFor((url,init)=>{
+  const op=url.searchParams.get('op');if(op==='session')return json({ok:true});
+  calls.push({op,body:JSON.parse(String(init.body))});
+  if(op==='quote-v2')return json({ok:true,quote:{quoteToken,eventId,expiresAt:'2035-01-01T11:02:00.000Z',version:7,currency:'PLN',subtotalMinor:15000,items:[{...typedItems[0],priceMinor:6500},{...typedItems[1],priceMinor:8500}]}});
+  return json({ok:true,hold:hold({items:[{...typedItems[0],priceMinor:6500},{...typedItems[1],priceMinor:8500}],subtotalMinor:15000})},201);
+ })});
+ const quote=await client.quoteV2({eventId,items:typedItems,expectedCatalogVersion:7,avoidSingle:true});
+ assert.equal(quote.quoteToken,quoteToken);assert.equal(quote.items[0].ticketTypeId,'child');
+ const created=await client.createV2({eventId,quoteToken,idempotencyKey:'stable-v2-key'});assert.equal(created.items[1].ticketTypeId,'standard');
+ assert.deepEqual(calls,[
+  {op:'quote-v2',body:{items:typedItems,expectedCatalogVersion:7,avoidSingle:true}},
+  {op:'create-v2',body:{quoteToken,idempotencyKey:'stable-v2-key'}},
+ ]);
+});
+
+test('v2 odrzuca podmieniony typ, cenę i niepełny snapshot',async()=>{
+ const items=[{seatId:'101-6-1',ticketTypeId:'child'}],quoteToken='87654321-8765-4321-9876-123456789abc';
+ for(const quote of [
+  {quoteToken,eventId,expiresAt:'2035-01-01T11:02:00.000Z',version:7,currency:'PLN',subtotalMinor:6500,items:[{seatId:'101-6-1',ticketTypeId:'standard',priceMinor:6500}]},
+  {quoteToken,eventId,expiresAt:'2035-01-01T11:02:00.000Z',version:7,currency:'PLN',subtotalMinor:1,items:[{seatId:'101-6-1',ticketTypeId:'child',priceMinor:6500}]},
+  {quoteToken,eventId,expiresAt:'2035-01-01T11:02:00.000Z',version:7,currency:'PLN',subtotalMinor:6500,items:[{seatId:'101-6-1',priceMinor:6500}]},
+ ]){
+  const client=createSeatHoldClient({fetcher:fetcherFor(url=>url.searchParams.get('op')==='session'?json({ok:true}):json({ok:true,quote}))});
+  await assert.rejects(client.quoteV2({eventId,items,expectedCatalogVersion:7}),{code:'invalid_response'});
+ }
+});
+
+test('v2 current/get/release zachowują typ, a legacy snapshot pozostaje czytelny',async()=>{
+ const typed=hold({items:[{seatId:'101-6-1',ticketTypeId:'child',priceMinor:8500}],subtotalMinor:8500});
+ const client=createSeatHoldClient({fetcher:fetcherFor((url,init)=>{
+  const op=url.searchParams.get('op');if(op==='session')return json({ok:true});
+  return json({ok:true,hold:op==='current-v2'?typed:{...typed,status:init.method==='DELETE'?'released':'active'}});
+ })});
+ assert.equal((await client.currentV2(eventId))?.items[0].ticketTypeId,'child');
+ assert.equal((await client.getV2(holdId)).items[0].ticketTypeId,'child');
+ assert.equal((await client.releaseV2(holdId)).status,'released');
+ const legacy=createSeatHoldClient({fetcher:fetcherFor(()=>json({ok:true,hold:hold()}))});
+ assert.equal((await legacy.currentV2(eventId))?.items[0].ticketTypeId,undefined);
+});

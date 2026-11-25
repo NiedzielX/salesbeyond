@@ -2,6 +2,7 @@ import {useEffect,useRef,useState} from 'react';
 import {createSeatHoldClient} from '../integrations/seatHoldClient.ts';
 import {createLiveHoldFlow,type LiveHoldState} from '../domain/liveHold.ts';
 import type {Seat} from '../data/stadium.ts';
+import type {TicketSelection} from '../integrations/seatHoldClient.ts';
 export function useLiveHold(catalog:readonly Seat[],enabled:boolean,createClient:typeof createSeatHoldClient=createSeatHoldClient,eventId='enea-demo'){
  const flow=useRef<ReturnType<typeof createLiveHoldFlow>|null>(null);
  const [mode,setMode]=useState<'loading'|'demo'|'service'|'unavailable'>(enabled?'loading':'demo');
@@ -29,5 +30,5 @@ export function useLiveHold(catalog:readonly Seat[],enabled:boolean,createClient
   window.addEventListener('focus',refresh);
   return()=>{clearInterval(interval);window.removeEventListener('focus',refresh);};
  },[mode]);
- return {mode,state,quote:(ids:readonly string[],avoidSingle:boolean)=>flow.current?.quote(ids,avoidSingle),create:()=>flow.current?.create(),retry:()=>flow.current?.retry(),refresh:()=>flow.current?.refresh(),release:()=>flow.current?.release()};
+ return {mode,state,quote:(items:readonly string[]|readonly TicketSelection[],avoidSingle:boolean)=>flow.current?.quote(items,avoidSingle),invalidateQuote:()=>flow.current?.invalidateQuote(),create:()=>flow.current?.create(),retry:()=>flow.current?.retry(),refresh:()=>flow.current?.refresh(),release:()=>flow.current?.release()};
 }

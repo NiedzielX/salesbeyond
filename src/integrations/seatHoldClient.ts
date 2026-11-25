@@ -1,6 +1,9 @@
 export type HoldStatus = 'active'|'released'|'expired';
-export type HoldItem = {seatId:string;priceMinor:number};
+export type TicketSelection = {seatId:string;ticketTypeId:string};
+export type HoldItem = {seatId:string;priceMinor:number;ticketTypeId?:string};
+export type TypedHoldItem = HoldItem & {ticketTypeId:string};
 export type SeatHold = {id:string;eventId:string;status:HoldStatus;expiresAt:string;version:number;currency:string;subtotalMinor:number;items:HoldItem[]};
+export type SeatQuote = {quoteToken:string;eventId:string;expiresAt:string;version:number;currency:string;subtotalMinor:number;items:TypedHoldItem[]};
 export type HoldInventorySeat = {seatId:string;sectionId:string;row:number;number:number;priceMinor:number;status:'available'|'blocked'|'sold'|'closed'|'held'};
 export type HoldInventorySection = {sectionId:string;total:number;available:number;minPriceMinor:number|null};
 export type SeatInventory = {eventId:string;status:'open'|'paused'|'closed'|'cancelled';version:number;currency:string;maxSeats:number;holdSeconds:number;preventSingle:boolean;sections?:HoldInventorySection[];seats?:HoldInventorySeat[]};
@@ -17,6 +20,8 @@ export class SeatHoldClientError extends Error {
  }
 }
 export type CreateSeatHoldInput={eventId:string;seatIds:string[];expectedCatalogVersion:number;idempotencyKey:string;avoidSingle?:boolean};
+export type QuoteSeatHoldInput={eventId:string;items:TicketSelection[];expectedCatalogVersion:number;avoidSingle?:boolean};
+export type CreateSeatHoldV2Input={eventId:string;quoteToken:string;idempotencyKey:string};
 type Fetcher=(input:RequestInfo|URL,init?:RequestInit)=>Promise<Response>;
 type Obj=Record<string,unknown>;
 const safeId=(value:unknown):value is string=>typeof value==='string'&&/^[A-Za-z0-9_-]{1,128}$/.test(value);
@@ -26,11 +31,18 @@ const object=(value:unknown):value is Obj=>!!value&&typeof value==='object'&&!Ar
 const statuses=['available','blocked','sold','closed','held'] as const;
 const errorCode=(value:unknown):string=>typeof value==='string'&&/^[a-z][a-z0-9_]{0,63}$/.test(value)?value:'backend_unavailable';
 function invalidResponse():never{throw new SeatHoldClientError('invalid_response',null);}
-function validateHold(value:unknown):SeatHold{
+function validateHold(value:unknown,requireTicketType=false):SeatHold{
  if(!object(value)||!uuid(value.id)||!safeId(value.eventId)||(typeof value.status!=='string'||!['active','released','expired'].includes(value.status))||typeof value.expiresAt!=='string'||!Number.isFinite(Date.parse(value.expiresAt))||!integer(value.version,1)||typeof value.currency!=='string'||!/^[A-Z]{3}$/.test(value.currency)||!integer(value.subtotalMinor)||!Array.isArray(value.items)||value.items.length<1||value.items.length>10)invalidResponse();
- const items=value.items.map(item=>{if(!object(item)||!safeId(item.seatId)||!integer(item.priceMinor))invalidResponse();return {seatId:item.seatId,priceMinor:Number(item.priceMinor)};});
+ const items=value.items.map(item=>{if(!object(item)||!safeId(item.seatId)||!integer(item.priceMinor)||requireTicketType&&!safeId(item.ticketTypeId)||item.ticketTypeId!==undefined&&!safeId(item.ticketTypeId))invalidResponse();return {seatId:item.seatId,priceMinor:Number(item.priceMinor),...(typeof item.ticketTypeId==='string'?{ticketTypeId:item.ticketTypeId}:{})};});
  if(new Set(items.map(item=>item.seatId)).size!==items.length||items.reduce((sum,item)=>sum+item.priceMinor,0)!==value.subtotalMinor)invalidResponse();
  return {id:value.id,eventId:value.eventId,status:value.status as HoldStatus,expiresAt:value.expiresAt,version:Number(value.version),currency:value.currency,subtotalMinor:Number(value.subtotalMinor),items};
+}
+function validateQuote(value:unknown,requested:readonly TicketSelection[],eventId:string):SeatQuote{
+ if(!object(value)||!uuid(value.quoteToken))invalidResponse();
+ const hold=validateHold({...value,id:value.quoteToken,status:'active'},true);
+ const expected=new Map(requested.map(item=>[item.seatId,item.ticketTypeId]));
+ if(hold.eventId!==eventId||hold.items.length!==requested.length||hold.items.some(item=>!item.ticketTypeId||expected.get(item.seatId)!==item.ticketTypeId))invalidResponse();
+ return {quoteToken:value.quoteToken,eventId:hold.eventId,expiresAt:hold.expiresAt,version:hold.version,currency:hold.currency,subtotalMinor:hold.subtotalMinor,items:hold.items as TypedHoldItem[]};
 }
 function validateInventory(value:unknown,eventId:string):SeatInventory{
  if(!object(value)||value.eventId!==eventId||(typeof value.status!=='string'||!['open','paused','closed','cancelled'].includes(value.status))||!integer(value.version,1)||typeof value.currency!=='string'||!/^[A-Z]{3}$/.test(value.currency)||!integer(value.maxSeats)||Number(value.maxSeats)>10||!integer(value.holdSeconds)||typeof value.preventSingle!=='boolean')invalidResponse();
@@ -48,6 +60,7 @@ function assertExactSeats(hold:SeatHold,requested:string[],eventId:string,versio
  const returned=hold.items.map(item=>item.seatId);
  if(hold.eventId!==eventId||hold.version!==version||returned.length!==requested.length||new Set(returned).size!==returned.length||requested.some(id=>!returned.includes(id)))invalidResponse();
 }
+function validSelections(items:unknown):items is TicketSelection[]{return Array.isArray(items)&&items.length>0&&items.length<=10&&items.every(item=>object(item)&&Object.keys(item).length===2&&safeId(item.seatId)&&safeId(item.ticketTypeId))&&new Set(items.map(item=>item.seatId)).size===items.length;}
 
 /** Same-origin gateway client. It never persists session credentials or retries mutations. */
 export function createSeatHoldClient(options:{fetcher?:Fetcher;endpoint?:string}={}){
@@ -94,6 +107,19 @@ export function createSeatHoldClient(options:{fetcher?:Fetcher;endpoint?:string}
    const value=await request('create',{eventId:snapshot.eventId},{seatIds:snapshot.seatIds,expectedCatalogVersion:snapshot.expectedCatalogVersion,idempotencyKey:snapshot.idempotencyKey,...(snapshot.avoidSingle===undefined?{}:{avoidSingle:snapshot.avoidSingle})});
    const hold=validateHold(value.hold);assertExactSeats(hold,snapshot.seatIds,snapshot.eventId,snapshot.expectedCatalogVersion);return hold;
   },
+  async quoteV2(input:QuoteSeatHoldInput){
+   if(!safeId(input.eventId)||!validSelections(input.items)||!integer(input.expectedCatalogVersion,1)||input.avoidSingle!==undefined&&typeof input.avoidSingle!=='boolean')throw new SeatHoldClientError('invalid_request',null);
+   const snapshot={...input,items:input.items.map(item=>({...item}))};
+   await ensureSession();
+   const value=await request('quote-v2',{eventId:snapshot.eventId},{items:snapshot.items,expectedCatalogVersion:snapshot.expectedCatalogVersion,avoidSingle:snapshot.avoidSingle===true});
+   return validateQuote(value.quote,snapshot.items,snapshot.eventId);
+  },
+  async createV2(input:CreateSeatHoldV2Input){
+   if(!safeId(input.eventId)||!uuid(input.quoteToken)||typeof input.idempotencyKey!=='string'||!/^[A-Za-z0-9_-]{8,128}$/.test(input.idempotencyKey))throw new SeatHoldClientError('invalid_request',null);
+   await ensureSession();
+   const value=await request('create-v2',{eventId:input.eventId},{quoteToken:input.quoteToken,idempotencyKey:input.idempotencyKey});
+   const hold=validateHold(value.hold,true);if(hold.eventId!==input.eventId)invalidResponse();return hold;
+  },
   async current(eventId:string):Promise<SeatHold|null>{
    if(!safeId(eventId)||eventId.length>80)throw new SeatHoldClientError('invalid_request',null);
    try{
@@ -107,13 +133,20 @@ export function createSeatHoldClient(options:{fetcher?:Fetcher;endpoint?:string}
     throw error;
    }
   },
+  async currentV2(eventId:string):Promise<SeatHold|null>{
+   if(!safeId(eventId)||eventId.length>80)throw new SeatHoldClientError('invalid_request',null);
+   try{const value=await request('current-v2',{eventId});if(value.hold===null)return null;const hold=validateHold(value.hold);if(hold.eventId!==eventId||hold.status!=='active')invalidResponse();return hold;}
+   catch(error){if(error instanceof SeatHoldClientError&&(error.status===401&&error.code==='session_required'||error.status===404&&error.code==='not_found'))return null;throw error;}
+  },
   async get(holdId:string){
    if(!uuid(holdId))throw new SeatHoldClientError('invalid_request',null);await ensureSession();
    const value=await request('hold',{holdId}),hold=validateHold(value.hold);if(hold.id!==holdId)invalidResponse();return hold;
   },
+  async getV2(holdId:string){if(!uuid(holdId))throw new SeatHoldClientError('invalid_request',null);await ensureSession();const value=await request('hold-v2',{holdId}),hold=validateHold(value.hold);if(hold.id!==holdId)invalidResponse();return hold;},
   async release(holdId:string){
    if(!uuid(holdId))throw new SeatHoldClientError('invalid_request',null);await ensureSession();
    const value=await request('hold',{holdId},undefined,'DELETE'),hold=validateHold(value.hold);if(hold.id!==holdId||!['released','expired'].includes(hold.status))invalidResponse();return hold;
   },
+  async releaseV2(holdId:string){if(!uuid(holdId))throw new SeatHoldClientError('invalid_request',null);await ensureSession();const value=await request('hold-v2',{holdId},undefined,'DELETE'),hold=validateHold(value.hold);if(hold.id!==holdId||!['released','expired'].includes(hold.status))invalidResponse();return hold;},
  };
 }

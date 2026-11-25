@@ -135,6 +135,37 @@ test('quotes each selected section once with server prices and creates exactly t
   unsubscribe();
 });
 
+test('v2 quote zachowuje typy, unieważnia token po zmianie i tworzy dokładny snapshot',async()=>{
+ const quoteToken='87654321-8765-4321-9876-123456789abc',quotes:unknown[]=[],creates:unknown[]=[];
+ const typedItems=[{seatId:a.id,ticketTypeId:'child'},{seatId:b.id,ticketTypeId:'standard'}];
+ const typedHold=hold([a.id,b.id],{items:[{seatId:a.id,ticketTypeId:'child',priceMinor:7550},{seatId:b.id,ticketTypeId:'standard',priceMinor:9000}],subtotalMinor:16550});
+ const {flow}=fixture({client:{
+  async inventory(id:string,sectionId?:string){assert.equal(id,eventId);assert.equal(sectionId,undefined);return {...inventory('101'),seats:undefined,sections:[{sectionId:'101',total:2,available:2,minPriceMinor:9000}]};},
+  async quoteV2(input){quotes.push(input);return {quoteToken,eventId,expiresAt:'2035-01-01T12:02:00.000Z',version:7,currency:'PLN',subtotalMinor:16550,items:typedHold.items as Required<SeatHold['items'][number]>[]};},
+  async createV2(input){creates.push(input);return typedHold;},
+  async currentV2(){return null;},async getV2(){return typedHold;},async releaseV2(){return {...typedHold,status:'released'};},
+ }});
+ await flow.quote(typedItems,true);
+ const quoted=flow.getState();assert.equal(quoted.phase,'quoted');if(quoted.phase==='quoted'){assert.equal(quoted.quote.quoteToken,quoteToken);assert.equal(quoted.quote.items[0].ticketTypeId,'child');}
+ flow.invalidateQuote();assert.equal(flow.getState().phase,'idle');await flow.create();assert.equal(creates.length,0);
+ await flow.quote(typedItems,true);await flow.create();assert.deepEqual(quotes,[
+  {eventId,items:typedItems,expectedCatalogVersion:7,avoidSingle:true},
+  {eventId,items:typedItems,expectedCatalogVersion:7,avoidSingle:true},
+ ]);assert.deepEqual(creates,[{eventId,quoteToken,idempotencyKey:'stable-key-1'}]);
+ const active=flow.getState();assert.equal(active.phase,'active');if(active.phase==='active')assert.equal(active.hold.items[0].ticketTypeId,'child');
+});
+
+test('spóźniony quote v2 nie przywraca unieważnionego wyboru',async()=>{
+ const pending=deferred<{quoteToken:string;eventId:string;expiresAt:string;version:number;currency:string;subtotalMinor:number;items:{seatId:string;ticketTypeId:string;priceMinor:number}[]}>();
+ const {flow}=fixture({client:{
+  async inventory(){return {...inventory('101'),seats:undefined,sections:[{sectionId:'101',total:2,available:2,minPriceMinor:9000}]};},
+  quoteV2:()=>pending.promise,
+ }});
+ const request=flow.quote([{seatId:a.id,ticketTypeId:'child'}]);flow.invalidateQuote();
+ pending.resolve({quoteToken:'87654321-8765-4321-9876-123456789abc',eventId,expiresAt:'2035-01-01T12:02:00.000Z',version:7,currency:'PLN',subtotalMinor:7550,items:[{seatId:a.id,ticketTypeId:'child',priceMinor:7550}]});
+ await request;assert.equal(flow.getState().phase,'idle');
+});
+
 test('rejects unrecognized IDs, duplicates, removed/held seats, stale catalog, and inconsistent inventory', async () => {
   const cases: [string[], string, Partial<SeatInventory>?][] = [
     [[a.id, 'unknown'], 'unavailable'],
