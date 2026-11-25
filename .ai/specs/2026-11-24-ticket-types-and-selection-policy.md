@@ -94,4 +94,16 @@ Zakres:
 
 ## Realizacja
 
-Właściciel zatwierdził B5a i migrację 2026-11-25. Implementacja rozpoczęta.
+Właściciel zatwierdził B5a i migrację 2026-11-25. Klient, kontrakt HTTP v2,
+RPC, migracje i testy są zaimplementowane. Migracje zostały zastosowane w
+`pnexqoyhazwlobzgdmzt`: oba wydarzenia mają po 38 078 miejsc, wersję 2,
+odrębne polityki 1–10 / 2–6 i po trzy typy biletów. Produkcyjny smoke RPC
+potwierdził quote 126,00 zł, atomowe create, replay tego samego holda i release.
+RLS nowych tabel jest włączone bez polityk jako celowe deny-all; funkcje publiczne
+v2 mają EXECUTE wyłącznie dla `service_role` i stały `search_path`.
+
+Lokalne bramki: lint, typecheck, 214 testów źródeł + 1 test gotowego API i build
+przeszły. Desktop 1440×900 i mobile 390×844 potwierdzają zmianę typu/ceny,
+limit 2/6, cele 44 px, brak overflow i błędów konsoli. AC6 pozostaje częściowo
+otwarte wyłącznie dla quote/hold/reload/release przez wdrożony interfejs v2,
+ponieważ deploy aplikacji nie był objęty zgodą.
