@@ -25,7 +25,11 @@ export function createHoldRuntime(env:BackendEnv,fetcher?:typeof fetch){
  if(op==='session')url.pathname='/api/seat-session';
  else if(['inventory','create'].includes(op??'')&&validEventId)url.pathname=`/api/events/${eventId}/${op==='create'?'holds':'inventory'}`;
  else if(op==='current'&&validEventId)url.pathname=`/api/events/${eventId}/holds/current`;
+ else if(op==='quote-v2'&&validEventId)url.pathname=`/api/v2/events/${eventId}/quotes`;
+ else if(op==='create-v2'&&validEventId)url.pathname=`/api/v2/events/${eventId}/holds`;
+ else if(op==='current-v2'&&validEventId)url.pathname=`/api/v2/events/${eventId}/holds/current`;
  else if(op==='hold'&&/^[0-9a-f-]{36}$/i.test(holdId))url.pathname=`/api/holds/${holdId}`;
+ else if(op==='hold-v2'&&/^[0-9a-f-]{36}$/i.test(holdId))url.pathname=`/api/v2/holds/${holdId}`;
  else return Response.json({ok:false,error:{code:'not_found'}},{status:404,headers:{'Cache-Control':'no-store'}});
  url.searchParams.delete('op');url.searchParams.delete('eventId');url.searchParams.delete('holdId');
  return api(new Request(url,request));

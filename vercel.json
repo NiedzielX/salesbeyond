@@ -1,1 +1,15 @@
-{"buildCommand":"npm run build","outputDirectory":"dist","framework":"vite","functions":{"api/seat-api.ts":{"maxDuration":15,"regions":["fra1"]}},"regions":["fra1"]}
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "functions": {
+    "api/seat-api.ts": { "maxDuration": 15, "regions": ["fra1"] }
+  },
+  "regions": ["fra1"],
+  "rewrites": [
+    { "source": "/api/v2/events/:eventId/quotes", "destination": "/api/seat-api?op=quote-v2&eventId=:eventId" },
+    { "source": "/api/v2/events/:eventId/holds", "destination": "/api/seat-api?op=create-v2&eventId=:eventId" },
+    { "source": "/api/v2/events/:eventId/holds/current", "destination": "/api/seat-api?op=current-v2&eventId=:eventId" },
+    { "source": "/api/v2/holds/:holdId", "destination": "/api/seat-api?op=hold-v2&holdId=:holdId" }
+  ]
+}

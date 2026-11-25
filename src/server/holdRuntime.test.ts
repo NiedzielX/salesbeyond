@@ -47,3 +47,29 @@ test('brak sekretu limitera lub zła konfiguracja pozostają zamknięte, bez wyw
  const badOrigin=createHoldRuntime({...env,APP_ORIGIN:'not-a-url'});assert.equal((await badOrigin(new Request(origin+'/api/seat-api?op=session'))).status,503);
  const invalid=createHoldRuntime({...env,SUPABASE_URL:'http://untrusted.test'});assert.equal((await invalid(new Request(origin+'/api/seat-api?op=session'))).status,503);
 });
+
+test('v2 gateway dispatches canonical and query routes to the same guarded RPCs',async()=>{
+ const seen:string[]=[];
+ const runtime=createHoldRuntime(env,async(url)=>{
+  const name=String(url).split('/').at(-1)!;
+  seen.push(name);
+  return Response.json(name==='sb_consume_hold_request'?{ok:true,allowed:true}:{ok:false,code:'not_found'});
+ });
+ const eventId='enea-demo',holdId='12345678-1234-4321-9876-123456789abc';
+ const headers={Origin:origin,Cookie:'__Host-salesbeyond_fan='+'a'.repeat(64),'Content-Type':'application/json','X-Forwarded-For':'192.0.2.10'};
+ const quote={items:[{seatId:'a',ticketTypeId:'standard'}],expectedCatalogVersion:1,avoidSingle:false};
+ const operations=[
+  {paths:[`/api/v2/events/${eventId}/quotes`,`/api/seat-api?op=quote-v2&eventId=${eventId}`],method:'POST',body:quote,expected:['sb_consume_hold_request','sb_quote_v2'],status:404},
+  {paths:[`/api/v2/events/${eventId}/holds`,`/api/seat-api?op=create-v2&eventId=${eventId}`],method:'POST',body:{quoteToken:holdId,idempotencyKey:'runtime-v2'},expected:['sb_consume_hold_request','sb_create_hold_v2'],status:404},
+  {paths:[`/api/v2/events/${eventId}/holds/current`,`/api/seat-api?op=current-v2&eventId=${eventId}`],method:'GET',expected:['sb_current_hold'],status:200},
+  {paths:[`/api/v2/holds/${holdId}`,`/api/seat-api?op=hold-v2&holdId=${holdId}`],method:'GET',expected:['sb_get_hold'],status:404},
+  {paths:[`/api/v2/holds/${holdId}`,`/api/seat-api?op=hold-v2&holdId=${holdId}`],method:'DELETE',expected:['sb_release_hold'],status:404},
+ ];
+ for(const {paths,method,body,expected,status} of operations){
+  for(const path of paths){
+   const response=await runtime(new Request(origin+path,{method,headers,body:JSON.stringify(body)}));
+   assert.equal(response.status,status);
+   assert.deepEqual(seen.splice(0),expected);
+  }
+ }
+});
