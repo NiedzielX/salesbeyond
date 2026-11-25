@@ -28,8 +28,6 @@ try:
     sql('alter default privileges in schema public grant execute on functions to anon, authenticated;')
     sql((root/'database/20261120112649_own_current_hold.sql').read_text())
     print('Migrations: passed on PostgreSQL 17.6',flush=True)
-    sql((root/'database/tests.sql').read_text())
-    print('SQL behavior, expiry, policy and RLS fixture: passed (rolled back)',flush=True)
     seed=command(['node','--experimental-strip-types',str(root/'scripts/export-demo-inventory.mjs')],capture_output=True).stdout
     sql(seed)
     count=sql("select count(*) from sb_hold.seats where event_id='enea-demo';").stdout.strip()
@@ -80,6 +78,43 @@ try:
     idempotency=sql("select (select count(*)=38078 from sb_hold.seats where event_id='enea-demo-alt') and (select count(*)=2 from sb_hold.seats where event_id='enea-demo-alt' and active_hold is not null) and (select count(*)=2 from sb_hold.seats where event_id='enea-demo' and active_hold is not null);").stdout.strip()
     if idempotency!='t': raise AssertionError('Rerunning event migration changed inventory or active holds')
     print('Second event migration: copied 38,078 seats with rounded +20% prices; rerun preserved both events’ holds',flush=True)
+    b5a_migration=(root/'database/20261125105833_ticket_types_and_quotes.sql').read_text()
+    sql(b5a_migration)
+    sql((root/'database/tests.sql').read_text())
+    print('SQL behavior, snapshots, expiry, policy and RLS fixtures: passed (rolled back)',flush=True)
+    active_v2=json.loads(sql("""
+    with quoted as (
+      select public.sb_quote_v2('enea-demo',repeat('d',64),jsonb_build_array(
+        jsonb_build_object('seatId',(select seat_id from sb_hold.seats where event_id='enea-demo'
+          and state='available' and active_hold is null order by seat_id limit 1),'ticketTypeId','reduced')
+      ),2,false) as result
+    )
+    select public.sb_create_hold_v2('enea-demo',repeat('d',64),(result#>>'{quote,quoteToken}')::uuid,'b5a-proof') from quoted;
+    """).stdout.strip())['hold']
+    sql(b5a_migration)
+    assert json.loads(sql("select public.sb_current_hold('enea-demo',repeat('d',64));").stdout)['hold']==active_v2
+    assert sql("""
+      select (select count(*)=6 from sb_hold.ticket_types)
+        and (select count(*)=1 and bool_and(consumed_hold_id is not null) from sb_hold.quotes)
+        and (select count(*)=2 and bool_and(version=2) from sb_hold.events
+          where id in ('enea-demo','enea-demo-alt'))
+        and (select count(*)=2 from sb_hold.holds where idempotency_key in ('seed-proof','alt-proof') and version=1
+          and status='active' and not (items->0 ? 'ticketTypeId'))
+        and (select count(*)=5 from sb_hold.seats where active_hold is not null);
+    """).stdout.strip()=='t', 'B5a rerun changed the catalog or active holds'
+    # Repair one fixture's changed price and policy, bumping that event exactly once.
+    sql("""
+      update sb_hold.ticket_types set adjustment_minor=1 where event_id='enea-demo-alt' and id='reduced';
+      update sb_hold.events set min_seats=1 where id='enea-demo-alt';
+    """)
+    sql(b5a_migration)
+    sql(b5a_migration)
+    assert sql("""
+      select (select version=2 from sb_hold.events where id='enea-demo')
+        and (select version=3 and min_seats=2 from sb_hold.events where id='enea-demo-alt')
+        and (select adjustment_minor=-1500 from sb_hold.ticket_types where event_id='enea-demo-alt' and id='reduced');
+    """).stdout.strip()=='t', 'Version must change once per actual event catalog change'
+    print('B5a migration: six event-scoped types; reruns preserved snapshots and bumped only a changed event once',flush=True)
     command(['python3',str(root/'scripts/test-holds-concurrency.py'),name,'hold_test'])
     print(json.dumps({'result':'passed','database':'local ephemeral PostgreSQL 17.6','cloudApplied':False}),flush=True)
 except subprocess.CalledProcessError as error:

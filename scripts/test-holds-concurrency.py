@@ -105,3 +105,70 @@ new=replacement["hold"]["id"]
 query(f"set role service_role; select public.sb_release_hold('{old}',repeat('c',64));")
 assert query("select active_hold from sb_hold.seats where event_id='race-expiry' and seat_id='a';")==new
 print('expiry replacement succeeded while old hold was locked; stale release preserved newer pointer')
+
+query("""
+  insert into sb_hold.events (id,status) values
+    ('race-v2-key','open'),('race-v2-replay','open'),('race-v2-quote','open');
+  insert into sb_hold.seats (event_id,seat_id,section_id,row,number,run_id,run_order,price_minor)
+    select id, 'a', 'test', 1, 1, 'row', 0, 6500 from sb_hold.events where id like 'race-v2-%';
+  insert into sb_hold.ticket_types (event_id,id,label,sort_order,adjustment_minor)
+    select id, 'standard', 'Normalny', 0, 0 from sb_hold.events where id like 'race-v2-%';
+""")
+
+quote_items = '[{"seatId":"a","ticketTypeId":"standard"}]'
+
+
+def quote_v2(event, client, delay=0):
+    return f"""
+      set application_name = 'sb-v2-{client}';
+      set role service_role;
+      begin;
+      select public.sb_quote_v2('{event}',repeat('e',64),'{quote_items}',1,false)->'quote';
+      {f'SELECT pg_sleep({delay});' if delay else ''}
+      commit;"""
+
+
+with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+    first = pool.submit(query, quote_v2('race-v2-quote', 'a', 3.0))
+    wait_until('sb-v2-a', 'Timeout/PgSleep')
+    second = pool.submit(query, quote_v2('race-v2-quote', 'b'))
+    wait_until('sb-v2-b', 'Lock/transactionid')
+    first_quote, second_quote = (json.loads(future.result()) for future in (first, second))
+assert first_quote["quoteToken"] != second_quote["quoteToken"]
+assert first_quote["items"] == second_quote["items"]
+print('v2 simultaneous quotes on the same seat -> independent tokens and matching snapshots')
+
+
+def race_v2(event, second_key, same_key):
+    token = json.loads(query(quote_v2(event, 'seed')))["quoteToken"]
+
+    def consume_v2(client, key, delay=0):
+        return f"""
+          set application_name = 'sb-v2-{client}';
+          set role service_role;
+          begin;
+          select public.sb_create_hold_v2('{event}',repeat('e',64),'{token}','{key}');
+          {f'SELECT pg_sleep({delay});' if delay else ''}
+          commit;"""
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+        first = pool.submit(query, consume_v2('a', 'race-key-a', 3.0))
+        wait_until('sb-v2-a', 'Timeout/PgSleep')
+        second = pool.submit(query, consume_v2('b', second_key))
+        wait_until('sb-v2-b', 'Lock/transactionid')
+        winner, follower = (json.loads(future.result()) for future in (first, second))
+    assert winner["ok"], winner
+    if same_key:
+        assert follower["replayed"] and follower["hold"] == winner["hold"], follower
+    else:
+        assert follower == {"ok": False, "code": "quote_consumed"}, follower
+    assert query(f"""
+      select count(*) from sb_hold.quotes q join sb_hold.holds h on h.id=q.consumed_hold_id
+      join sb_hold.seats s on s.active_hold=h.id where q.id='{token}';
+    """) == '1'
+    assert query(f"select count(*) from sb_hold.holds where event_id='{event}';") == '1'
+    print(f'{event} Lock/transactionid -> {"same hold replayed" if same_key else "second key rejected"}; one hold row')
+
+
+race_v2('race-v2-key', 'race-key-b', False)
+race_v2('race-v2-replay', 'race-key-a', True)
