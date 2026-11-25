@@ -1,5 +1,5 @@
 ---
-status: draft
+status: in-progress
 created: 2026-11-24
 owner: product-owner
 related:
@@ -94,4 +94,4 @@ Zakres:
 
 ## Realizacja
 
-Nie rozpoczęto. Wymagany niezależny review draftu i jawne zatwierdzenie właściciela.
+Właściciel zatwierdził B5a i migrację 2026-11-25. Implementacja rozpoczęta.

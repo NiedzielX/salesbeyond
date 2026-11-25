@@ -11,7 +11,28 @@ export type DemoEvent = {
   currency: 'PLN';
   preventSingleSeats: boolean;
   catalogPriceMultiplier: number;
+  selectionPolicy: Readonly<{minSeats: number; maxSeats: number}>;
+  ticketTypes: readonly DemoTicketType[];
+  defaultTicketTypeId: string;
 };
+
+export type DemoTicketType = Readonly<{
+  id: 'standard' | 'reduced' | 'child';
+  label: string;
+  adjustmentMinor: number;
+}>;
+
+const ticketTypesA = [
+  {id: 'standard', label: 'Normalny', adjustmentMinor: 0},
+  {id: 'reduced', label: 'Ulgowy', adjustmentMinor: -1000},
+  {id: 'child', label: 'Dziecko', adjustmentMinor: -2000},
+] as const satisfies readonly DemoTicketType[];
+
+const ticketTypesB = [
+  {id: 'standard', label: 'Normalny', adjustmentMinor: 0},
+  {id: 'reduced', label: 'Ulgowy', adjustmentMinor: -1500},
+  {id: 'child', label: 'Dziecko', adjustmentMinor: -3000},
+] as const satisfies readonly DemoTicketType[];
 
 export const eventCatalog: readonly DemoEvent[] = [
   {
@@ -22,6 +43,9 @@ export const eventCatalog: readonly DemoEvent[] = [
     currency: 'PLN',
     preventSingleSeats: false,
     catalogPriceMultiplier: 1,
+    selectionPolicy: {minSeats: 1, maxSeats: 10},
+    ticketTypes: ticketTypesA,
+    defaultTicketTypeId: 'standard',
   },
   {
     id: 'enea-demo-alt',
@@ -31,6 +55,9 @@ export const eventCatalog: readonly DemoEvent[] = [
     currency: 'PLN',
     preventSingleSeats: false,
     catalogPriceMultiplier: 1.2,
+    selectionPolicy: {minSeats: 2, maxSeats: 6},
+    ticketTypes: ticketTypesB,
+    defaultTicketTypeId: 'standard',
   },
 ];
 
@@ -46,6 +73,18 @@ export function resolveEvent(id: unknown): DemoEvent {
 /** A display-only whole-PLN catalogue price, independent of live inventory prices. */
 export function priceForEvent(event: DemoEvent, seat: Seat): number {
   return Math.round(seat.price * event.catalogPriceMultiplier);
+}
+
+export function resolveTicketType(event: DemoEvent, id: unknown): DemoTicketType {
+  return typeof id === 'string'
+    ? event.ticketTypes.find((ticketType) => ticketType.id === id) ?? event.ticketTypes[0]
+    : event.ticketTypes[0];
+}
+
+/** Display-only catalogue amount. The hold service recalculates integer minor units independently. */
+export function ticketPriceMinor(event: DemoEvent, seat: Seat, ticketTypeId: unknown): number {
+  const baseMinor = priceForEvent(event, seat) * 100;
+  return Math.max(0, baseMinor + resolveTicketType(event, ticketTypeId).adjustmentMinor);
 }
 
 /** Return the shared chart with prices projected for this event. */

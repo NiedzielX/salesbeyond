@@ -10,10 +10,11 @@ const all=stadiumSeats(),free=all.filter(s=>s.available),taken=all.find(s=>!s.av
 function memoryStorage(){const data=new Map<string,string>();return {getItem:(key:string)=>data.get(key)??null,setItem:(key:string,value:string)=>{data.set(key,value);}} satisfies FanStorage;}
 
 test('powrót odtwarza kanoniczny koszyk, filtry i podgląd, zapis zawiera wyłącznie ID/preferencje',()=>{
- const state=freshFanState();state.basket=free.slice(0,10);state.selection=selectionReducer(initialSelection,{type:'seat',seat:taken});state.filters={maxPrice:75,availableOnly:false};state.stand=2;state.surface='map';
+ const state=freshFanState();state.basket=free.slice(0,10);state.ticketTypeBySeat=Object.fromEntries(state.basket.map((seat,index)=>[seat.id,index===0?'child':'standard']));state.selection=selectionReducer(initialSelection,{type:'seat',seat:taken});state.filters={maxPrice:75,availableOnly:false};state.stand=2;state.surface='map';
  const raw=encodeFanSession(state),doc=JSON.parse(raw),restored=decodeFanSession(raw);
  assert.deepEqual(restored.state,state);assert.equal(restored.restored,true);assert.equal(restored.discarded,0);
  assert.deepEqual(doc.cart,state.basket.map(s=>s.id));assert.ok(!raw.includes('position'));assert.ok(!raw.includes('available"'));assert.ok(!raw.includes('price"'));assert.ok(!raw.includes('image'));
+ assert.equal(doc.ticketTypeBySeat[state.basket[0].id],'child');assert.equal(restored.state.ticketTypeBySeat[state.basket[1].id],'standard');
  assert.equal(restored.state.selection.seat?.available,false,'zajęty fotel nadal można obejrzeć');
  const changedPrice=state.basket.map(s=>({...s,price:1,position:[999,999,999] as [number,number,number]}));
  assert.deepEqual(decodeFanSession(encodeFanSession({...state,basket:changedPrice})).state.basket,state.basket);
@@ -51,12 +52,14 @@ test('sesje wydarzeń są rozdzielone, a drugi cennik odtwarza się wyłącznie 
  const resolveA=(id:string)=>eventA.find(seat=>seat.id===id)??null;
  const resolveB=(id:string)=>eventB.find(seat=>seat.id===id)??null;
  assert.notEqual(seatA.price,seatB.price);
- assert.equal(saveFanSession(store,{...freshFanState(),basket:[seatA]},false,'enea-demo'),true);
- assert.equal(saveFanSession(store,{...freshFanState(),basket:[seatB]},false,'enea-demo-alt'),true);
+ assert.equal(saveFanSession(store,{...freshFanState(),basket:[seatA],ticketTypeBySeat:{[seatA.id]:'child'}},false,'enea-demo'),true);
+ assert.equal(saveFanSession(store,{...freshFanState(),basket:[seatB],ticketTypeBySeat:{[seatB.id]:'reduced'}},false,'enea-demo-alt'),true);
  const restoredA=readFanSession(store,false,'enea-demo',resolveA).state.basket;
  const restoredB=readFanSession(store,false,'enea-demo-alt',resolveB).state.basket;
  assert.deepEqual(restoredA.map(seat=>[seat.id,seat.price]),[[seatA.id,seatA.price]]);
  assert.deepEqual(restoredB.map(seat=>[seat.id,seat.price]),[[seatB.id,seatB.price]]);
+ assert.equal(readFanSession(store,false,'enea-demo',resolveA).state.ticketTypeBySeat[seatA.id],'child');
+ assert.equal(readFanSession(store,false,'enea-demo-alt',resolveB).state.ticketTypeBySeat[seatB.id],'reduced');
  assert.equal(applySeatLink(freshFanState(),`?seat=${seatB.id}`,false,resolveB).state.selection.seat?.price,seatB.price);
  assert.notEqual(fanSessionKey(false,'enea-demo'),fanSessionKey(false,'enea-demo-alt'));
 });
@@ -65,6 +68,14 @@ test('stary zapis v1 jest migrowany logicznie tylko dla domyślnego wydarzenia',
  store.setItem('salesbeyond:enea-demo:fan:v1:full',encodeFanSession(state));
  assert.deepEqual(readFanSession(store,false,'enea-demo').state.basket.map(seat=>seat.id),state.basket.map(seat=>seat.id));
  assert.deepEqual(readFanSession(store,false,'enea-demo-alt',id=>seatsForEvent('enea-demo-alt').find(seat=>seat.id===id)??null).state.basket,[]);
+});
+test('historyczny zapis bez typów dostaje domyślny typ, a obce i zbędne przypisania są usuwane',()=>{
+ const state={...freshFanState(),basket:free.slice(0,2)};
+ const doc=JSON.parse(encodeFanSession(state));delete doc.ticketTypeBySeat;
+ const migrated=decodeFanSession(JSON.stringify(doc));
+ assert.deepEqual(migrated.state.ticketTypeBySeat,{[state.basket[0].id]:'standard',[state.basket[1].id]:'standard'});
+ doc.ticketTypeBySeat={[state.basket[0].id]:'child',[state.basket[1].id]:'foreign',other:'reduced'};
+ assert.deepEqual(decodeFanSession(JSON.stringify(doc)).state.ticketTypeBySeat,{[state.basket[0].id]:'child',[state.basket[1].id]:'standard'});
 });
 test('kontrola podsumowania odrzuca zmienioną dostępność i sygnalizuje zmianę ceny z katalogu',()=>{
  const previous=free.slice(0,3);
