@@ -12,7 +12,7 @@ Cel właściciela: pełne doświadczenie kibica na poziomie produktu referencyjn
 | 4 | Autorska rekonstrukcja Enei w kodzie | Kod i obejrzane rendery CPU: ciągła misa, różne poziomy, biała łukowa membrana, kratownice i gęste niebieskie fotele. Wymaga odbioru w aplikacji i dalszego porównania z referencjami |
 | 4a | Symulowana widownia w podglądzie3D | Kod21listopada: jedna instancjonowana geometria ciemnych sylwetek, przełącznik puste/z kibicami, ukryty obserwator i zgodne miniatury. Kontroler CPU/StrictMode57perspektyw oraz porównanie CPU:pass. Niezależne od biletów/holdów; obraz/płynnośćC5 nadal pending. |
 | 5 | Spójność geometrii, foteli i kamery | Wspólne parametry; testy podparcia foteli, kadru panoramy i wszystkich bloków. Dokładne oficjalne rzędy/numery nie są zweryfikowane |
-| 6 | Ceny, filtry i reguły wydarzenia | Kod i baza B5a: typ normalny/ulgowy/dziecko per fotel, eventowe limity 1–10 / 2–6, serwerowy quote v2 i dokładny snapshot ceny. Filtry, grupy i aktualizacja wybranego bloku pozostają wspólne dla panelu, mapy i 3D. Dane są demo; klient B5a nie jest jeszcze wdrożony |
+| 6 | Ceny, filtry i reguły wydarzenia | Wdrożone B5a: typ normalny/ulgowy/dziecko per fotel, eventowe limity 1–10 / 2–6, serwerowy quote v2 i dokładny snapshot ceny. Production desktop/mobile potwierdzają quote, hold, recovery i release. Dane pozostają demo |
 | 7 | Quote, hold, wygaśnięcie, wznowienie i konflikt | Supabase/Vercel połączone, transakcje i właściciel sesji potwierdzone realnym HTTP i PostgreSQL. Panel quote/confirm/countdown/release i current recovery wdrożony. Otwarte: odbiór w aplikacji. Płatności/produkcyjny operator sprzedaży nie są podłączone |
 | 8 | Odbiór całego flow na telefonie i desktopie | Zablokowane otwarcie Cloud Desktop przez automatyczną kontrolę; pozostałe prace nie są od tego zależne |
 | 9 | Docelowe MVP pod stałym linkiem | Obecne przyrosty wdrażane na salesbeyond.vercel.app. Sam deploy nie zamyka etapów 4–8 |
@@ -35,11 +35,12 @@ Domyślny plan 2D montuje rzeczywisty `createRenderer` z przypiętego pakietu pr
 
 ## Bieżący etap: jakość stadionu i odbiór całego doświadczenia
 
-B5a 2026-11-25: dwa eventy i cenniki typów są już w prywatnym schemacie
-Supabase. Rzeczywisty quote→hold→idempotent replay→release przeszedł, a nowe
-tabele mają RLS deny-all i RPC dostępne wyłącznie przez backend `service_role`.
-Lokalne UI przechodzi desktop/mobile i pełne bramki kodu. Następny krok to deploy
-klienta/API v2 i produkcyjny odbiór tego samego flow; nie wykonano go bez zgody.
+B5a 2026-11-25: dwa eventy i cenniki typów są w prywatnym schemacie Supabase.
+Rzeczywisty quote→hold→idempotent replay→release przeszedł, nowe tabele mają RLS
+deny-all, a RPC są dostępne wyłącznie przez backend `service_role`. Deployment
+`dpl_5XwC5qZpyLB5qQDoDFT2dhSjVngz` (`ed2f128`) jest READY na production.
+Desktop i mobile 390×844 przeszły wybór typu, quote 126 zł, hold, reload/recovery
+i release; brak overflow, błędów konsoli oraz error/fatal w logach Vercel.
 
 Stan na 2026-11-20: źródła 91272b3 wdrożone production READY na salesbeyond.vercel.app. 147 testów źródeł + 1 test gotowego API, lint/typecheck/build przeszły. Rzeczywisty HTTP potwierdza quote/inventory, wyścig dwóch sesji, własność, idempotencję, odzyskanie i release. To nie jest dowód wyglądu ani pełnej ścieżki w przeglądarce.
 

@@ -3,7 +3,7 @@ started: 2026-11-25
 ended: 2026-11-25
 agent: root
 spec: .ai/specs/2026-11-24-ticket-types-and-selection-policy.md
-outcome: partial
+outcome: success
 ---
 
 # B5a — implementacja typów biletów i polityk wydarzenia
@@ -25,6 +25,9 @@ Wdrożyć zatwierdzone B5a, zweryfikować klienta, API i migrację na izolowanej
   Dwa następcze indeksy pokryły klucze obce `quotes` i `seats`; nie zmieniano
   tabel innej aplikacji w schemacie `public`.
 - Niezależny agent Luna nie znalazł blockerów ani findingów high/medium.
+- Commit `ed2f128` wdrożono na Vercel production jako
+  `dpl_5XwC5qZpyLB5qQDoDFT2dhSjVngz`; alias `salesbeyond.vercel.app` wskazuje
+  deployment READY w regionie `fra1`.
 
 ## Weryfikacja
 
@@ -41,13 +44,21 @@ Wdrożyć zatwierdzone B5a, zweryfikować klienta, API i migrację na izolowanej
   tabel i execute v2 tylko dla `service_role` — pass.
 - Rzeczywisty RPC: quote 126 zł → create → ten sam create zwrócił identyczny hold
   z `replayed: true` → release; testowe miejsca zwolniono — pass.
+- Production desktop: event B → 101/1/1 + 101/1/2 → Dziecko/Normalny → serwer
+  48/78 zł, razem 126 zł → hold 10:00 → reload z komunikatem „Przywrócono Twoją
+  blokadę” → release i terminalne „Miejsca zostały zwolnione.” — pass.
+- Production mobile 390×844: analogiczny flow na dwóch miejscach, 390/390 px,
+  selecty 44 px, brak błędów konsoli; pełny kadr obejrzany — pass.
+- Vercel: HTML, JS, CSS, status backendu i inventory eventu B zwracają 200;
+  deployment ma dokładny SHA `ed2f12891409ac281199904d5b9a1b00d06c88f9`.
+  Skan error/fatal z 30 minut po deployu jest czysty; projekt nie ma drainów.
 - Security/health advisors: brak błędów B5a. `rls_enabled_no_policy` dla prywatnego
   `sb_hold` jest zamierzonym deny-all. Nowe ostrzeżenia FK usunięto indeksami.
 
 ## Wynik
 
-Kod i zatwierdzone migracje B5a są gotowe. Nie wykonano deployu aplikacji.
-Pełne AC6 przez HTTP/UI production wymaga osobnej zgody na wdrożenie kodu v2.
+B5a jest wdrożone i odebrane na production. Kod, migracje, quote v2, hold,
+recovery i release przeszły testy lokalne, bazowe oraz rzeczywisty browser flow.
 
 ## Lekcje
 

@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: implemented
 created: 2026-11-24
 owner: product-owner
 related:
@@ -104,6 +104,7 @@ v2 mają EXECUTE wyłącznie dla `service_role` i stały `search_path`.
 
 Lokalne bramki: lint, typecheck, 214 testów źródeł + 1 test gotowego API i build
 przeszły. Desktop 1440×900 i mobile 390×844 potwierdzają zmianę typu/ceny,
-limit 2/6, cele 44 px, brak overflow i błędów konsoli. AC6 pozostaje częściowo
-otwarte wyłącznie dla quote/hold/reload/release przez wdrożony interfejs v2,
-ponieważ deploy aplikacji nie był objęty zgodą.
+limit 2/6, cele 44 px, brak overflow i błędów konsoli. AC6 zamknięto po deployu
+`ed2f128` na production: desktop oraz mobile przeszły wybór dwóch typów, quote
+126,00 zł, hold, reload/recovery i release. Mobile zachował szerokość 390 px bez
+overflow, kontrolki 44 px i zero błędów konsoli.
